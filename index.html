@@ -6,28 +6,34 @@
   <title>Notte di Natale · scroll</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Inter:wght@300;400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
     html { scroll-behavior: smooth; }
 
     body {
-      height: 600vh;
+      height: 800vh;
       background: #05080f;
       font-family: 'Inter', sans-serif;
       color: #f5f5fa;
       overscroll-behavior: none;
     }
 
-    /* il "palco" è fisso: la pagina scrolla, ma la scena resta in vista
-       e si anima in base alla progressione dello scroll */
     .stage {
       position: fixed;
       inset: 0;
       overflow: hidden;
       background:
         radial-gradient(ellipse at 50% 110%, #0e2438 0%, #060912 55%, #02030a 100%);
+    }
+
+    /* contenitore esterno: tutta la scena notturna che verrà "zoomata" */
+    .exterior {
+      position: absolute;
+      inset: 0;
+      transform-origin: 20% 78%;
+      will-change: transform, opacity, filter;
     }
 
     /* stelle */
@@ -48,7 +54,6 @@
       opacity: 0;
       animation: twinkle 4s ease-in-out infinite;
     }
-
     @keyframes twinkle {
       0%, 100% { filter: brightness(1); }
       50%      { filter: brightness(1.6); }
@@ -67,7 +72,7 @@
       transform: scale(0.6);
     }
 
-    /* terreno innevato */
+    /* terreno */
     .ground {
       position: absolute;
       bottom: -40px;
@@ -79,10 +84,9 @@
       border-top-left-radius: 50% 80px;
       border-top-right-radius: 50% 110px;
       transform: translateY(100%);
-      box-shadow: 0 -20px 60px rgba(255,255,255,0.05) inset;
     }
 
-    /* colline lontane */
+    /* colline */
     .hill {
       position: absolute;
       bottom: 28%;
@@ -128,7 +132,6 @@
     .tree .l2 { bottom: 150px; border-left-width: 95px;  border-right-width: 95px;  border-bottom-width: 130px; border-bottom-color: #1f5a2e; }
     .tree .l3 { bottom:  50px; border-left-width: 125px; border-right-width: 125px; border-bottom-width: 150px; border-bottom-color: #235f33; }
 
-    /* baubles & lights */
     .bauble {
       position: absolute;
       width: 14px; height: 14px;
@@ -144,7 +147,6 @@
       opacity: 0;
     }
 
-    /* stella in cima */
     .star {
       position: absolute;
       bottom: 360px;
@@ -160,7 +162,7 @@
       box-shadow: 0 0 25px #ffd766, 0 0 60px #ffae2a;
     }
 
-    /* fiocchi di neve */
+    /* neve */
     .snow {
       position: absolute; inset: 0;
       pointer-events: none;
@@ -225,6 +227,14 @@
       border-radius: 4px;
       box-shadow: 0 0 18px rgba(255, 200, 100, 0.7);
     }
+    .house .door {
+      position: absolute;
+      bottom: 0; left: 14px;
+      width: 22px; height: 36px;
+      background: linear-gradient(180deg, #4a2418 0%, #2a140b 100%);
+      border-radius: 3px 3px 0 0;
+      box-shadow: inset 0 0 0 1px rgba(255,200,120,0.15);
+    }
     .house .chimney {
       position: absolute;
       top: 0; right: 18px;
@@ -232,19 +242,181 @@
       background: #4a2418;
     }
 
-    /* messaggio finale */
-    .greet {
+    /* INTERNO della casa: appare quando la "camera" entra */
+    .interior {
       position: absolute;
-      left: 50%; top: 18%;
-      transform: translate(-50%, 0) scale(0.9);
-      font-family: 'Great Vibes', cursive;
-      font-size: clamp(48px, 9vw, 120px);
-      color: #fff;
-      letter-spacing: 1px;
+      inset: 0;
       opacity: 0;
-      text-shadow: 0 0 20px rgba(255,210,150,0.6), 0 4px 30px rgba(0,0,0,0.5);
-      white-space: nowrap;
+      pointer-events: none;
+      background:
+        radial-gradient(ellipse at 50% 65%, #f4b86a 0%, #c97632 30%, #5a2a14 70%, #1a0a05 100%);
     }
+    .interior::before {
+      /* pavimento in legno */
+      content: "";
+      position: absolute;
+      left: 0; right: 0; bottom: 0;
+      height: 32%;
+      background:
+        repeating-linear-gradient(90deg,
+          #5a3520 0 60px, #6b3f26 60px 120px),
+        linear-gradient(180deg, rgba(0,0,0,0.3), rgba(0,0,0,0.6));
+      background-blend-mode: multiply;
+      box-shadow: 0 -20px 60px rgba(0,0,0,0.6) inset;
+    }
+    .interior::after {
+      /* parete con boiserie */
+      content: "";
+      position: absolute;
+      left: 0; right: 0; top: 0;
+      height: 68%;
+      background:
+        linear-gradient(180deg, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0) 35%, rgba(0,0,0,0.5) 100%);
+    }
+
+    /* camino */
+    .fireplace {
+      position: absolute;
+      bottom: 10%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 240px;
+      height: 220px;
+    }
+    .fireplace .mantel {
+      position: absolute;
+      top: 0; left: -16px;
+      width: 272px; height: 18px;
+      background: linear-gradient(180deg, #d8b07a, #8a6438);
+      border-radius: 2px;
+      box-shadow: 0 6px 16px rgba(0,0,0,0.5);
+    }
+    .fireplace .stone {
+      position: absolute;
+      top: 18px; left: 0;
+      width: 240px; height: 200px;
+      background:
+        repeating-linear-gradient(90deg,
+          #6e6258 0 38px, #5a4f47 38px 76px),
+        linear-gradient(180deg, #5a4f47, #3a312b);
+      background-blend-mode: multiply;
+      border-radius: 4px;
+    }
+    .fireplace .opening {
+      position: absolute;
+      top: 60px; left: 50%;
+      transform: translateX(-50%);
+      width: 140px; height: 130px;
+      background: radial-gradient(ellipse at 50% 80%, #2a0a02 0%, #000 80%);
+      border-radius: 8px 8px 4px 4px;
+      box-shadow: inset 0 0 20px rgba(0,0,0,0.9);
+      overflow: hidden;
+    }
+    .flame {
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 60px; height: 90px;
+      background: radial-gradient(ellipse at 50% 100%, #fff3a0 0%, #ffb347 35%, #e2531a 65%, transparent 80%);
+      border-radius: 50% 50% 30% 30% / 60% 60% 40% 40%;
+      filter: blur(2px);
+      animation: flicker 1.4s ease-in-out infinite alternate;
+      mix-blend-mode: screen;
+    }
+    .flame.f2 { width: 40px; height: 70px; opacity: 0.8; animation-duration: 1.1s; animation-delay: -0.4s; }
+    .flame.f3 { width: 28px; height: 50px; opacity: 0.7; animation-duration: 0.8s; animation-delay: -0.7s; }
+    @keyframes flicker {
+      0%   { transform: translateX(-50%) scale(1, 1); }
+      50%  { transform: translateX(-50%) scale(1.05, 1.1); }
+      100% { transform: translateX(-50%) scale(0.95, 0.95); }
+    }
+
+    /* calze appese al camino */
+    .stocking {
+      position: absolute;
+      top: 18px;
+      width: 22px; height: 50px;
+      background: #c0392b;
+      border-radius: 4px 4px 12px 4px / 4px 4px 14px 4px;
+      transform: rotate(-6deg);
+      box-shadow: inset 0 4px 0 #fff;
+    }
+    .stocking.s1 { left: 30px; }
+    .stocking.s2 { left: 70px; background: #2e8b57; transform: rotate(4deg); }
+    .stocking.s3 { right: 30px; background: #c0392b; transform: rotate(6deg); }
+
+    /* ghirlanda sul camino */
+    .garland {
+      position: absolute;
+      top: 12px; left: -16px;
+      width: 272px; height: 14px;
+      background:
+        radial-gradient(circle at 10px 7px, #1f5a2e 6px, transparent 7px) repeat-x,
+        radial-gradient(circle at 22px 7px, #235f33 6px, transparent 7px) repeat-x;
+      background-size: 28px 14px;
+    }
+    .garland::after {
+      content: "";
+      position: absolute; inset: 0;
+      background:
+        radial-gradient(circle at 14px 7px, #e74c3c 2px, transparent 3px) repeat-x,
+        radial-gradient(circle at 28px 7px, #f1c40f 2px, transparent 3px) repeat-x;
+      background-size: 28px 14px;
+    }
+
+    /* CTA finale */
+    .cta-wrap {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 24px;
+      opacity: 0;
+      pointer-events: none;
+      z-index: 5;
+    }
+    .cta-title {
+      font-family: 'Great Vibes', cursive;
+      font-size: clamp(36px, 6vw, 72px);
+      color: #fff;
+      text-shadow: 0 0 24px rgba(255,180,100,0.7), 0 4px 30px rgba(0,0,0,0.6);
+      transform: translateY(20px);
+      transition: transform 0.6s ease;
+    }
+    .cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      padding: 18px 38px;
+      font-family: 'Inter', sans-serif;
+      font-weight: 500;
+      font-size: 16px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: #2a140b;
+      background: linear-gradient(180deg, #ffd66b 0%, #e9a73a 100%);
+      border: none;
+      border-radius: 40px;
+      cursor: pointer;
+      box-shadow:
+        0 0 0 1px rgba(255,255,255,0.3) inset,
+        0 8px 24px rgba(0,0,0,0.5),
+        0 0 40px rgba(255, 180, 80, 0.5);
+      transform: translateY(20px) scale(0.95);
+      transition: transform 0.6s ease, box-shadow 0.3s ease;
+    }
+    .cta:hover {
+      transform: translateY(20px) scale(1.04);
+      box-shadow:
+        0 0 0 1px rgba(255,255,255,0.4) inset,
+        0 12px 32px rgba(0,0,0,0.55),
+        0 0 60px rgba(255, 200, 110, 0.7);
+    }
+    .cta-wrap.show .cta-title,
+    .cta-wrap.show .cta { transform: translateY(0) scale(1); }
 
     /* hint scroll */
     .hint {
@@ -271,7 +443,6 @@
       50%     { transform: translateY(8px); opacity: 1; }
     }
 
-    /* progress bar */
     .progress {
       position: fixed;
       top: 0; left: 0;
@@ -288,38 +459,69 @@
   <div class="hint" id="hint">scroll</div>
 
   <div class="stage">
-    <div class="stars" id="stars"></div>
-    <div class="moon" id="moon"></div>
 
-    <div class="hill left"  id="hillL"></div>
-    <div class="hill right" id="hillR"></div>
+    <!-- SCENA ESTERNA -->
+    <div class="exterior" id="exterior">
+      <div class="stars" id="stars"></div>
+      <div class="moon" id="moon"></div>
 
-    <div class="snow" id="snow"></div>
+      <div class="hill left"  id="hillL"></div>
+      <div class="hill right" id="hillR"></div>
 
-    <div class="sleigh" id="sleigh">🎅🛷</div>
+      <div class="snow" id="snow"></div>
 
-    <div class="ground" id="ground"></div>
+      <div class="sleigh" id="sleigh">🎅🛷</div>
 
-    <div class="house" id="house">
-      <div class="roof"></div>
-      <div class="chimney"></div>
-      <div class="body"></div>
-      <div class="window"></div>
+      <div class="ground" id="ground"></div>
+
+      <div class="house" id="house">
+        <div class="roof"></div>
+        <div class="chimney"></div>
+        <div class="body"></div>
+        <div class="window"></div>
+        <div class="door"></div>
+      </div>
+
+      <div class="tree" id="tree">
+        <div class="layer l3"></div>
+        <div class="layer l2"></div>
+        <div class="layer l1"></div>
+        <div class="trunk"></div>
+        <div class="star" id="star"></div>
+      </div>
     </div>
 
-    <div class="tree" id="tree">
-      <div class="layer l3"></div>
-      <div class="layer l2"></div>
-      <div class="layer l1"></div>
-      <div class="trunk"></div>
-      <div class="star" id="star"></div>
+    <!-- INTERNO della casa -->
+    <div class="interior" id="interior">
+      <div class="fireplace">
+        <div class="mantel"></div>
+        <div class="garland"></div>
+        <div class="stocking s1"></div>
+        <div class="stocking s2"></div>
+        <div class="stocking s3"></div>
+        <div class="stone"></div>
+        <div class="opening">
+          <div class="flame"></div>
+          <div class="flame f2"></div>
+          <div class="flame f3"></div>
+        </div>
+      </div>
     </div>
 
-    <div class="greet" id="greet">Buon Natale</div>
+    <!-- CTA -->
+    <div class="cta-wrap" id="ctaWrap">
+      <div class="cta-title">Benvenuto</div>
+      <button class="cta" type="button">Verifica disponibilità</button>
+    </div>
+
   </div>
 
 <script>
 (() => {
+  const exterior = document.getElementById('exterior');
+  const interior = document.getElementById('interior');
+  const ctaWrap  = document.getElementById('ctaWrap');
+
   const tree    = document.getElementById('tree');
   const star    = document.getElementById('star');
   const stars   = document.getElementById('stars');
@@ -330,11 +532,10 @@
   const snow    = document.getElementById('snow');
   const sleigh  = document.getElementById('sleigh');
   const house   = document.getElementById('house');
-  const greet   = document.getElementById('greet');
   const hint    = document.getElementById('hint');
   const progress= document.getElementById('progress');
 
-  // genera fiocchi di neve
+  // fiocchi di neve
   const flakeChars = ['❄', '❅', '❆', '✻', '·'];
   for (let i = 0; i < 70; i++) {
     const f = document.createElement('span');
@@ -349,11 +550,10 @@
     snow.appendChild(f);
   }
 
-  // genera baubles e luci sull'albero in posizioni "stabili"
+  // baubles e luci
   const baubleColors = ['#e74c3c', '#f1c40f', '#ecf0f1', '#9b59b6', '#3498db'];
   const lightColors  = ['#ffeb99', '#ff8a8a', '#9be3a3', '#a3c8ff', '#ffc78a'];
 
-  // posizioni relative all'albero (260x380)
   const baublePositions = [
     [130, 110], [90, 145], [170, 145], [60, 180], [200, 180],
     [110, 215], [150, 215], [85, 250], [175, 250],
@@ -388,85 +588,101 @@
     return l;
   });
 
-  // utility
-  const clamp  = (v, a=0, b=1) => Math.max(a, Math.min(b, v));
-  const map    = (v, a, b) => clamp((v - a) / (b - a));
-  const lerp   = (a, b, t) => a + (b - a) * t;
+  const clamp = (v, a=0, b=1) => Math.max(a, Math.min(b, v));
+  const map   = (v, a, b) => clamp((v - a) / (b - a));
+  const lerp  = (a, b, t) => a + (b - a) * t;
 
   function frame() {
     const max = document.body.scrollHeight - window.innerHeight;
     const p   = max > 0 ? window.scrollY / max : 0;
     progress.style.width = (p * 100) + '%';
 
-    if (p > 0.02) hint.style.opacity = '0';
-    else          hint.style.opacity = '1';
+    hint.style.opacity = p > 0.02 ? '0' : '1';
 
-    // 0.00 - 0.10 : stelle e luna appaiono
-    const tStars = map(p, 0.00, 0.10);
+    // 0.00 - 0.07 stelle e luna
+    const tStars = map(p, 0.00, 0.07);
     stars.style.opacity = tStars.toString();
     moon.style.opacity  = tStars.toString();
     moon.style.transform = `scale(${lerp(0.6, 1, tStars)})`;
 
-    // 0.05 - 0.20 : colline emergono
-    const tHills = map(p, 0.05, 0.20);
+    // 0.04 - 0.14 colline
+    const tHills = map(p, 0.04, 0.14);
     hillL.style.opacity = tHills.toString();
     hillR.style.opacity = tHills.toString();
     hillL.style.transform = `translateY(${lerp(40, 0, tHills)}px)`;
     hillR.style.transform = `translateY(${lerp(50, 0, tHills)}px)`;
 
-    // 0.10 - 0.25 : terreno sale
-    const tGround = map(p, 0.10, 0.25);
-    ground.style.transform = `translateY(${lerp(100, 0, tGround)}%)`;
+    // 0.08 - 0.18 terreno
+    ground.style.transform = `translateY(${lerp(100, 0, map(p, 0.08, 0.18))}%)`;
 
-    // 0.18 - 0.32 : casetta entra
-    const tHouse = map(p, 0.18, 0.32);
+    // 0.14 - 0.24 casetta
+    const tHouse = map(p, 0.14, 0.24);
     house.style.opacity   = tHouse.toString();
     house.style.transform = `translateY(${lerp(20, 0, tHouse)}px)`;
 
-    // 0.20 - 0.40 : neve aumenta
-    snow.style.opacity = map(p, 0.20, 0.40).toString();
+    // 0.16 - 0.32 neve
+    snow.style.opacity = map(p, 0.16, 0.32).toString();
 
-    // 0.25 - 0.45 : albero cresce
-    const tTree = map(p, 0.25, 0.45);
-    const ease  = tTree * tTree * (3 - 2 * tTree); // smoothstep
-    tree.style.transform = `translateX(-50%) scale(${ease})`;
+    // 0.20 - 0.36 albero
+    const tTree = map(p, 0.20, 0.36);
+    const easeT = tTree * tTree * (3 - 2 * tTree);
+    tree.style.transform = `translateX(-50%) scale(${easeT})`;
 
-    // 0.45 - 0.65 : decorazioni (baubles) appaiono in sequenza
-    const tDeco = map(p, 0.45, 0.65);
+    // 0.36 - 0.50 baubles
+    const tDeco = map(p, 0.36, 0.50);
     baubles.forEach(b => {
-      const delay = parseFloat(b.dataset.delay);
-      const local = clamp((tDeco - delay * 0.7) / 0.3);
+      const d = parseFloat(b.dataset.delay);
+      const local = clamp((tDeco - d * 0.7) / 0.3);
       b.style.opacity = local.toString();
       b.style.transform = `scale(${lerp(0, 1, local)})`;
     });
 
-    // 0.60 - 0.78 : luci si accendono
-    const tLights = map(p, 0.60, 0.78);
+    // 0.48 - 0.62 luci
+    const tLights = map(p, 0.48, 0.62);
     lights.forEach(l => {
-      const delay = parseFloat(l.dataset.delay);
-      const local = clamp((tLights - delay * 0.6) / 0.4);
-      // pulsazione leggera quando accese
-      const pulse = 0.6 + 0.4 * Math.sin(performance.now() / 400 + delay * 6);
+      const d = parseFloat(l.dataset.delay);
+      const local = clamp((tLights - d * 0.6) / 0.4);
+      const pulse = 0.6 + 0.4 * Math.sin(performance.now() / 400 + d * 6);
       l.style.opacity = (local * pulse).toString();
     });
 
-    // 0.72 - 0.85 : stella sull'albero
-    const tStar = map(p, 0.72, 0.85);
-    const starEase = tStar * tStar * (3 - 2 * tStar);
+    // 0.58 - 0.70 stella
+    const tStar = map(p, 0.58, 0.70);
+    const easeS = tStar * tStar * (3 - 2 * tStar);
     star.style.transform =
-      `translate(-50%, -50%) scale(${lerp(0, 1, starEase)}) rotate(${lerp(-180, 0, starEase)}deg)`;
+      `translate(-50%, -50%) scale(${lerp(0, 1, easeS)}) rotate(${lerp(-180, 0, easeS)}deg)`;
 
-    // 0.78 - 1.00 : slitta attraversa il cielo
-    const tSleigh = map(p, 0.78, 1.00);
+    // 0.65 - 0.78 slitta
+    const tSleigh = map(p, 0.65, 0.78);
     const arc = -Math.sin(tSleigh * Math.PI) * 60;
     sleigh.style.opacity   = (tSleigh > 0 && tSleigh < 1 ? 1 : 0).toString();
     sleigh.style.transform =
       `translate(${lerp(0, window.innerWidth * 1.5, tSleigh)}px, ${arc}px)`;
 
-    // 0.88 - 1.00 : auguri
-    const tGreet = map(p, 0.88, 1.00);
-    greet.style.opacity = tGreet.toString();
-    greet.style.transform = `translate(-50%, 0) scale(${lerp(0.9, 1, tGreet)})`;
+    // 0.78 - 0.92 ZOOM dentro la casa
+    const tZoom = map(p, 0.78, 0.92);
+    const easeZ = tZoom * tZoom * (3 - 2 * tZoom);
+    const scale = lerp(1, 14, easeZ);
+    // dopo lo scale rispetto a (20%, 78%), porto quel punto al centro viewport
+    const tx = lerp(0, 30, easeZ); // vw
+    const ty = lerp(0, -28, easeZ); // vh
+    exterior.style.transform = `translate(${tx}vw, ${ty}vh) scale(${scale})`;
+    exterior.style.filter    = `blur(${lerp(0, 6, easeZ)}px) brightness(${lerp(1, 1.4, easeZ)})`;
+    exterior.style.opacity   = lerp(1, 0, clamp((tZoom - 0.6) / 0.4)).toString();
+
+    // interno appare verso fine zoom
+    interior.style.opacity = map(p, 0.86, 0.95).toString();
+
+    // 0.94 - 1.00 CTA
+    const tCta = map(p, 0.94, 1.00);
+    ctaWrap.style.opacity = tCta.toString();
+    if (tCta > 0.5) {
+      ctaWrap.classList.add('show');
+      ctaWrap.style.pointerEvents = 'auto';
+    } else {
+      ctaWrap.classList.remove('show');
+      ctaWrap.style.pointerEvents = 'none';
+    }
 
     requestAnimationFrame(frame);
   }
