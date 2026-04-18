@@ -4,11 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>De Giuseppe — Pizzeria</title>
-    <meta name="description" content="DeGiuseppe nasce dall'incontro tra tecnica, ricerca e passione per i lievitati. Pizza contemporanea, cosentina, panini gourmet e carta degli oli in Calabria.">
+    <meta name="description" content="DeGiuseppe — pizza contemporanea, cosentina, panini gourmet e carta degli oli. Calabria.">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Bitter:ital,wght@0,400;0,600;0,700;1,400&family=PT+Sans:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Bitter:ital,wght@0,400;0,600;0,700;1,400;1,700&family=PT+Sans:ital,wght@0,400;0,700;1,400;1,700&family=Pinyon+Script&display=swap" rel="stylesheet">
 
     <link rel="stylesheet" href="style.css">
 </head>
@@ -16,276 +16,302 @@
 
 <header class="nav" id="nav">
     <div class="nav__inner">
-        <a href="#top" class="nav__logo" aria-label="De Giuseppe">
-            <img src="assets/img/logo-text.png" alt="De Giuseppe">
+        <div class="nav__left">
+            <a href="#top" class="nav__wordmark nav__wordmark--left">De Giuseppe</a>
+        </div>
+        <a href="#top" class="nav__mono" aria-label="De Giuseppe">
+            <svg viewBox="0 0 60 60" class="nav__mono-svg" aria-hidden="true"><circle cx="30" cy="30" r="28" fill="none" stroke="currentColor" stroke-width="1"/><text x="30" y="40" text-anchor="middle" font-family="Bitter, serif" font-style="italic" font-size="26" fill="currentColor">D</text></svg>
         </a>
-        <nav class="nav__menu" aria-label="Navigazione principale">
-            <a href="#mission">Mission</a>
-            <a href="#chef">Chef</a>
-            <a href="#monoporzioni">Monoporzioni</a>
-            <a href="#contemporanea">Pizza</a>
-            <a href="#panini">Panini</a>
-            <a href="#oli">Oli &amp; Birra</a>
-        </nav>
-        <a href="#contact" class="nav__cta">Prenota</a>
+        <div class="nav__right">
+            <a href="#top" class="nav__wordmark nav__wordmark--right">Pizzeria</a>
+            <a href="#riserva" class="nav__cta">Prenota</a>
+        </div>
     </div>
+    <div class="nav__divider" aria-hidden="true"></div>
 </header>
 
 <main id="top">
 
+    <!-- ==================== HERO ==================== -->
     <section class="hero">
-        <div class="hero__mark" aria-hidden="true">
-            <span class="hero__stamp">EST. 2019 · CALABRIA</span>
+        <div class="hero__stage">
+            <span class="hero__line hero__line--a">De</span>
+            <span class="hero__ornament" aria-hidden="true">
+                <span class="hero__dot"></span>
+                <svg viewBox="0 0 80 80" class="hero__crest"><circle cx="40" cy="40" r="38" fill="none" stroke="currentColor" stroke-width="1"/><circle cx="40" cy="40" r="34" fill="none" stroke="currentColor" stroke-width="0.5"/><text x="40" y="52" text-anchor="middle" font-family="Bitter, serif" font-style="italic" font-size="36" fill="currentColor">D</text></svg>
+                <span class="hero__dot"></span>
+            </span>
+            <span class="hero__line hero__line--b"><em>Giuseppe</em></span>
         </div>
-        <h1 class="hero__title">
-            <span class="reveal-word">De</span>
-            <span class="reveal-word">Giuseppe</span>
-        </h1>
-        <p class="hero__sub">Pizzeria</p>
-        <div class="hero__foot">
-            <p class="hero__lead">
-                Tecnica, ricerca e passione per i lievitati.<br>
-                Dove la pizza diventa racconto del territorio.
+        <div class="hero__meta">
+            <span>Pizzeria</span>
+            <span class="dot">·</span>
+            <span>Calabria</span>
+            <span class="dot">·</span>
+            <span>Est. 2019</span>
+        </div>
+        <div class="hero__intro">
+            <p>
+                <span class="dropcap dropcap--red">D</span>eGiuseppe nasce dall'incontro tra tecnica, ricerca e passione per i lievitati. Un percorso che unisce il rigore dell'alta cucina all'autenticità delle materie prime, per dare vita a un'offerta che esalta la semplicità con un tocco distintivo.
             </p>
-            <a href="#mission" class="btn">Scopri la storia</a>
         </div>
-        <div class="hero__scroll" aria-hidden="true">Scroll</div>
     </section>
 
-    <section class="intro" id="mission">
-        <div class="intro__grid">
-            <div class="intro__media intro__media--primary reveal">
-                <img src="assets/img/interior.jpg" alt="Interno del locale De Giuseppe">
-            </div>
-            <div class="intro__copy reveal">
-                <p class="eyebrow">La Mission</p>
-                <h2 class="display">Un lievitato che racconta <em>il territorio</em>.</h2>
-                <p class="lead">
-                    <span class="dropcap">D</span>eGiuseppe nasce dall'incontro tra tecnica, ricerca e passione per i lievitati. Un percorso che unisce il rigore dell'alta cucina all'autenticità delle materie prime, per dare vita a un'offerta che esalta la semplicità con un tocco distintivo.
-                </p>
+    <!-- ==================== MENU ==================== -->
+    <section class="block-menu" id="menu">
+        <div class="block-menu__grid">
+            <div class="block-menu__copy">
+                <h2 class="big-serif big-serif--red">Menu</h2>
                 <p>
-                    Le pizze e i panini sono il cuore del menu: impasti lavorati con cura, lunga lievitazione e ingredienti selezionati danno forma a creazioni dal gusto contemporaneo, in equilibrio tra tradizione e sperimentazione. Le farciture, studiate per valorizzare ogni singolo elemento, raccontano il territorio con accostamenti originali e tecniche raffinate.
+                    <span class="dropcap dropcap--red">S</span>elezioniamo ogni ingrediente con cura — farine macinate a pietra, olio EVO calabrese, formaggi di piccoli produttori, salumi di suino nero, verdure locali. Lunghe maturazioni e topping studiati per raccontare il territorio.
                 </p>
-                <p>
-                    Ogni dettaglio è pensato per offrire un'esperienza autentica, in cui la qualità degli ingredienti e il rispetto delle lavorazioni artigianali si fondono in piatti che sorprendono senza artifici.
+                <p class="muted">
+                    Un equilibrio tra tradizione e sperimentazione: dalla pizza cosentina alle monoporzioni al quadrato, dal panino gourmet al maritozzo salato.
                 </p>
+                <a href="#contemporanea" class="btn">Vedi il menu</a>
             </div>
-            <div class="intro__media intro__media--secondary reveal">
-                <img src="assets/img/hero-pizzas.jpg" alt="Pizze gourmet De Giuseppe">
+            <div class="block-menu__sketch">
+                <img src="assets/sketches/menu-plate.avif" alt="" class="sketch">
             </div>
         </div>
     </section>
 
-    <section class="chef" id="chef">
-        <div class="chef__grid">
-            <div class="chef__copy reveal">
-                <p class="eyebrow">Il Fondatore</p>
-                <h2 class="display">Pasqualino<br><em>De Giuseppe</em></h2>
-                <div class="chef__text">
-                    <p>
-                        Dopo diverse esperienze stagionali, ha scelto di approfondire la propria formazione frequentando corsi presso scuole private, tra cui <em>Chef Fuoriclasse</em>, all'epoca sponsorizzata da Antonino Cannavacciuolo.
-                    </p>
-                    <p>
-                        Negli anni successivi ha maturato esperienza in diversi locali, fino a fondare, nel 2013, il suo primo chiosco di street food: <em>"Viale Mancini — Boss Burger"</em>. La crescente richiesta della clientela ha portato, nel dicembre 2019, all'apertura del suo primo ristorante specializzato in hamburger e cucina curata.
-                    </p>
-                    <p>
-                        Dopo soli tre mesi, la pandemia ha costretto alla chiusura temporanea. Di fronte alla sfida, ha ripensato l'intera proposta: panini gourmet, lievitati e una ricerca continua sui topping, con maestri come <em>Francesco Di Salvo</em> e <em>Raffaele Bonetta</em>.
-                    </p>
+    <!-- ==================== RISERVA / BOOK ==================== -->
+    <section class="block-reserve" id="riserva">
+        <div class="block-reserve__inner">
+            <p class="eyebrow eyebrow--white">Prenota ora</p>
+            <h2 class="big-serif big-serif--white">Riserva</h2>
+            <img src="assets/sketches/phone.webp" alt="" class="sketch sketch--phone">
+            <div class="block-reserve__slots">
+                <div class="slot">
+                    <p class="slot__date">VENERDÌ · SABATO</p>
+                    <p class="slot__hour">19:30 — 23:30</p>
+                </div>
+                <div class="slot">
+                    <p class="slot__date">DOMENICA · PRANZO</p>
+                    <p class="slot__hour">12:30 — 15:00</p>
                 </div>
             </div>
-            <figure class="chef__portrait reveal">
-                <img src="assets/img/pasqualino.jpg" alt="Pasqualino De Giuseppe, chef e fondatore">
-                <figcaption>— Pasqualino De Giuseppe, Chef &amp; Founder</figcaption>
+            <div class="block-reserve__addr">
+                <p>DeGiuseppe Pizzeria</p>
+                <p>Calabria · Italia</p>
+                <p class="phone">+39 000 000 0000</p>
+            </div>
+            <a href="mailto:prenota@degiuseppe.it" class="btn btn--ghost-white">Scrivici →</a>
+        </div>
+    </section>
+
+    <!-- ==================== CHI SIAMO ==================== -->
+    <section class="block-who" id="chef">
+        <div class="block-who__grid">
+            <div class="block-who__copy">
+                <p class="eyebrow">Fai la conoscenza</p>
+                <h2 class="big-serif">Chi siamo</h2>
+                <p>
+                    <span class="dropcap dropcap--red">P</span>asqualino De Giuseppe ha fondato nel 2013 il suo primo chiosco di street food "Viale Mancini — Boss Burger" dopo anni di esperienze e formazione presso <em>Chef Fuoriclasse</em>, sponsorizzata da Antonino Cannavacciuolo. Nel 2019 apre il suo primo ristorante. La pandemia cambia tutto: nasce la proposta gourmet.
+                </p>
+                <p class="muted">
+                    Durante il lockdown approfondisce la panificazione con maestri come <em>Francesco Di Salvo</em> e <em>Raffaele Bonetta</em>, sviluppando topping innovativi per un'esperienza gastronomica distintiva.
+                </p>
+                <a href="#monoporzioni" class="btn">Scopri di più</a>
+            </div>
+            <figure class="block-who__portrait">
+                <img src="assets/img/pasqualino.jpg" alt="Pasqualino De Giuseppe">
             </figure>
         </div>
     </section>
 
-    <section class="menu-section dark" id="monoporzioni">
-        <div class="menu-section__head reveal">
-            <p class="eyebrow light">Signature</p>
-            <h2 class="display display--huge">Monoporzioni <em>al quadrato</em></h2>
-            <p class="menu-section__intro">
-                Lievitati lavorati con cura e precisione per esaltarne leggerezza, fragranza e digeribilità. I topping studiati per valorizzare le eccellenze del territorio calabrese.
-            </p>
-        </div>
-        <div class="dish-grid">
-            <article class="dish reveal">
-                <div class="dish__img dish__img--tall">
-                    <img src="assets/img/gambero.jpg" alt="Gambero — impasto al nero di seppia">
-                </div>
-                <div class="dish__body">
-                    <h3>Gambero</h3>
-                    <p>
-                        Impasto al nero di seppia in doppia cottura — vapore e forno statico — servito con gambero rosso crudo e stracciatella di solo latte italiano. Completato da scarola riccia saltata con pinoli e uva passa, bottarga di tonno rosso, scorza di limone e olio EVO di Calabria.
-                    </p>
-                </div>
-            </article>
-            <article class="dish reveal">
-                <div class="dish__img">
-                    <img src="assets/img/maritozzo.jpg" alt="Maritozzo alla genovese">
-                </div>
-                <div class="dish__body">
-                    <h3>Maritozzo alla genovese</h3>
-                    <p>
-                        Maritozzo salato e soffice, farcito con una genovese di carne di Podolica e cipolla di Tropea IGP. A completare: polvere di pomodoro essiccato e crema di giardiniera caramellata nel fondo di cottura.
-                    </p>
-                </div>
-            </article>
-            <article class="dish reveal dish--wide">
-                <div class="dish__img">
-                    <img src="assets/img/gambero-detail.jpg" alt="Dettaglio impasto al nero di seppia">
-                </div>
-                <div class="dish__body">
-                    <h3>Impasto, in dettaglio</h3>
-                    <p>
-                        Ogni monoporzione è il risultato di una ricerca approfondita sulle tecniche di fermentazione, con un'attenzione particolare alla qualità delle farine e ai tempi di maturazione.
-                    </p>
-                </div>
-            </article>
-        </div>
+    <!-- ==================== FEATURE PHOTO ==================== -->
+    <section class="feature-photo">
+        <figure>
+            <img src="assets/img/gambero.jpg" alt="Gambero al nero di seppia">
+            <figcaption>— Gambero · Impasto al nero di seppia</figcaption>
+        </figure>
     </section>
 
-    <section class="menu-section" id="contemporanea">
-        <div class="menu-section__head reveal">
-            <p class="eyebrow">Pizza</p>
-            <h2 class="display display--huge">La Pizza <em>contemporanea</em></h2>
-            <p class="menu-section__intro">
-                Incontro tra artigianalità, ricerca e tecnica: dall'impasto all'equilibrio finale di ogni ingrediente. Una base leggera, fragrante e altamente digeribile.
-            </p>
-        </div>
-        <div class="feature-row reveal">
-            <div class="feature-row__media">
-                <img src="assets/img/marinara-bruciata.jpg" alt="Pizza Marinara Bruciata">
-            </div>
-            <div class="feature-row__body">
-                <h3>Marinara Bruciata</h3>
-                <p>
-                    Nata per riprodurre il sugo bruciacchiato sul bordo della padella. Conserva di datterino cotta in padella per ore e poi "bruciata" in forno. Con acciughe sott'olio lavorate a fresco di Reggio Calabria, capperi in polvere, olive nere denocciolate a mano di Vibo Valentia, origano di montagna e olio all'aglio rosa di Nicastro.
-                </p>
-            </div>
-        </div>
-        <div class="feature-row feature-row--reverse reveal">
-            <div class="feature-row__media">
-                <img src="assets/img/cinque-casi.jpg" alt="Pizza Cinque Casi">
-            </div>
-            <div class="feature-row__body">
-                <h3>Cinque Casi</h3>
-                <p>
-                    Base di fiordilatte che celebra il mondo caseario: blu di capra Az. Agricola Sant'Anna, cialde di vaccino stagionato oltre 24 mesi Az. Agricola Marcì, pops di pecorino del Monte Poro e stracciatella. Finita con un filo di olio EVO di Calabria.
-                </p>
-            </div>
-        </div>
-    </section>
-
-    <section class="menu-section pale" id="cosentina">
-        <div class="menu-section__head reveal">
-            <p class="eyebrow">Tonda</p>
-            <h2 class="display display--huge">La Pizza <em>cosentina</em></h2>
-            <p class="menu-section__intro">
-                Base sottile, croccante e friabile, con diametro ampio e impasto altamente digeribile. Una pizza che definisce con rigore i propri limiti, anche nelle interpretazioni più personali.
-            </p>
-        </div>
-        <div class="dish-grid dish-grid--two">
-            <article class="dish reveal">
-                <div class="dish__img">
-                    <img src="assets/img/incapricciata.jpg" alt="Pizza Incapricciata">
-                </div>
-                <div class="dish__body">
-                    <h3>Incapricciata</h3>
-                    <p>
-                        Conserva di pomodoro bio, fior di latte 100% italiano, carciofi freschi del territorio saltati in padella, shiitake rosolati, polvere di olive nere di Calabria, prosciutto cotto di suino nero artigianale, olio EVO e basilico fresco.
-                    </p>
-                </div>
-            </article>
-            <article class="dish reveal">
-                <div class="dish__img">
-                    <img src="assets/img/viaggio-dei.jpg" alt="Pizza Viaggio tra gli Dei">
-                </div>
-                <div class="dish__body">
-                    <h3>Viaggio tra gli Dei</h3>
-                    <p>
-                        Base di conserva di pomodori gialli BIO, 'nduja di Spilinga, cipolla di Tropea IGP caramellata, datterini gialli del territorio, filetti di tonno sott'olio locali, basilico fresco.
-                    </p>
-                </div>
-            </article>
-        </div>
-    </section>
-
-    <section class="menu-section dark" id="panini">
-        <div class="menu-section__head reveal">
-            <p class="eyebrow light">Bun fatto in casa</p>
-            <h2 class="display display--huge">Panini</h2>
-            <p class="menu-section__intro">
-                Un pane fatto da noi: panificazione diretta perché struttura e gusto del bun sono determinanti quanto la farcitura. Combinazioni pensate per offrire contrasti bilanciati.
-            </p>
-        </div>
-        <div class="dish-grid dish-grid--two">
-            <article class="dish reveal">
-                <div class="dish__img">
-                    <img src="assets/img/cheeseburger.jpg" alt="Voleva essere un cheeseburger">
-                </div>
-                <div class="dish__body">
-                    <h3>Voleva essere un cheeseburger</h3>
-                    <p>
-                        Bun morbido, 180g di bovino podolico aspromontano, cheddar Amber Mist affinato al whisky, doppia pancetta croccante di suino nero, cipolla di Tropea caramellata, mango acerbo in osmosi con aceto di champagne e zucchero di canna, salsa BBQ alla 'nduja.
-                    </p>
-                </div>
-            </article>
-            <article class="dish reveal">
-                <div class="dish__img">
-                    <img src="assets/img/ribs.jpg" alt="Ribs in the Bun">
-                </div>
-                <div class="dish__body">
-                    <h3>Ribs in the Bun</h3>
-                    <p>
-                        Costolette di suino nero di Calabria disossate, cotte a bassa temperatura per oltre sette ore, salsa BBQ artigianale, pancetta croccante, cheddar e cipolla di Tropea caramellata. Classico bun o bao cotto a vapore.
-                    </p>
-                </div>
-            </article>
-        </div>
-    </section>
-
-    <section class="split" id="oli">
-        <div class="split__col reveal">
-            <p class="eyebrow">Carta degli oli</p>
-            <h2 class="display">L'olio come <em>racconto</em> d'identità</h2>
-            <p>
-                L'olio extravergine è un ingrediente, non un condimento. La nostra Carta degli Oli nasce da una ricerca tra piccoli produttori, frantoi artigianali e realtà d'eccellenza.
-            </p>
-            <ul class="list">
-                <li><span>Monovarietali bio</span><em>Nocellara del Belice · Carolea</em></li>
-                <li><span>Blend d'autore</span><em>Altanum I.G.P. · MICU 1906 Grand Cru</em></li>
-                <li><span>Presìdi Slow Food</span><em>L'Ottobratica · Verace</em></li>
-            </ul>
+    <!-- ==================== DRINK / BIRRA ==================== -->
+    <section class="block-drink">
+        <div class="block-drink__inner">
+            <img src="assets/sketches/drink.webp" alt="" class="sketch sketch--drink">
+            <h3 class="mid-serif">La Birra della casa</h3>
             <p class="muted">
-                Una mappa di aromi per ogni tipo di pizza, con note di degustazione e suggerimenti di abbinamento per una scelta consapevole.
-            </p>
-        </div>
-        <div class="split__col reveal">
-            <p class="eyebrow">La birra</p>
-            <h2 class="display">Semplice, autentica, <em>per tutti</em>.</h2>
-            <p>
-                La nostra birra nasce in Calabria, frutto di una ricetta studiata per accompagnare il gusto autentico della cucina regionale senza mai sovrastarlo.
-            </p>
-            <ul class="list">
-                <li><span>Gradazione</span><em>2,5° — leggera e responsabile</em></li>
-                <li><span>Ingredienti</span><em>Acqua della Sila · Riso di Sibari</em></li>
-                <li><span>Naturalmente</span><em>Senza glutine · Bassa fermentazione</em></li>
-            </ul>
-            <p class="muted">
-                Un gesto di accoglienza e attenzione, un invito a bere bene e con piacere, nel rispetto dei sapori e delle persone.
+                Nasce in Calabria, 2,5° — acqua pura della Sila e riso di Sibari. Naturalmente senza glutine, bassa fermentazione. Pensata per accompagnare, non sovrastare.
             </p>
         </div>
     </section>
 
-    <section class="cta" id="contact">
-        <div class="cta__inner reveal">
-            <p class="eyebrow light">Vienici a trovare</p>
-            <h2 class="display display--huge">Una tavola, <em>una storia</em>.</h2>
-            <p class="cta__lead">
-                Prenota il tuo tavolo e lasciati raccontare la Calabria, lievitato dopo lievitato.
+    <!-- ==================== MENU LIST (Monoporzioni) ==================== -->
+    <section class="menu-list" id="monoporzioni">
+        <div class="menu-list__head">
+            <p class="eyebrow">Signature</p>
+            <h2 class="mid-serif">Monoporzioni al quadrato</h2>
+            <p class="muted menu-list__lead">
+                Lievitati lavorati con cura per esaltarne leggerezza, fragranza e digeribilità. Topping studiati per valorizzare le eccellenze calabresi.
             </p>
-            <a href="#" class="btn btn--light">Prenota ora</a>
+        </div>
+        <ul class="menu-list__items">
+            <li>
+                <div class="menu-list__icon" aria-hidden="true">
+                    <svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="20" fill="none" stroke="currentColor" stroke-width="1.2"/><path d="M20 38 Q32 28 44 38" fill="none" stroke="currentColor" stroke-width="1.2"/><circle cx="26" cy="28" r="1.5" fill="currentColor"/><circle cx="38" cy="28" r="1.5" fill="currentColor"/></svg>
+                </div>
+                <div class="menu-list__body">
+                    <div class="menu-list__title">
+                        <h4>Gambero</h4>
+                        <span class="menu-list__tag">Signature</span>
+                    </div>
+                    <p>Impasto al nero di seppia in doppia cottura, gambero rosso crudo, stracciatella, scarola saltata con pinoli e uva passa, bottarga di tonno rosso, limone, EVO di Calabria.</p>
+                </div>
+            </li>
+            <li>
+                <div class="menu-list__icon" aria-hidden="true">
+                    <svg viewBox="0 0 64 64"><ellipse cx="32" cy="34" rx="18" ry="14" fill="none" stroke="currentColor" stroke-width="1.2"/><ellipse cx="32" cy="32" rx="16" ry="11" fill="none" stroke="currentColor" stroke-width="1"/></svg>
+                </div>
+                <div class="menu-list__body">
+                    <div class="menu-list__title">
+                        <h4>Maritozzo alla genovese</h4>
+                    </div>
+                    <p>Maritozzo salato farcito con carne di Podolica, cipolla di Tropea IGP caramellata, polvere di pomodoro essiccato, crema di giardiniera.</p>
+                </div>
+            </li>
+        </ul>
+    </section>
+
+    <!-- ==================== CIAO AMICI (red block) ==================== -->
+    <section class="block-ciao">
+        <div class="block-ciao__inner">
+            <p class="block-ciao__text">
+                «Ogni dettaglio è pensato per offrire un'esperienza autentica, in cui la qualità degli ingredienti e il rispetto delle lavorazioni artigianali si fondono in piatti che sorprendono senza artifici. Un luogo dove la pizza, il pane e i lievitati diventano espressione di una cucina consapevole, fatta di memoria e innovazione.»
+            </p>
+            <p class="signature">Pasqualino</p>
+        </div>
+    </section>
+
+    <!-- ==================== FEATURE PHOTO 2 ==================== -->
+    <section class="feature-photo">
+        <figure>
+            <img src="assets/img/hero-pizzas.jpg" alt="Pizze De Giuseppe">
+            <figcaption>— Pizza contemporanea · Cosentina</figcaption>
+        </figure>
+    </section>
+
+    <!-- ==================== PIZZA CONTEMPORANEA + COSENTINA ==================== -->
+    <section class="story" id="contemporanea">
+        <div class="story__inner">
+            <p class="eyebrow">La nostra pizza</p>
+            <h2 class="big-serif">
+                <span class="dropcap dropcap--red dropcap--inline">L</span>a Pizza contemporanea
+            </h2>
+            <p>
+                Incontro tra artigianalità, ricerca e tecnica. Fermentazioni prolungate, alte idratazioni e un impasto altamente digeribile per esaltare ogni condimento. Un classico reinterpretato con una visione personale.
+            </p>
+            <p class="muted">
+                Ogni pizza è narrazione, emozione e creatività — contrasti e armonie che sorprendono al palato.
+            </p>
+        </div>
+
+        <div class="dish-row">
+            <article class="dish-card">
+                <div class="dish-card__img"><img src="assets/img/marinara-bruciata.jpg" alt="Marinara Bruciata"></div>
+                <h4>Marinara Bruciata</h4>
+                <p>Datterino cotto per ore e "bruciato" in forno. Acciughe di Reggio Calabria, capperi in polvere, olive nere di Vibo Valentia, origano di montagna, olio all'aglio rosa di Nicastro.</p>
+            </article>
+            <article class="dish-card">
+                <div class="dish-card__img"><img src="assets/img/cinque-casi.jpg" alt="Cinque Casi"></div>
+                <h4>Cinque Casi</h4>
+                <p>Fiordilatte, blu di capra Sant'Anna, cialde di vaccino stagionato 24 mesi, pops di pecorino del Monte Poro, stracciatella, EVO di Calabria.</p>
+            </article>
+            <article class="dish-card" id="cosentina">
+                <div class="dish-card__img"><img src="assets/img/incapricciata.jpg" alt="Incapricciata"></div>
+                <h4>Incapricciata <span class="tag">Cosentina</span></h4>
+                <p>Conserva bio, fior di latte, carciofi saltati, shiitake, polvere di olive nere di Calabria, cotto di suino nero, basilico.</p>
+            </article>
+            <article class="dish-card">
+                <div class="dish-card__img"><img src="assets/img/viaggio-dei.jpg" alt="Viaggio tra gli Dei"></div>
+                <h4>Viaggio tra gli Dei <span class="tag">Cosentina</span></h4>
+                <p>Pomodori gialli BIO, 'nduja di Spilinga, cipolla di Tropea caramellata, datterini gialli, filetti di tonno locale, basilico.</p>
+            </article>
+        </div>
+    </section>
+
+    <!-- ==================== PANINI ==================== -->
+    <section class="story story--alt" id="panini">
+        <div class="story__inner">
+            <p class="eyebrow">Bun fatto in casa</p>
+            <h2 class="big-serif">
+                <span class="dropcap dropcap--red dropcap--inline">P</span>anini
+            </h2>
+            <p>
+                Un pane fatto da noi: struttura e gusto del bun sono determinanti quanto la farcitura. Combinazioni pensate per contrasti bilanciati e sapori leggibili.
+            </p>
+        </div>
+
+        <div class="dish-row dish-row--two">
+            <article class="dish-card">
+                <div class="dish-card__img"><img src="assets/img/cheeseburger.jpg" alt="Voleva essere un cheeseburger"></div>
+                <h4>Voleva essere un cheeseburger</h4>
+                <p>Bun, 180g di Podolica aspromontana, cheddar Amber Mist al whisky, doppia pancetta di suino nero, Tropea caramellata, mango acerbo in osmosi, salsa BBQ alla 'nduja.</p>
+            </article>
+            <article class="dish-card">
+                <div class="dish-card__img"><img src="assets/img/ribs.jpg" alt="Ribs in the Bun"></div>
+                <h4>Ribs in the Bun</h4>
+                <p>Costolette di suino nero disossate, cotte a bassa temperatura 7 ore, BBQ artigianale, pancetta, cheddar, Tropea caramellata. Classico bun o bao a vapore.</p>
+            </article>
+        </div>
+    </section>
+
+    <!-- ==================== CARTA OLI (jars) ==================== -->
+    <section class="block-oli" id="oli">
+        <div class="block-oli__head">
+            <p class="eyebrow">L'olio come racconto d'identità</p>
+            <h2 class="big-serif">
+                <span class="dropcap dropcap--red dropcap--inline">L</span>a Carta degli Oli
+            </h2>
+            <p class="block-oli__lead">
+                L'olio extravergine è un ingrediente, non un condimento. Selezione da piccoli produttori, frantoi artigianali e realtà d'eccellenza — una mappa di aromi per ogni tipo di pizza.
+            </p>
+        </div>
+
+        <div class="jars">
+            <figure class="jar">
+                <img src="assets/sketches/olive-oil.avif" alt="">
+                <figcaption>
+                    <h5>Monovarietali Bio</h5>
+                    <p>Nocellara del Belice · Carolea. Per pizze leggere e vegetali.</p>
+                </figcaption>
+            </figure>
+            <figure class="jar">
+                <img src="assets/sketches/tomato-jar.avif" alt="">
+                <figcaption>
+                    <h5>Blend d'Autore</h5>
+                    <p>Altanum I.G.P. · MICU 1906 Grand Cru. Per pizze strutturate.</p>
+                </figcaption>
+            </figure>
+            <figure class="jar">
+                <img src="assets/sketches/olives-jar.webp" alt="">
+                <figcaption>
+                    <h5>Presìdi Slow Food</h5>
+                    <p>L'Ottobratica · Verace. Equilibrio armonico e firma territoriale.</p>
+                </figcaption>
+            </figure>
+        </div>
+
+        <a href="#" class="btn btn--pill">Vedi la carta</a>
+    </section>
+
+    <!-- ==================== NEWSLETTER ==================== -->
+    <section class="block-news">
+        <img src="assets/sketches/stamp.svg" alt="" class="stamp" aria-hidden="true">
+        <div class="block-news__inner">
+            <h2 class="mid-serif">
+                <span class="dropcap dropcap--red dropcap--inline">S</span>crivici, una volta ogni tanto.
+            </h2>
+            <p class="muted">
+                Nuove pizze in carta, serate speciali, ospiti. Niente spam, solo lievitati.
+            </p>
+            <form class="news-form" onsubmit="event.preventDefault();">
+                <input type="email" placeholder="la-tua-email@..." required>
+                <button type="submit">Iscriviti</button>
+            </form>
         </div>
     </section>
 
@@ -299,22 +325,23 @@
         </div>
         <div class="footer__col">
             <p class="eyebrow">Naviga</p>
-            <a href="#mission">La Mission</a>
-            <a href="#chef">Pasqualino</a>
+            <a href="#menu">Menu</a>
+            <a href="#chef">Chi siamo</a>
             <a href="#monoporzioni">Monoporzioni</a>
-            <a href="#contemporanea">Pizza contemporanea</a>
-            <a href="#cosentina">Pizza cosentina</a>
+            <a href="#contemporanea">Pizza</a>
             <a href="#panini">Panini</a>
+            <a href="#oli">Carta Oli</a>
         </div>
         <div class="footer__col">
             <p class="eyebrow">Contatti</p>
             <a href="#">Instagram</a>
             <a href="#">Facebook</a>
             <a href="mailto:info@degiuseppe.it">info@degiuseppe.it</a>
+            <a href="#riserva">Prenota</a>
         </div>
     </div>
     <div class="footer__bottom">
-        <p>© De Giuseppe Pizzeria. Tutti i diritti riservati.</p>
+        <p>© De Giuseppe Pizzeria</p>
         <p>Tecnica · Ricerca · Territorio</p>
     </div>
 </footer>
