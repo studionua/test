@@ -2,667 +2,476 @@
 <html lang="it">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-  <title>Rêverie · quattro movimenti</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Notte di Natale · scroll</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,500;1,300&family=Inter:wght@200;300;400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Inter:wght@300;400&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
-    html, body {
-      width: 100%;
-      height: 100%;
-      overflow: hidden;
-      overscroll-behavior: none;
-      touch-action: none;
-      background: #06060c;
-      color: #f0f0f8;
+    html { scroll-behavior: smooth; }
+
+    body {
+      height: 600vh;
+      background: #05080f;
       font-family: 'Inter', sans-serif;
-      cursor: none;
+      color: #f5f5fa;
+      overscroll-behavior: none;
     }
 
-    canvas {
+    /* il "palco" è fisso: la pagina scrolla, ma la scena resta in vista
+       e si anima in base alla progressione dello scroll */
+    .stage {
       position: fixed;
       inset: 0;
-      display: block;
+      overflow: hidden;
+      background:
+        radial-gradient(ellipse at 50% 110%, #0e2438 0%, #060912 55%, #02030a 100%);
     }
 
-    /* Custom cursor */
-    .cursor {
-      position: fixed;
-      top: 0; left: 0;
-      width: 14px; height: 14px;
-      border: 1px solid rgba(255, 255, 255, 0.6);
-      border-radius: 50%;
-      pointer-events: none;
-      transform: translate(-50%, -50%);
-      transition: width 0.25s, height 0.25s, border-color 0.25s;
-      mix-blend-mode: difference;
-      z-index: 100;
+    /* stelle */
+    .stars {
+      position: absolute; inset: 0;
+      background-image:
+        radial-gradient(1px 1px at 12% 18%, #fff, transparent 60%),
+        radial-gradient(1px 1px at 25% 9%, #cfe6ff, transparent 60%),
+        radial-gradient(1.5px 1.5px at 40% 22%, #fff, transparent 60%),
+        radial-gradient(1px 1px at 58% 12%, #aac6ff, transparent 60%),
+        radial-gradient(1px 1px at 71% 25%, #fff, transparent 60%),
+        radial-gradient(1.5px 1.5px at 83% 8%, #fff, transparent 60%),
+        radial-gradient(1px 1px at 92% 30%, #cfe6ff, transparent 60%),
+        radial-gradient(1px 1px at 6% 35%, #fff, transparent 60%),
+        radial-gradient(1px 1px at 33% 38%, #fff, transparent 60%),
+        radial-gradient(1px 1px at 48% 5%, #fff, transparent 60%),
+        radial-gradient(1px 1px at 64% 32%, #fff, transparent 60%);
+      opacity: 0;
+      animation: twinkle 4s ease-in-out infinite;
     }
-    .cursor::after {
-      content: "";
+
+    @keyframes twinkle {
+      0%, 100% { filter: brightness(1); }
+      50%      { filter: brightness(1.6); }
+    }
+
+    /* luna */
+    .moon {
       position: absolute;
-      top: 50%; left: 50%;
-      width: 2px; height: 2px;
-      background: #fff;
+      top: 12%;
+      right: 14%;
+      width: 110px; height: 110px;
       border-radius: 50%;
-      transform: translate(-50%, -50%);
+      background: radial-gradient(circle at 35% 35%, #fff8e0 0%, #ecd58a 60%, #b89a4a 100%);
+      box-shadow: 0 0 60px rgba(255, 240, 180, 0.35), 0 0 120px rgba(255, 220, 150, 0.18);
+      opacity: 0;
+      transform: scale(0.6);
     }
 
-    /* Overlays */
-    .overlay {
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      z-index: 10;
+    /* terreno innevato */
+    .ground {
+      position: absolute;
+      bottom: -40px;
+      left: -10%;
+      width: 120%;
+      height: 38%;
+      background:
+        radial-gradient(ellipse at 50% 0%, #f4f7ff 0%, #d7dfee 60%, #aab6cb 100%);
+      border-top-left-radius: 50% 80px;
+      border-top-right-radius: 50% 110px;
+      transform: translateY(100%);
+      box-shadow: 0 -20px 60px rgba(255,255,255,0.05) inset;
     }
 
-    /* Intro */
-    .intro {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      padding: 2rem;
-      transition: opacity 0.8s ease, transform 0.8s ease;
+    /* colline lontane */
+    .hill {
+      position: absolute;
+      bottom: 28%;
+      width: 60%;
+      height: 18%;
+      background: linear-gradient(180deg, #1a2c44 0%, #0c1726 100%);
+      border-radius: 50% 50% 0 0 / 100% 100% 0 0;
+      opacity: 0;
     }
+    .hill.left  { left: -10%; }
+    .hill.right { right: -15%; width: 65%; height: 22%; bottom: 28%; }
 
-    .intro .eyebrow {
-      font-size: 0.7rem;
-      letter-spacing: 0.7em;
-      text-transform: uppercase;
-      opacity: 0.5;
-      margin-bottom: 2rem;
-      padding-left: 0.7em;
-    }
-
-    .intro h1 {
-      font-family: 'Cormorant Garamond', serif;
-      font-weight: 300;
-      font-size: clamp(3.5rem, 11vw, 8rem);
-      letter-spacing: 0.02em;
-      line-height: 1;
-      margin-bottom: 1.5rem;
-    }
-
-    .intro .sub {
-      font-family: 'Cormorant Garamond', serif;
-      font-style: italic;
-      font-weight: 300;
-      font-size: clamp(1rem, 2vw, 1.4rem);
-      opacity: 0.7;
-      max-width: 480px;
-    }
-
-    /* Movement labels */
-    .movement {
-      position: fixed;
-      top: 50%;
+    /* albero */
+    .tree {
+      position: absolute;
+      bottom: 12%;
       left: 50%;
-      transform: translate(-50%, -50%);
-      text-align: center;
+      transform: translateX(-50%) scale(0);
+      transform-origin: 50% 100%;
+      width: 260px;
+      height: 380px;
+    }
+    .tree .trunk {
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 36px; height: 50px;
+      background: linear-gradient(180deg, #5a3a20, #2e1b0d);
+      border-radius: 4px;
+    }
+    .tree .layer {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 0; height: 0;
+      border-left: solid transparent;
+      border-right: solid transparent;
+      border-bottom: solid #1f5a2e;
+      filter: drop-shadow(0 6px 12px rgba(0,0,0,0.4));
+    }
+    .tree .l1 { bottom: 230px; border-left-width: 70px;  border-right-width: 70px;  border-bottom-width: 110px; border-bottom-color: #1c5028; }
+    .tree .l2 { bottom: 150px; border-left-width: 95px;  border-right-width: 95px;  border-bottom-width: 130px; border-bottom-color: #1f5a2e; }
+    .tree .l3 { bottom:  50px; border-left-width: 125px; border-right-width: 125px; border-bottom-width: 150px; border-bottom-color: #235f33; }
+
+    /* baubles & lights */
+    .bauble {
+      position: absolute;
+      width: 14px; height: 14px;
+      border-radius: 50%;
+      opacity: 0;
+      transform: scale(0);
+      box-shadow: 0 0 8px rgba(255,255,255,0.3);
+    }
+    .light {
+      position: absolute;
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      opacity: 0;
+    }
+
+    /* stella in cima */
+    .star {
+      position: absolute;
+      bottom: 360px;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0) rotate(0deg);
+      width: 36px; height: 36px;
+      background: #ffe27a;
+      clip-path: polygon(
+        50% 0%, 61% 35%, 98% 35%, 68% 57%,
+        79% 91%, 50% 70%, 21% 91%, 32% 57%,
+        2% 35%, 39% 35%
+      );
+      box-shadow: 0 0 25px #ffd766, 0 0 60px #ffae2a;
+    }
+
+    /* fiocchi di neve */
+    .snow {
+      position: absolute; inset: 0;
       pointer-events: none;
-      z-index: 8;
+      opacity: 0;
+    }
+    .flake {
+      position: absolute;
+      top: -10px;
+      color: #fff;
+      font-size: 14px;
+      opacity: 0.85;
+      will-change: transform;
+      animation: fall linear infinite;
+      text-shadow: 0 0 4px rgba(255,255,255,0.6);
+    }
+    @keyframes fall {
+      0%   { transform: translate3d(0, -10vh, 0) rotate(0deg); }
+      100% { transform: translate3d(20px, 110vh, 0) rotate(360deg); }
     }
 
-    .movement .roman {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 0.75rem;
-      letter-spacing: 0.6em;
-      opacity: 0.55;
-      margin-bottom: 1rem;
-      padding-left: 0.6em;
+    /* slitta */
+    .sleigh {
+      position: absolute;
+      top: 22%;
+      left: -25%;
+      font-size: 56px;
+      filter: drop-shadow(0 6px 14px rgba(0,0,0,0.5));
+      transform: translateX(0);
+      opacity: 0;
     }
 
-    .movement .title {
-      font-family: 'Cormorant Garamond', serif;
-      font-weight: 300;
-      font-style: italic;
-      font-size: clamp(3rem, 9vw, 7rem);
-      letter-spacing: 0.02em;
-      line-height: 1;
+    /* casetta */
+    .house {
+      position: absolute;
+      bottom: 14%;
+      left: 14%;
+      width: 130px; height: 100px;
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    .house .body {
+      position: absolute;
+      bottom: 0; left: 0;
+      width: 130px; height: 70px;
+      background: linear-gradient(180deg, #b15a3c 0%, #7a3a26 100%);
+      border-radius: 4px;
+    }
+    .house .roof {
+      position: absolute;
+      top: 0; left: -10px;
+      width: 0; height: 0;
+      border-left: 75px solid transparent;
+      border-right: 75px solid transparent;
+      border-bottom: 50px solid #f4f7ff;
+    }
+    .house .window {
+      position: absolute;
+      bottom: 22px; left: 50%;
+      transform: translateX(-50%);
+      width: 28px; height: 28px;
+      background: #ffd66b;
+      border-radius: 4px;
+      box-shadow: 0 0 18px rgba(255, 200, 100, 0.7);
+    }
+    .house .chimney {
+      position: absolute;
+      top: 0; right: 18px;
+      width: 16px; height: 32px;
+      background: #4a2418;
+    }
+
+    /* messaggio finale */
+    .greet {
+      position: absolute;
+      left: 50%; top: 18%;
+      transform: translate(-50%, 0) scale(0.9);
+      font-family: 'Great Vibes', cursive;
+      font-size: clamp(48px, 9vw, 120px);
+      color: #fff;
+      letter-spacing: 1px;
+      opacity: 0;
+      text-shadow: 0 0 20px rgba(255,210,150,0.6), 0 4px 30px rgba(0,0,0,0.5);
       white-space: nowrap;
     }
 
-    .movement {
-      opacity: 0;
-      transition: opacity 0.6s ease;
-    }
-
-    /* Bottom credits */
-    .credits {
-      position: fixed;
-      bottom: 24px;
-      left: 0; right: 0;
-      display: flex;
-      justify-content: space-between;
-      padding: 0 32px;
-      font-size: 0.65rem;
-      letter-spacing: 0.35em;
-      text-transform: uppercase;
-      opacity: 0.5;
-      z-index: 20;
-      pointer-events: none;
-    }
-
-    /* Side progress — elegant vertical line */
-    .progress-rail {
-      position: fixed;
-      top: 50%;
-      right: 24px;
-      transform: translateY(-50%);
-      width: 1px;
-      height: 180px;
-      background: rgba(255, 255, 255, 0.1);
-      z-index: 30;
-    }
-
-    .progress-rail::after {
-      content: "";
-      position: absolute;
-      left: -1px;
-      top: 0;
-      width: 3px;
-      height: var(--p, 0%);
-      background: linear-gradient(to bottom, #fff, rgba(255,255,255,0.4));
-      box-shadow: 0 0 10px rgba(255, 255, 255, 0.6);
-    }
-
-    .progress-dots {
-      position: fixed;
-      top: 50%;
-      right: 14px;
-      transform: translateY(-50%);
-      display: flex;
-      flex-direction: column;
-      gap: 58px;
-      z-index: 30;
-      pointer-events: none;
-    }
-
-    .dot {
-      width: 5px; height: 5px;
-      border-radius: 50%;
-      background: rgba(255, 255, 255, 0.15);
-      border: 1px solid transparent;
-      margin-left: 8px;
-      transition: background 0.4s, transform 0.4s;
-    }
-    .dot.active {
-      background: #fff;
-      transform: scale(1.6);
-    }
-
-    /* Hint */
+    /* hint scroll */
     .hint {
       position: fixed;
-      bottom: 60px;
-      left: 50%;
+      bottom: 24px; left: 50%;
       transform: translateX(-50%);
-      font-size: 0.7rem;
-      letter-spacing: 0.4em;
+      font-size: 12px; letter-spacing: 4px;
+      color: rgba(255,255,255,0.55);
       text-transform: uppercase;
-      opacity: 0.4;
-      transition: opacity 0.6s;
+      transition: opacity 0.4s ease;
       pointer-events: none;
-      z-index: 20;
+      z-index: 10;
     }
-    .hint.hidden { opacity: 0; }
-
     .hint::after {
-      content: "↓";
-      display: inline-block;
-      margin-left: 0.8em;
-      animation: drift 2s ease-in-out infinite;
+      content: "";
+      display: block;
+      width: 1px; height: 36px;
+      margin: 10px auto 0;
+      background: linear-gradient(180deg, rgba(255,255,255,0.6), transparent);
+      animation: pulse 1.6s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%,100% { transform: translateY(0); opacity: 0.4; }
+      50%     { transform: translateY(8px); opacity: 1; }
     }
 
-    @keyframes drift {
-      0%, 100% { transform: translateY(0); opacity: 0.6; }
-      50%      { transform: translateY(4px); opacity: 1; }
-    }
-
-    .restart {
+    /* progress bar */
+    .progress {
       position: fixed;
-      top: 24px;
-      right: 40px;
-      padding: 10px 20px;
-      background: transparent;
-      border: 1px solid rgba(255, 255, 255, 0.3);
-      color: #fff;
-      font-family: 'Inter', sans-serif;
-      font-size: 0.65rem;
-      letter-spacing: 0.35em;
-      text-transform: uppercase;
-      cursor: none;
-      opacity: 0;
-      transition: opacity 0.6s, background 0.3s;
-      z-index: 40;
-      pointer-events: none;
+      top: 0; left: 0;
+      height: 2px;
+      width: 0%;
+      background: linear-gradient(90deg, #c0392b, #ffd66b, #2e8b57);
+      z-index: 11;
     }
-    .restart.visible {
-      opacity: 1;
-      pointer-events: auto;
-    }
-    .restart:hover { background: rgba(255, 255, 255, 0.08); }
-
-    .intro.hidden { opacity: 0; transform: scale(0.98); }
   </style>
 </head>
 <body>
 
-  <canvas id="canvas"></canvas>
+  <div class="progress" id="progress"></div>
+  <div class="hint" id="hint">scroll</div>
 
-  <div class="cursor" id="cursor"></div>
+  <div class="stage">
+    <div class="stars" id="stars"></div>
+    <div class="moon" id="moon"></div>
 
-  <div class="overlay">
-    <div class="intro" id="intro">
-      <div class="eyebrow">Opus 01</div>
-      <h1>Rêverie</h1>
-      <div class="sub">un'esperienza astratta in quattro movimenti</div>
+    <div class="hill left"  id="hillL"></div>
+    <div class="hill right" id="hillR"></div>
+
+    <div class="snow" id="snow"></div>
+
+    <div class="sleigh" id="sleigh">🎅🛷</div>
+
+    <div class="ground" id="ground"></div>
+
+    <div class="house" id="house">
+      <div class="roof"></div>
+      <div class="chimney"></div>
+      <div class="body"></div>
+      <div class="window"></div>
     </div>
 
-    <div class="movement" id="mov1">
-      <div class="roman">I</div>
-      <div class="title">Origine</div>
+    <div class="tree" id="tree">
+      <div class="layer l3"></div>
+      <div class="layer l2"></div>
+      <div class="layer l1"></div>
+      <div class="trunk"></div>
+      <div class="star" id="star"></div>
     </div>
-    <div class="movement" id="mov2">
-      <div class="roman">II</div>
-      <div class="title">Risveglio</div>
-    </div>
-    <div class="movement" id="mov3">
-      <div class="roman">III</div>
-      <div class="title">Tempesta</div>
-    </div>
-    <div class="movement" id="mov4">
-      <div class="roman">IV</div>
-      <div class="title">Armonia</div>
-    </div>
+
+    <div class="greet" id="greet">Buon Natale</div>
   </div>
 
-  <div class="progress-rail" id="progressRail"></div>
-  <div class="progress-dots" id="progressDots">
-    <div class="dot"></div>
-    <div class="dot"></div>
-    <div class="dot"></div>
-    <div class="dot"></div>
-  </div>
+<script>
+(() => {
+  const tree    = document.getElementById('tree');
+  const star    = document.getElementById('star');
+  const stars   = document.getElementById('stars');
+  const moon    = document.getElementById('moon');
+  const ground  = document.getElementById('ground');
+  const hillL   = document.getElementById('hillL');
+  const hillR   = document.getElementById('hillR');
+  const snow    = document.getElementById('snow');
+  const sleigh  = document.getElementById('sleigh');
+  const house   = document.getElementById('house');
+  const greet   = document.getElementById('greet');
+  const hint    = document.getElementById('hint');
+  const progress= document.getElementById('progress');
 
-  <div class="credits">
-    <span>Rêverie</span>
-    <span>Opus 01</span>
-  </div>
+  // genera fiocchi di neve
+  const flakeChars = ['❄', '❅', '❆', '✻', '·'];
+  for (let i = 0; i < 70; i++) {
+    const f = document.createElement('span');
+    f.className = 'flake';
+    f.textContent = flakeChars[Math.floor(Math.random() * flakeChars.length)];
+    f.style.left = (Math.random() * 100) + '%';
+    f.style.fontSize = (8 + Math.random() * 16) + 'px';
+    f.style.opacity = (0.4 + Math.random() * 0.6).toString();
+    const dur = 6 + Math.random() * 10;
+    f.style.animationDuration = dur + 's';
+    f.style.animationDelay = (-Math.random() * dur) + 's';
+    snow.appendChild(f);
+  }
 
-  <div class="hint" id="hint">Scorri per iniziare</div>
-  <button class="restart" id="restart">Ricomincia</button>
+  // genera baubles e luci sull'albero in posizioni "stabili"
+  const baubleColors = ['#e74c3c', '#f1c40f', '#ecf0f1', '#9b59b6', '#3498db'];
+  const lightColors  = ['#ffeb99', '#ff8a8a', '#9be3a3', '#a3c8ff', '#ffc78a'];
 
-  <script>
-    /* =========================================================
-       Rêverie — a generative abstract scroll-driven visual piece
-       ========================================================= */
+  // posizioni relative all'albero (260x380)
+  const baublePositions = [
+    [130, 110], [90, 145], [170, 145], [60, 180], [200, 180],
+    [110, 215], [150, 215], [85, 250], [175, 250],
+    [100, 290], [160, 290], [130, 320]
+  ];
+  const lightPositions = [
+    [70, 130], [190, 130], [50, 175], [210, 175],
+    [40, 230], [220, 230], [70, 270], [190, 270],
+    [110, 80], [150, 80]
+  ];
 
-    const canvas = document.getElementById('canvas');
-    const ctx    = canvas.getContext('2d');
+  const baubles = baublePositions.map(([x, y], i) => {
+    const b = document.createElement('div');
+    b.className = 'bauble';
+    b.style.left = x + 'px';
+    b.style.top  = y + 'px';
+    b.style.background = baubleColors[i % baubleColors.length];
+    b.dataset.delay = (i / baublePositions.length).toFixed(3);
+    tree.appendChild(b);
+    return b;
+  });
 
-    let W, H, CX, CY, DPR;
+  const lights = lightPositions.map(([x, y], i) => {
+    const l = document.createElement('div');
+    l.className = 'light';
+    l.style.left = x + 'px';
+    l.style.top  = y + 'px';
+    l.style.background = lightColors[i % lightColors.length];
+    l.style.boxShadow = `0 0 12px ${lightColors[i % lightColors.length]}, 0 0 24px ${lightColors[i % lightColors.length]}`;
+    l.dataset.delay = (i / lightPositions.length).toFixed(3);
+    tree.appendChild(l);
+    return l;
+  });
 
-    function resize() {
-      DPR = Math.min(window.devicePixelRatio || 1, 2);
-      W = window.innerWidth;
-      H = window.innerHeight;
-      CX = W / 2;
-      CY = H / 2;
-      canvas.width  = W * DPR;
-      canvas.height = H * DPR;
-      canvas.style.width  = W + 'px';
-      canvas.style.height = H + 'px';
-      ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
-    }
-    window.addEventListener('resize', resize);
-    resize();
+  // utility
+  const clamp  = (v, a=0, b=1) => Math.max(a, Math.min(b, v));
+  const map    = (v, a, b) => clamp((v - a) / (b - a));
+  const lerp   = (a, b, t) => a + (b - a) * t;
 
-    /* ---------- Utilities ---------- */
-    const TAU = Math.PI * 2;
-    const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
-    const range = (p, s, e) => clamp((p - s) / (e - s), 0, 1);
-    const lerp  = (a, b, t) => a + (b - a) * t;
+  function frame() {
+    const max = document.body.scrollHeight - window.innerHeight;
+    const p   = max > 0 ? window.scrollY / max : 0;
+    progress.style.width = (p * 100) + '%';
 
-    function hsla(h, s, l, a) {
-      return `hsla(${h},${s}%,${l}%,${a})`;
-    }
+    if (p > 0.02) hint.style.opacity = '0';
+    else          hint.style.opacity = '1';
 
-    /* Layered sinusoidal noise — cheap, smooth, and organic */
-    function flowNoise(x, y, t) {
-      const s = 0.0025;
-      return (
-        Math.sin(x * s + t * 0.6) * Math.cos(y * s - t * 0.4) +
-        Math.sin((x + y) * s * 0.6 + t * 0.8) * 0.6 +
-        Math.cos((x - y) * s * 1.3 + t * 0.3) * 0.4
-      );
-    }
+    // 0.00 - 0.10 : stelle e luna appaiono
+    const tStars = map(p, 0.00, 0.10);
+    stars.style.opacity = tStars.toString();
+    moon.style.opacity  = tStars.toString();
+    moon.style.transform = `scale(${lerp(0.6, 1, tStars)})`;
 
-    /* ---------- Color palettes per movement ---------- */
-    const palettes = [
-      { hue: 230, hue2: 270, sat: 70, name: 'origine'  },
-      { hue: 190, hue2: 160, sat: 75, name: 'risveglio'},
-      { hue:  10, hue2: 330, sat: 90, name: 'tempesta' },
-      { hue:  45, hue2:  15, sat: 60, name: 'armonia'  }
-    ];
+    // 0.05 - 0.20 : colline emergono
+    const tHills = map(p, 0.05, 0.20);
+    hillL.style.opacity = tHills.toString();
+    hillR.style.opacity = tHills.toString();
+    hillL.style.transform = `translateY(${lerp(40, 0, tHills)}px)`;
+    hillR.style.transform = `translateY(${lerp(50, 0, tHills)}px)`;
 
-    function paletteAt(p) {
-      const seg = clamp(p * 3, 0, 2.9999);
-      const i   = Math.floor(seg);
-      const t   = seg - i;
-      const a = palettes[i];
-      const b = palettes[Math.min(i + 1, 3)];
-      return {
-        hue:  lerp(a.hue,  b.hue,  t),
-        hue2: lerp(a.hue2, b.hue2, t),
-        sat:  lerp(a.sat,  b.sat,  t)
-      };
-    }
+    // 0.10 - 0.25 : terreno sale
+    const tGround = map(p, 0.10, 0.25);
+    ground.style.transform = `translateY(${lerp(100, 0, tGround)}%)`;
 
-    /* ---------- Particles ---------- */
-    const PARTICLE_COUNT = Math.min(2200, Math.floor(W * H / 700));
-    const particles = [];
+    // 0.18 - 0.32 : casetta entra
+    const tHouse = map(p, 0.18, 0.32);
+    house.style.opacity   = tHouse.toString();
+    house.style.transform = `translateY(${lerp(20, 0, tHouse)}px)`;
 
-    class Particle {
-      constructor() { this.reset(true); }
+    // 0.20 - 0.40 : neve aumenta
+    snow.style.opacity = map(p, 0.20, 0.40).toString();
 
-      reset(initial = false) {
-        this.x  = Math.random() * W;
-        this.y  = Math.random() * H;
-        this.px = this.x;
-        this.py = this.y;
-        this.vx = 0;
-        this.vy = 0;
-        this.life    = initial ? Math.random() * 180 : 0;
-        this.maxLife = 180 + Math.random() * 220;
-        this.seed    = Math.random();
-      }
+    // 0.25 - 0.45 : albero cresce
+    const tTree = map(p, 0.25, 0.45);
+    const ease  = tTree * tTree * (3 - 2 * tTree); // smoothstep
+    tree.style.transform = `translateX(-50%) scale(${ease})`;
 
-      update(p, mx, my, t) {
-        /* Flow field angle scales and shifts per movement */
-        const fieldScale = 2 + p * 4;
-        const angle = flowNoise(this.x, this.y, t * (0.3 + p * 0.9)) * Math.PI * fieldScale;
+    // 0.45 - 0.65 : decorazioni (baubles) appaiono in sequenza
+    const tDeco = map(p, 0.45, 0.65);
+    baubles.forEach(b => {
+      const delay = parseFloat(b.dataset.delay);
+      const local = clamp((tDeco - delay * 0.7) / 0.3);
+      b.style.opacity = local.toString();
+      b.style.transform = `scale(${lerp(0, 1, local)})`;
+    });
 
-        const speed = 0.4 + p * 1.3;
-        this.vx += Math.cos(angle) * speed * 0.25;
-        this.vy += Math.sin(angle) * speed * 0.25;
+    // 0.60 - 0.78 : luci si accendono
+    const tLights = map(p, 0.60, 0.78);
+    lights.forEach(l => {
+      const delay = parseFloat(l.dataset.delay);
+      const local = clamp((tLights - delay * 0.6) / 0.4);
+      // pulsazione leggera quando accese
+      const pulse = 0.6 + 0.4 * Math.sin(performance.now() / 400 + delay * 6);
+      l.style.opacity = (local * pulse).toString();
+    });
 
-        /* Radial pull toward center — strong at origin, relaxed later */
-        const dx = CX - this.x;
-        const dy = CY - this.y;
-        const d  = Math.hypot(dx, dy) + 1;
-        const pull = (0.025 * (1 - p * 0.6)) - 0.004 * p;
-        this.vx += (dx / d) * pull;
-        this.vy += (dy / d) * pull;
+    // 0.72 - 0.85 : stella sull'albero
+    const tStar = map(p, 0.72, 0.85);
+    const starEase = tStar * tStar * (3 - 2 * tStar);
+    star.style.transform =
+      `translate(-50%, -50%) scale(${lerp(0, 1, starEase)}) rotate(${lerp(-180, 0, starEase)}deg)`;
 
-        /* Orbital swirl — increases in tempesta, resolves in armonia */
-        const swirl = (0.015 + p * 0.08) * (p < 0.85 ? 1 : 1 - (p - 0.85) * 4);
-        this.vx += (-dy / d) * swirl;
-        this.vy += ( dx / d) * swirl;
+    // 0.78 - 1.00 : slitta attraversa il cielo
+    const tSleigh = map(p, 0.78, 1.00);
+    const arc = -Math.sin(tSleigh * Math.PI) * 60;
+    sleigh.style.opacity   = (tSleigh > 0 && tSleigh < 1 ? 1 : 0).toString();
+    sleigh.style.transform =
+      `translate(${lerp(0, window.innerWidth * 1.5, tSleigh)}px, ${arc}px)`;
 
-        /* Mouse interaction — attractor early, repulsor in tempesta */
-        if (mx !== null) {
-          const mdx = mx - this.x;
-          const mdy = my - this.y;
-          const md2 = mdx * mdx + mdy * mdy;
-          if (md2 < 40000) {
-            const mdist = Math.sqrt(md2) + 1;
-            const dir   = (p > 0.55 && p < 0.8) ? -1 : 1;
-            const force = (1 - mdist / 200) * 0.9 * dir;
-            this.vx += (mdx / mdist) * force;
-            this.vy += (mdy / mdist) * force;
-          }
-        }
+    // 0.88 - 1.00 : auguri
+    const tGreet = map(p, 0.88, 1.00);
+    greet.style.opacity = tGreet.toString();
+    greet.style.transform = `translate(-50%, 0) scale(${lerp(0.9, 1, tGreet)})`;
 
-        /* Damping */
-        const damp = 0.92 - p * 0.04;
-        this.vx *= damp;
-        this.vy *= damp;
-
-        this.px = this.x;
-        this.py = this.y;
-        this.x += this.vx;
-        this.y += this.vy;
-
-        this.life++;
-        if (
-          this.life > this.maxLife ||
-          this.x < -20 || this.x > W + 20 ||
-          this.y < -20 || this.y > H + 20
-        ) {
-          this.reset();
-        }
-      }
-
-      draw(pal, p) {
-        const lifeT  = 1 - this.life / this.maxLife;
-        const alpha  = Math.sin(lifeT * Math.PI) * (0.35 + p * 0.25);
-        const hueMix = lerp(pal.hue, pal.hue2, this.seed);
-        const light  = 55 + this.seed * 20;
-
-        ctx.strokeStyle = hsla(hueMix, pal.sat, light, alpha);
-        ctx.lineWidth   = 0.8 + this.seed * 0.9;
-        ctx.beginPath();
-        ctx.moveTo(this.px, this.py);
-        ctx.lineTo(this.x,  this.y);
-        ctx.stroke();
-      }
-    }
-
-    for (let i = 0; i < PARTICLE_COUNT; i++) particles.push(new Particle());
-
-    /* ---------- Central morphing form ---------- */
-    function drawForm(p, t, pal) {
-      const phaseBreath = Math.sin(t * 0.8) * 0.5 + 0.5;
-      const baseR = Math.min(W, H) * (0.06 + p * 0.22);
-      const points = 3 + Math.floor(p * 9);            /* 3 → 12 vertices */
-      const spike  = 0.1 + Math.abs(Math.sin(p * Math.PI * 1.5)) * 0.6;
-      const rot    = t * (0.2 + p * 0.6);
-
-      ctx.save();
-      ctx.globalCompositeOperation = 'lighter';
-      ctx.translate(CX, CY);
-      ctx.rotate(rot);
-
-      for (let layer = 0; layer < 3; layer++) {
-        const layerScale = 1 + layer * 0.25;
-        const alpha = (0.12 - layer * 0.03) * (0.7 + phaseBreath * 0.3);
-        ctx.beginPath();
-        for (let i = 0; i <= points; i++) {
-          const a = (i / points) * TAU;
-          const s = 1 + Math.sin(a * points + t * 1.5) * spike;
-          const r = baseR * layerScale * s * (0.9 + phaseBreath * 0.2);
-          const x = Math.cos(a) * r;
-          const y = Math.sin(a) * r;
-          if (i === 0) ctx.moveTo(x, y);
-          else         ctx.lineTo(x, y);
-        }
-        ctx.closePath();
-
-        const grad = ctx.createRadialGradient(0, 0, 0, 0, 0, baseR * layerScale * 1.5);
-        grad.addColorStop(0, hsla(pal.hue,  pal.sat, 65, alpha * 2));
-        grad.addColorStop(1, hsla(pal.hue2, pal.sat, 45, 0));
-        ctx.fillStyle = grad;
-        ctx.fill();
-      }
-
-      /* Core ring */
-      ctx.lineWidth = 1.2;
-      ctx.strokeStyle = hsla(pal.hue, pal.sat, 80, 0.6 + phaseBreath * 0.25);
-      ctx.beginPath();
-      for (let i = 0; i <= points; i++) {
-        const a = (i / points) * TAU;
-        const s = 1 + Math.sin(a * points + t * 1.5) * spike;
-        const r = baseR * s;
-        const x = Math.cos(a) * r;
-        const y = Math.sin(a) * r;
-        if (i === 0) ctx.moveTo(x, y);
-        else         ctx.lineTo(x, y);
-      }
-      ctx.closePath();
-      ctx.stroke();
-
-      /* Center point */
-      ctx.fillStyle = hsla(pal.hue, pal.sat, 95, 0.9);
-      ctx.beginPath();
-      ctx.arc(0, 0, 3 + phaseBreath * 2, 0, TAU);
-      ctx.fill();
-
-      ctx.restore();
-    }
-
-    /* ---------- Vignette ---------- */
-    function drawVignette() {
-      const g = ctx.createRadialGradient(CX, CY, Math.min(W, H) * 0.25, CX, CY, Math.max(W, H) * 0.75);
-      g.addColorStop(0, 'rgba(0,0,0,0)');
-      g.addColorStop(1, 'rgba(0,0,0,0.55)');
-      ctx.fillStyle = g;
-      ctx.fillRect(0, 0, W, H);
-    }
-
-    /* ---------- Scroll progress (virtual) ---------- */
-    let target  = 0;
-    let current = 0;
-    let mouseX  = null;
-    let mouseY  = null;
-    let smoothMX = null;
-    let smoothMY = null;
-
-    const intro        = document.getElementById('intro');
-    const hint         = document.getElementById('hint');
-    const restartBtn   = document.getElementById('restart');
-    const progressRail = document.getElementById('progressRail');
-    const dots         = document.querySelectorAll('#progressDots .dot');
-    const movements    = [
-      document.getElementById('mov1'),
-      document.getElementById('mov2'),
-      document.getElementById('mov3'),
-      document.getElementById('mov4')
-    ];
-    const cursor = document.getElementById('cursor');
-
-    function updateOverlay(p) {
-      intro.classList.toggle('hidden', p > 0.02);
-      hint.classList.toggle('hidden', p > 0.02);
-      restartBtn.classList.toggle('visible', p > 0.97);
-
-      progressRail.style.setProperty('--p', (p * 100) + '%');
-
-      /* Movement labels: show near each quadrant's midpoint */
-      const centers = [0.12, 0.38, 0.62, 0.88];
-      movements.forEach((el, i) => {
-        const dist = Math.abs(p - centers[i]);
-        const vis  = dist < 0.09 ? 1 - dist / 0.09 : 0;
-        el.style.opacity = vis.toFixed(3);
-        const ty = (1 - vis) * 20;
-        el.style.transform = `translate(-50%, calc(-50% + ${ty}px))`;
-      });
-
-      const active = Math.min(3, Math.floor(p * 4));
-      dots.forEach((d, i) => d.classList.toggle('active', i === active));
-    }
-
-    /* ---------- Main loop ---------- */
-    let t0 = performance.now();
-    function frame(now) {
-      const t = (now - t0) * 0.001;
-
-      /* Smooth progress */
-      current += (target - current) * 0.06;
-
-      /* Smooth mouse for organic feel */
-      if (mouseX !== null) {
-        if (smoothMX === null) { smoothMX = mouseX; smoothMY = mouseY; }
-        smoothMX += (mouseX - smoothMX) * 0.15;
-        smoothMY += (mouseY - smoothMY) * 0.15;
-      }
-
-      /* Fade previous frame for motion trails */
-      const fadeAlpha = 0.06 + current * 0.04;
-      ctx.fillStyle = `rgba(6, 6, 12, ${fadeAlpha})`;
-      ctx.fillRect(0, 0, W, H);
-
-      const pal = paletteAt(current);
-
-      ctx.globalCompositeOperation = 'lighter';
-      for (let i = 0; i < particles.length; i++) {
-        const pt = particles[i];
-        pt.update(current, smoothMX, smoothMY, t);
-        pt.draw(pal, current);
-      }
-      ctx.globalCompositeOperation = 'source-over';
-
-      drawForm(current, t, pal);
-      drawVignette();
-
-      updateOverlay(current);
-
-      requestAnimationFrame(frame);
-    }
     requestAnimationFrame(frame);
-
-    /* ---------- Input ---------- */
-    const WHEEL_SENS = 0.00055;
-    const TOUCH_SENS = 0.002;
-    const KEY_STEP   = 0.05;
-
-    function setTarget(v) { target = clamp(v, 0, 1); }
-
-    window.addEventListener('wheel', (e) => {
-      e.preventDefault();
-      setTarget(target + e.deltaY * WHEEL_SENS);
-    }, { passive: false });
-
-    let touchY = null;
-    window.addEventListener('touchstart', (e) => {
-      touchY = e.touches[0].clientY;
-      mouseX = e.touches[0].clientX;
-      mouseY = e.touches[0].clientY;
-    }, { passive: true });
-
-    window.addEventListener('touchmove', (e) => {
-      if (touchY === null) return;
-      e.preventDefault();
-      const y = e.touches[0].clientY;
-      setTarget(target + (touchY - y) * TOUCH_SENS);
-      touchY = y;
-      mouseX = e.touches[0].clientX;
-      mouseY = e.touches[0].clientY;
-    }, { passive: false });
-
-    window.addEventListener('touchend', () => {
-      touchY = null;
-      mouseX = mouseY = null;
-    }, { passive: true });
-
-    window.addEventListener('keydown', (e) => {
-      if (['ArrowDown', 'PageDown', ' '].includes(e.key)) { e.preventDefault(); setTarget(target + KEY_STEP); }
-      else if (['ArrowUp', 'PageUp'].includes(e.key))     { e.preventDefault(); setTarget(target - KEY_STEP); }
-      else if (e.key === 'Home')                          { setTarget(0); }
-      else if (e.key === 'End')                           { setTarget(1); }
-    });
-
-    window.addEventListener('mousemove', (e) => {
-      mouseX = e.clientX;
-      mouseY = e.clientY;
-      cursor.style.transform = `translate(${mouseX}px, ${mouseY}px) translate(-50%, -50%)`;
-    });
-
-    window.addEventListener('mouseleave', () => {
-      mouseX = mouseY = null;
-      smoothMX = smoothMY = null;
-    });
-
-    restartBtn.addEventListener('click', () => setTarget(0));
-
-    /* Prime the canvas with solid background */
-    ctx.fillStyle = '#06060c';
-    ctx.fillRect(0, 0, W, H);
-  </script>
+  }
+  requestAnimationFrame(frame);
+})();
+</script>
 </body>
 </html>
