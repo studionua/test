@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-  <title>Viaggio nella Sila · Lorica</title>
+  <title>Rêverie · quattro movimenti</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@300;400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,500;1,300&family=Inter:wght@200;300;400&display=swap" rel="stylesheet">
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
     html, body {
       width: 100%;
@@ -16,541 +16,602 @@
       overflow: hidden;
       overscroll-behavior: none;
       touch-action: none;
-    }
-
-    body {
+      background: #06060c;
+      color: #f0f0f8;
       font-family: 'Inter', sans-serif;
-      background: #000;
-      color: #fff;
-      line-height: 1.6;
+      cursor: none;
     }
 
-    .scene {
+    canvas {
       position: fixed;
       inset: 0;
-      overflow: hidden;
-      background: #000;
+      display: block;
     }
 
-    .layer {
-      position: absolute;
-      inset: 0;
-      will-change: transform, opacity;
-    }
-
-    /* Stars */
-    .star {
-      position: absolute;
-      background: #fff;
+    /* Custom cursor */
+    .cursor {
+      position: fixed;
+      top: 0; left: 0;
+      width: 14px; height: 14px;
+      border: 1px solid rgba(255, 255, 255, 0.6);
       border-radius: 50%;
-      box-shadow: 0 0 6px rgba(255, 255, 255, 0.8);
-      animation: twinkle var(--dur, 3s) ease-in-out infinite;
-    }
-    @keyframes twinkle {
-      0%, 100% { opacity: var(--op, 0.8); }
-      50%      { opacity: calc(var(--op, 0.8) * 0.3); }
-    }
-
-    /* Nebula */
-    .nebula {
-      background:
-        radial-gradient(ellipse 60% 40% at 20% 30%, rgba(140, 70, 200, 0.35), transparent 60%),
-        radial-gradient(ellipse 50% 40% at 80% 70%, rgba(40, 90, 200, 0.35), transparent 60%),
-        radial-gradient(ellipse 40% 30% at 60% 20%, rgba(200, 60, 120, 0.2), transparent 60%);
-    }
-
-    /* Earth */
-    .earth {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .earth-ball {
-      width: 40vmin;
-      height: 40vmin;
-      border-radius: 50%;
-      background:
-        radial-gradient(circle at 30% 30%, rgba(255,255,255,0.25) 0%, transparent 35%),
-        radial-gradient(circle at 68% 55%, #2d7a45 0%, transparent 22%),
-        radial-gradient(circle at 28% 68%, #3a8a55 0%, transparent 18%),
-        radial-gradient(circle at 60% 28%, #4a9a60 0%, transparent 15%),
-        radial-gradient(circle at 45% 75%, #2a6a40 0%, transparent 18%),
-        radial-gradient(circle at 80% 30%, #3a7a50 0%, transparent 14%),
-        linear-gradient(135deg, #1e5ea0, #0a3880);
-      box-shadow:
-        inset -25px -25px 70px rgba(0, 0, 0, 0.55),
-        inset 10px 10px 40px rgba(120, 200, 255, 0.2),
-        0 0 80px rgba(120, 200, 255, 0.5),
-        0 0 160px rgba(80, 160, 230, 0.25);
-      transform: scale(0.05);
-    }
-
-    /* Sky */
-    .sky {
-      background: linear-gradient(to bottom,
-        #0a1e55 0%,
-        #1d4a95 25%,
-        #4a90c5 55%,
-        #a8c8dd 85%,
-        #e8ddc4 100%);
-      opacity: 0;
-    }
-
-    /* Sun */
-    .sun {
-      position: absolute;
-      top: 18%;
-      right: 18%;
-      width: 90px;
-      height: 90px;
-      border-radius: 50%;
-      background: radial-gradient(circle, #fff8d0 0%, #ffd490 45%, rgba(255, 180, 100, 0.3) 70%, transparent 85%);
-      box-shadow: 0 0 100px rgba(255, 210, 120, 0.6);
-      opacity: 0;
-    }
-
-    /* Clouds */
-    .cloud {
-      position: absolute;
-      background: rgba(255, 255, 255, 0.85);
-      border-radius: 100px;
-      filter: blur(10px);
-      box-shadow: 0 0 40px rgba(255, 255, 255, 0.4);
-    }
-
-    /* Mountains */
-    .mountains {
-      bottom: 0; top: auto;
-      height: 100%;
       pointer-events: none;
+      transform: translate(-50%, -50%);
+      transition: width 0.25s, height 0.25s, border-color 0.25s;
+      mix-blend-mode: difference;
+      z-index: 100;
     }
-    .mountains svg {
-      position: absolute;
-      bottom: 0; left: 0;
-      width: 100%; height: 100%;
-    }
-
-    /* Forest */
-    .forest {
-      bottom: 0; top: auto;
-      height: 100%;
-      pointer-events: none;
-    }
-
-    /* Lake */
-    .lake {
-      position: absolute;
-      bottom: 0; left: 0;
-      width: 100%;
-      height: 22%;
-      background: linear-gradient(to bottom,
-        rgba(60, 110, 150, 0.4) 0%,
-        rgba(35, 75, 115, 0.85) 40%,
-        rgba(20, 50, 90, 1) 100%);
-      box-shadow: inset 0 20px 40px rgba(0, 0, 0, 0.4);
-      opacity: 0;
-    }
-    .lake::before {
+    .cursor::after {
       content: "";
       position: absolute;
-      top: 10%; left: 0;
-      width: 100%; height: 1px;
-      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.35), transparent);
-      box-shadow: 0 0 10px rgba(255, 255, 255, 0.4);
+      top: 50%; left: 50%;
+      width: 2px; height: 2px;
+      background: #fff;
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
     }
 
-    /* Mist */
-    .mist {
-      position: absolute;
-      bottom: 25%;
-      left: 0;
-      width: 100%;
-      height: 15%;
-      background: linear-gradient(to bottom, transparent, rgba(220, 230, 240, 0.5), transparent);
-      filter: blur(6px);
-      opacity: 0;
-    }
-
-    /* Vignette */
-    .vignette {
-      background: radial-gradient(ellipse at center, transparent 45%, rgba(0, 0, 0, 0.55) 100%);
-      pointer-events: none;
-    }
-
-    /* Intro overlay */
-    .intro-overlay {
-      position: absolute;
+    /* Overlays */
+    .overlay {
+      position: fixed;
       inset: 0;
+      pointer-events: none;
+      z-index: 10;
+    }
+
+    /* Intro */
+    .intro {
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       text-align: center;
       padding: 2rem;
-      pointer-events: none;
-      z-index: 10;
-    }
-    .intro-overlay h1 {
-      font-family: 'Cinzel', serif;
-      font-size: clamp(2.2rem, 6vw, 4.5rem);
-      font-weight: 600;
-      letter-spacing: 0.12em;
-      margin-bottom: 1rem;
-      text-shadow: 0 0 40px rgba(200, 220, 255, 0.5);
-    }
-    .intro-overlay p {
-      opacity: 0.8;
-      max-width: 520px;
-      font-weight: 300;
-      margin-bottom: 2.5rem;
+      transition: opacity 0.8s ease, transform 0.8s ease;
     }
 
-    /* Title at the end */
-    .title-layer {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      opacity: 0;
-      pointer-events: none;
-      z-index: 12;
-    }
-    .title-main {
-      font-family: 'Cinzel', serif;
-      font-size: clamp(3rem, 10vw, 7rem);
-      font-weight: 700;
-      letter-spacing: 0.18em;
-      background: linear-gradient(180deg, #ffffff 0%, #d0e8f0 60%, #a0c8d8 100%);
-      -webkit-background-clip: text;
-      background-clip: text;
-      -webkit-text-fill-color: transparent;
-      filter: drop-shadow(0 0 30px rgba(255, 255, 255, 0.5));
-    }
-    .title-divider {
-      width: 120px; height: 1px;
-      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.7), transparent);
-      margin: 1.2rem 0;
-    }
-    .title-sub {
-      font-family: 'Cinzel', serif;
-      font-size: clamp(0.9rem, 1.8vw, 1.4rem);
-      letter-spacing: 0.5em;
+    .intro .eyebrow {
+      font-size: 0.7rem;
+      letter-spacing: 0.7em;
       text-transform: uppercase;
-      opacity: 0.9;
-      padding-left: 0.5em;
+      opacity: 0.5;
+      margin-bottom: 2rem;
+      padding-left: 0.7em;
     }
-    .title-caption {
-      margin-top: 2rem;
-      font-size: 0.9rem;
+
+    .intro h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 300;
+      font-size: clamp(3.5rem, 11vw, 8rem);
+      letter-spacing: 0.02em;
+      line-height: 1;
+      margin-bottom: 1.5rem;
+    }
+
+    .intro .sub {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-weight: 300;
+      font-size: clamp(1rem, 2vw, 1.4rem);
       opacity: 0.7;
-      max-width: 420px;
-      font-weight: 300;
+      max-width: 480px;
     }
 
-    /* UI */
-    .progress-bar {
+    /* Movement labels */
+    .movement {
       position: fixed;
-      top: 0; left: 0;
-      height: 3px;
-      background: linear-gradient(90deg, #a0c8d8, #e8ddc4);
-      width: 0;
-      z-index: 100;
-      box-shadow: 0 0 8px rgba(200, 220, 255, 0.6);
-      transition: width 0.2s ease-out;
-    }
-
-    .hint {
-      position: fixed;
-      bottom: 28px;
+      top: 50%;
       left: 50%;
-      transform: translateX(-50%);
-      font-size: 0.75rem;
-      opacity: 0.6;
-      letter-spacing: 0.3em;
-      text-transform: uppercase;
-      pointer-events: none;
-      transition: opacity 0.5s;
-      z-index: 50;
+      transform: translate(-50%, -50%);
       text-align: center;
+      pointer-events: none;
+      z-index: 8;
+    }
+
+    .movement .roman {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 0.75rem;
+      letter-spacing: 0.6em;
+      opacity: 0.55;
+      margin-bottom: 1rem;
+      padding-left: 0.6em;
+    }
+
+    .movement .title {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 300;
+      font-style: italic;
+      font-size: clamp(3rem, 9vw, 7rem);
+      letter-spacing: 0.02em;
+      line-height: 1;
       white-space: nowrap;
     }
-    .hint .arrow {
-      display: inline-block;
-      margin-left: 0.5em;
-      animation: bounce 2s infinite;
+
+    .movement {
+      opacity: 0;
+      transition: opacity 0.6s ease;
     }
-    @keyframes bounce {
-      0%, 100% { transform: translateY(0); }
-      50%      { transform: translateY(4px); }
+
+    /* Bottom credits */
+    .credits {
+      position: fixed;
+      bottom: 24px;
+      left: 0; right: 0;
+      display: flex;
+      justify-content: space-between;
+      padding: 0 32px;
+      font-size: 0.65rem;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      opacity: 0.5;
+      z-index: 20;
+      pointer-events: none;
+    }
+
+    /* Side progress — elegant vertical line */
+    .progress-rail {
+      position: fixed;
+      top: 50%;
+      right: 24px;
+      transform: translateY(-50%);
+      width: 1px;
+      height: 180px;
+      background: rgba(255, 255, 255, 0.1);
+      z-index: 30;
+    }
+
+    .progress-rail::after {
+      content: "";
+      position: absolute;
+      left: -1px;
+      top: 0;
+      width: 3px;
+      height: var(--p, 0%);
+      background: linear-gradient(to bottom, #fff, rgba(255,255,255,0.4));
+      box-shadow: 0 0 10px rgba(255, 255, 255, 0.6);
+    }
+
+    .progress-dots {
+      position: fixed;
+      top: 50%;
+      right: 14px;
+      transform: translateY(-50%);
+      display: flex;
+      flex-direction: column;
+      gap: 58px;
+      z-index: 30;
+      pointer-events: none;
+    }
+
+    .dot {
+      width: 5px; height: 5px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.15);
+      border: 1px solid transparent;
+      margin-left: 8px;
+      transition: background 0.4s, transform 0.4s;
+    }
+    .dot.active {
+      background: #fff;
+      transform: scale(1.6);
+    }
+
+    /* Hint */
+    .hint {
+      position: fixed;
+      bottom: 60px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 0.7rem;
+      letter-spacing: 0.4em;
+      text-transform: uppercase;
+      opacity: 0.4;
+      transition: opacity 0.6s;
+      pointer-events: none;
+      z-index: 20;
     }
     .hint.hidden { opacity: 0; }
 
+    .hint::after {
+      content: "↓";
+      display: inline-block;
+      margin-left: 0.8em;
+      animation: drift 2s ease-in-out infinite;
+    }
+
+    @keyframes drift {
+      0%, 100% { transform: translateY(0); opacity: 0.6; }
+      50%      { transform: translateY(4px); opacity: 1; }
+    }
+
     .restart {
       position: fixed;
-      top: 20px;
-      right: 20px;
-      padding: 10px 18px;
-      background: rgba(255, 255, 255, 0.08);
-      border: 1px solid rgba(255, 255, 255, 0.25);
+      top: 24px;
+      right: 40px;
+      padding: 10px 20px;
+      background: transparent;
+      border: 1px solid rgba(255, 255, 255, 0.3);
       color: #fff;
       font-family: 'Inter', sans-serif;
-      font-size: 0.75rem;
-      letter-spacing: 0.2em;
+      font-size: 0.65rem;
+      letter-spacing: 0.35em;
       text-transform: uppercase;
-      cursor: pointer;
-      backdrop-filter: blur(10px);
+      cursor: none;
       opacity: 0;
-      transition: opacity 0.4s;
-      z-index: 60;
-      border-radius: 2px;
+      transition: opacity 0.6s, background 0.3s;
+      z-index: 40;
+      pointer-events: none;
     }
-    .restart.visible { opacity: 1; }
-    .restart:hover { background: rgba(255, 255, 255, 0.18); }
+    .restart.visible {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .restart:hover { background: rgba(255, 255, 255, 0.08); }
+
+    .intro.hidden { opacity: 0; transform: scale(0.98); }
   </style>
 </head>
 <body>
 
-  <div class="progress-bar" id="progressBar"></div>
+  <canvas id="canvas"></canvas>
 
-  <div class="scene">
+  <div class="cursor" id="cursor"></div>
 
-    <div class="layer nebula" id="nebula"></div>
-    <div class="layer stars" id="stars"></div>
-
-    <div class="layer earth" id="earth">
-      <div class="earth-ball" id="earthBall"></div>
+  <div class="overlay">
+    <div class="intro" id="intro">
+      <div class="eyebrow">Opus 01</div>
+      <h1>Rêverie</h1>
+      <div class="sub">un'esperienza astratta in quattro movimenti</div>
     </div>
 
-    <div class="layer sky" id="sky"></div>
-    <div class="sun" id="sun"></div>
-
-    <div class="layer" id="clouds">
-      <div class="cloud" style="top: 22%; left: -25%; width: 340px; height: 70px;"></div>
-      <div class="cloud" style="top: 38%; left: 55%; width: 280px; height: 55px;"></div>
-      <div class="cloud" style="top: 14%; left: 30%; width: 220px; height: 50px;"></div>
-      <div class="cloud" style="top: 48%; left: -10%; width: 380px; height: 80px;"></div>
-      <div class="cloud" style="top: 30%; left: 75%; width: 260px; height: 60px;"></div>
+    <div class="movement" id="mov1">
+      <div class="roman">I</div>
+      <div class="title">Origine</div>
     </div>
-
-    <div class="layer mountains" id="mountainsBack">
-      <svg viewBox="0 0 1200 400" preserveAspectRatio="none">
-        <defs>
-          <linearGradient id="mBack" x1="0" x2="0" y1="0" y2="1">
-            <stop offset="0%" stop-color="#8aa8c4" />
-            <stop offset="100%" stop-color="#4a6890" />
-          </linearGradient>
-        </defs>
-        <path d="M0 280 L80 200 L160 240 L260 150 L360 210 L460 130 L580 190 L700 120 L820 180 L940 140 L1060 200 L1200 160 L1200 400 L0 400 Z" fill="url(#mBack)" />
-      </svg>
+    <div class="movement" id="mov2">
+      <div class="roman">II</div>
+      <div class="title">Risveglio</div>
     </div>
-
-    <div class="layer mist" id="mist"></div>
-
-    <div class="layer mountains" id="mountainsMid">
-      <svg viewBox="0 0 1200 400" preserveAspectRatio="none">
-        <defs>
-          <linearGradient id="mMid" x1="0" x2="0" y1="0" y2="1">
-            <stop offset="0%" stop-color="#5a7860" />
-            <stop offset="100%" stop-color="#2d4838" />
-          </linearGradient>
-        </defs>
-        <path d="M0 340 L120 240 L240 300 L360 200 L500 270 L640 180 L780 250 L920 190 L1060 260 L1200 220 L1200 400 L0 400 Z" fill="url(#mMid)" />
-      </svg>
+    <div class="movement" id="mov3">
+      <div class="roman">III</div>
+      <div class="title">Tempesta</div>
     </div>
-
-    <div class="layer mountains" id="mountainsFront">
-      <svg viewBox="0 0 1200 400" preserveAspectRatio="none">
-        <defs>
-          <linearGradient id="mFront" x1="0" x2="0" y1="0" y2="1">
-            <stop offset="0%" stop-color="#2a4830" />
-            <stop offset="100%" stop-color="#0f2018" />
-          </linearGradient>
-        </defs>
-        <path d="M0 380 L100 300 L220 350 L340 250 L480 320 L620 230 L760 300 L900 240 L1040 310 L1200 270 L1200 400 L0 400 Z" fill="url(#mFront)" />
-      </svg>
+    <div class="movement" id="mov4">
+      <div class="roman">IV</div>
+      <div class="title">Armonia</div>
     </div>
-
-    <div class="layer forest" id="forest">
-      <svg viewBox="0 0 1200 400" preserveAspectRatio="none">
-        <defs>
-          <linearGradient id="treeGrad" x1="0" x2="0" y1="0" y2="1">
-            <stop offset="0%" stop-color="#1a3820" />
-            <stop offset="100%" stop-color="#081808" />
-          </linearGradient>
-        </defs>
-        <g fill="url(#treeGrad)" id="treeGroup"></g>
-      </svg>
-    </div>
-
-    <div class="lake" id="lake"></div>
-
-    <div class="layer vignette"></div>
-
-    <div class="intro-overlay" id="intro">
-      <h1>Entra nella Sila</h1>
-      <p>Un viaggio dallo spazio profondo fino al cuore incantato della Calabria, tra gli altopiani e i boschi di Lorica.</p>
-    </div>
-
-    <div class="layer title-layer" id="title">
-      <div class="title-main">La Sila</div>
-      <div class="title-divider"></div>
-      <div class="title-sub">Lorica</div>
-      <div class="title-caption">Nel cuore del Parco Nazionale della Sila</div>
-    </div>
-
   </div>
 
-  <div class="hint" id="hint">Scorri per iniziare il viaggio<span class="arrow">&#8595;</span></div>
+  <div class="progress-rail" id="progressRail"></div>
+  <div class="progress-dots" id="progressDots">
+    <div class="dot"></div>
+    <div class="dot"></div>
+    <div class="dot"></div>
+    <div class="dot"></div>
+  </div>
+
+  <div class="credits">
+    <span>Rêverie</span>
+    <span>Opus 01</span>
+  </div>
+
+  <div class="hint" id="hint">Scorri per iniziare</div>
   <button class="restart" id="restart">Ricomincia</button>
 
   <script>
-    /* ---------- Generate stars ---------- */
-    const starsLayer = document.getElementById('stars');
-    for (let i = 0; i < 220; i++) {
-      const s = document.createElement('div');
-      s.className = 'star';
-      const size = Math.random() * 2.2 + 0.4;
-      s.style.width  = size + 'px';
-      s.style.height = size + 'px';
-      s.style.left = (Math.random() * 100) + '%';
-      s.style.top  = (Math.random() * 100) + '%';
-      s.style.setProperty('--op',  (Math.random() * 0.7 + 0.3).toFixed(2));
-      s.style.setProperty('--dur', (Math.random() * 4 + 2).toFixed(1) + 's');
-      s.style.animationDelay = (Math.random() * 4).toFixed(1) + 's';
-      starsLayer.appendChild(s);
+    /* =========================================================
+       Rêverie — a generative abstract scroll-driven visual piece
+       ========================================================= */
+
+    const canvas = document.getElementById('canvas');
+    const ctx    = canvas.getContext('2d');
+
+    let W, H, CX, CY, DPR;
+
+    function resize() {
+      DPR = Math.min(window.devicePixelRatio || 1, 2);
+      W = window.innerWidth;
+      H = window.innerHeight;
+      CX = W / 2;
+      CY = H / 2;
+      canvas.width  = W * DPR;
+      canvas.height = H * DPR;
+      canvas.style.width  = W + 'px';
+      canvas.style.height = H + 'px';
+      ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
     }
+    window.addEventListener('resize', resize);
+    resize();
 
-    /* ---------- Generate forest ---------- */
-    const treeGroup = document.getElementById('treeGroup');
-    let treesSVG = '';
-    for (let i = 0; i < 40; i++) {
-      const x = Math.random() * 1200;
-      const scale = 0.5 + Math.random() * 0.9;
-      const h = 80 * scale;
-      const w = 30 * scale;
-      const y = 400 - h + Math.random() * 10;
-      treesSVG += `<polygon points="${x},${y} ${x - w/2},${y + h} ${x + w/2},${y + h}" opacity="${(0.75 + Math.random() * 0.25).toFixed(2)}" />`;
-      treesSVG += `<polygon points="${x},${y + h*0.2} ${x - w*0.7},${y + h*0.75} ${x + w*0.7},${y + h*0.75}" opacity="${(0.75 + Math.random() * 0.25).toFixed(2)}" />`;
-    }
-    treeGroup.innerHTML = treesSVG;
-
-    /* ---------- Elements ---------- */
-    const progressBar    = document.getElementById('progressBar');
-    const nebula         = document.getElementById('nebula');
-    const earthBall      = document.getElementById('earthBall');
-    const sky            = document.getElementById('sky');
-    const sun            = document.getElementById('sun');
-    const clouds         = document.getElementById('clouds');
-    const mountainsBack  = document.getElementById('mountainsBack');
-    const mountainsMid   = document.getElementById('mountainsMid');
-    const mountainsFront = document.getElementById('mountainsFront');
-    const forest         = document.getElementById('forest');
-    const mist           = document.getElementById('mist');
-    const lake           = document.getElementById('lake');
-    const title          = document.getElementById('title');
-    const intro          = document.getElementById('intro');
-    const hint           = document.getElementById('hint');
-    const restartBtn     = document.getElementById('restart');
-
+    /* ---------- Utilities ---------- */
+    const TAU = Math.PI * 2;
     const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
     const range = (p, s, e) => clamp((p - s) / (e - s), 0, 1);
+    const lerp  = (a, b, t) => a + (b - a) * t;
 
-    /* ---------- Virtual scroll progress (page doesn't scroll) ---------- */
-    let target  = 0;   // 0..1 target set by input
-    let current = 0;   // 0..1 smoothed value driving the scene
-    let rafId   = null;
-
-    function render(p) {
-      progressBar.style.width = (p * 100) + '%';
-
-      /* Intro fades out quickly */
-      intro.style.opacity   = 1 - range(p, 0, 0.08);
-      intro.style.transform = `scale(${1 - range(p, 0, 0.15) * 0.1})`;
-
-      /* Cosmos */
-      starsLayer.style.opacity = 1 - range(p, 0.22, 0.45);
-      nebula.style.opacity     = 1 - range(p, 0.18, 0.42);
-
-      /* Earth grows from dot to full screen, then fades */
-      const earthApproach = range(p, 0, 0.45);
-      const earthScale    = 0.05 + Math.pow(earthApproach, 2.2) * 11;
-      earthBall.style.transform = `scale(${earthScale})`;
-      earthBall.style.opacity   = 1 - range(p, 0.42, 0.50);
-
-      /* Atmosphere and sky */
-      sky.style.opacity = range(p, 0.40, 0.56);
-
-      /* Clouds rush past */
-      const cP = range(p, 0.42, 0.62);
-      clouds.style.opacity   = cP < 0.5 ? cP * 2 : (1 - cP) * 2;
-      clouds.style.transform = `scale(${1 + cP * 3.5})`;
-
-      /* Sun */
-      sun.style.opacity = range(p, 0.52, 0.62);
-
-      /* Mountains in depth */
-      const mB = range(p, 0.50, 0.74);
-      mountainsBack.style.transform = `translateY(${(1 - mB) * 25}%) scale(${0.92 + mB * 0.25})`;
-      mountainsBack.style.opacity   = mB;
-
-      const mM = range(p, 0.56, 0.80);
-      mountainsMid.style.transform = `translateY(${(1 - mM) * 45}%) scale(${0.9 + mM * 0.35})`;
-      mountainsMid.style.opacity   = mM;
-
-      const mF = range(p, 0.62, 0.86);
-      mountainsFront.style.transform = `translateY(${(1 - mF) * 65}%) scale(${0.88 + mF * 0.45})`;
-      mountainsFront.style.opacity   = mF;
-
-      /* Mist drifts */
-      mist.style.opacity   = range(p, 0.65, 0.82) * (1 - range(p, 0.92, 1));
-      mist.style.transform = `translateX(${Math.sin(p * Math.PI * 3) * 30}px)`;
-
-      /* Forest */
-      const f = range(p, 0.70, 0.92);
-      forest.style.transform = `translateY(${(1 - f) * 90}%) scale(${0.82 + f * 0.55})`;
-      forest.style.opacity   = f;
-
-      /* Lake */
-      lake.style.opacity = range(p, 0.82, 0.96);
-
-      /* Title */
-      const t = range(p, 0.88, 1);
-      title.style.opacity   = t;
-      title.style.transform = `translateY(${(1 - t) * 40}px) scale(${0.95 + t * 0.05})`;
-
-      /* UI */
-      hint.classList.toggle('hidden', p > 0.03);
-      restartBtn.classList.toggle('visible', p > 0.95);
+    function hsla(h, s, l, a) {
+      return `hsla(${h},${s}%,${l}%,${a})`;
     }
 
-    function tick() {
-      const diff = target - current;
-      if (Math.abs(diff) < 0.0001) {
-        current = target;
-        render(current);
-        rafId = null;
-        return;
+    /* Layered sinusoidal noise — cheap, smooth, and organic */
+    function flowNoise(x, y, t) {
+      const s = 0.0025;
+      return (
+        Math.sin(x * s + t * 0.6) * Math.cos(y * s - t * 0.4) +
+        Math.sin((x + y) * s * 0.6 + t * 0.8) * 0.6 +
+        Math.cos((x - y) * s * 1.3 + t * 0.3) * 0.4
+      );
+    }
+
+    /* ---------- Color palettes per movement ---------- */
+    const palettes = [
+      { hue: 230, hue2: 270, sat: 70, name: 'origine'  },
+      { hue: 190, hue2: 160, sat: 75, name: 'risveglio'},
+      { hue:  10, hue2: 330, sat: 90, name: 'tempesta' },
+      { hue:  45, hue2:  15, sat: 60, name: 'armonia'  }
+    ];
+
+    function paletteAt(p) {
+      const seg = clamp(p * 3, 0, 2.9999);
+      const i   = Math.floor(seg);
+      const t   = seg - i;
+      const a = palettes[i];
+      const b = palettes[Math.min(i + 1, 3)];
+      return {
+        hue:  lerp(a.hue,  b.hue,  t),
+        hue2: lerp(a.hue2, b.hue2, t),
+        sat:  lerp(a.sat,  b.sat,  t)
+      };
+    }
+
+    /* ---------- Particles ---------- */
+    const PARTICLE_COUNT = Math.min(2200, Math.floor(W * H / 700));
+    const particles = [];
+
+    class Particle {
+      constructor() { this.reset(true); }
+
+      reset(initial = false) {
+        this.x  = Math.random() * W;
+        this.y  = Math.random() * H;
+        this.px = this.x;
+        this.py = this.y;
+        this.vx = 0;
+        this.vy = 0;
+        this.life    = initial ? Math.random() * 180 : 0;
+        this.maxLife = 180 + Math.random() * 220;
+        this.seed    = Math.random();
       }
-      current += diff * 0.08;
-      render(current);
-      rafId = requestAnimationFrame(tick);
+
+      update(p, mx, my, t) {
+        /* Flow field angle scales and shifts per movement */
+        const fieldScale = 2 + p * 4;
+        const angle = flowNoise(this.x, this.y, t * (0.3 + p * 0.9)) * Math.PI * fieldScale;
+
+        const speed = 0.4 + p * 1.3;
+        this.vx += Math.cos(angle) * speed * 0.25;
+        this.vy += Math.sin(angle) * speed * 0.25;
+
+        /* Radial pull toward center — strong at origin, relaxed later */
+        const dx = CX - this.x;
+        const dy = CY - this.y;
+        const d  = Math.hypot(dx, dy) + 1;
+        const pull = (0.025 * (1 - p * 0.6)) - 0.004 * p;
+        this.vx += (dx / d) * pull;
+        this.vy += (dy / d) * pull;
+
+        /* Orbital swirl — increases in tempesta, resolves in armonia */
+        const swirl = (0.015 + p * 0.08) * (p < 0.85 ? 1 : 1 - (p - 0.85) * 4);
+        this.vx += (-dy / d) * swirl;
+        this.vy += ( dx / d) * swirl;
+
+        /* Mouse interaction — attractor early, repulsor in tempesta */
+        if (mx !== null) {
+          const mdx = mx - this.x;
+          const mdy = my - this.y;
+          const md2 = mdx * mdx + mdy * mdy;
+          if (md2 < 40000) {
+            const mdist = Math.sqrt(md2) + 1;
+            const dir   = (p > 0.55 && p < 0.8) ? -1 : 1;
+            const force = (1 - mdist / 200) * 0.9 * dir;
+            this.vx += (mdx / mdist) * force;
+            this.vy += (mdy / mdist) * force;
+          }
+        }
+
+        /* Damping */
+        const damp = 0.92 - p * 0.04;
+        this.vx *= damp;
+        this.vy *= damp;
+
+        this.px = this.x;
+        this.py = this.y;
+        this.x += this.vx;
+        this.y += this.vy;
+
+        this.life++;
+        if (
+          this.life > this.maxLife ||
+          this.x < -20 || this.x > W + 20 ||
+          this.y < -20 || this.y > H + 20
+        ) {
+          this.reset();
+        }
+      }
+
+      draw(pal, p) {
+        const lifeT  = 1 - this.life / this.maxLife;
+        const alpha  = Math.sin(lifeT * Math.PI) * (0.35 + p * 0.25);
+        const hueMix = lerp(pal.hue, pal.hue2, this.seed);
+        const light  = 55 + this.seed * 20;
+
+        ctx.strokeStyle = hsla(hueMix, pal.sat, light, alpha);
+        ctx.lineWidth   = 0.8 + this.seed * 0.9;
+        ctx.beginPath();
+        ctx.moveTo(this.px, this.py);
+        ctx.lineTo(this.x,  this.y);
+        ctx.stroke();
+      }
     }
 
-    function requestRender() {
-      if (rafId === null) rafId = requestAnimationFrame(tick);
+    for (let i = 0; i < PARTICLE_COUNT; i++) particles.push(new Particle());
+
+    /* ---------- Central morphing form ---------- */
+    function drawForm(p, t, pal) {
+      const phaseBreath = Math.sin(t * 0.8) * 0.5 + 0.5;
+      const baseR = Math.min(W, H) * (0.06 + p * 0.22);
+      const points = 3 + Math.floor(p * 9);            /* 3 → 12 vertices */
+      const spike  = 0.1 + Math.abs(Math.sin(p * Math.PI * 1.5)) * 0.6;
+      const rot    = t * (0.2 + p * 0.6);
+
+      ctx.save();
+      ctx.globalCompositeOperation = 'lighter';
+      ctx.translate(CX, CY);
+      ctx.rotate(rot);
+
+      for (let layer = 0; layer < 3; layer++) {
+        const layerScale = 1 + layer * 0.25;
+        const alpha = (0.12 - layer * 0.03) * (0.7 + phaseBreath * 0.3);
+        ctx.beginPath();
+        for (let i = 0; i <= points; i++) {
+          const a = (i / points) * TAU;
+          const s = 1 + Math.sin(a * points + t * 1.5) * spike;
+          const r = baseR * layerScale * s * (0.9 + phaseBreath * 0.2);
+          const x = Math.cos(a) * r;
+          const y = Math.sin(a) * r;
+          if (i === 0) ctx.moveTo(x, y);
+          else         ctx.lineTo(x, y);
+        }
+        ctx.closePath();
+
+        const grad = ctx.createRadialGradient(0, 0, 0, 0, 0, baseR * layerScale * 1.5);
+        grad.addColorStop(0, hsla(pal.hue,  pal.sat, 65, alpha * 2));
+        grad.addColorStop(1, hsla(pal.hue2, pal.sat, 45, 0));
+        ctx.fillStyle = grad;
+        ctx.fill();
+      }
+
+      /* Core ring */
+      ctx.lineWidth = 1.2;
+      ctx.strokeStyle = hsla(pal.hue, pal.sat, 80, 0.6 + phaseBreath * 0.25);
+      ctx.beginPath();
+      for (let i = 0; i <= points; i++) {
+        const a = (i / points) * TAU;
+        const s = 1 + Math.sin(a * points + t * 1.5) * spike;
+        const r = baseR * s;
+        const x = Math.cos(a) * r;
+        const y = Math.sin(a) * r;
+        if (i === 0) ctx.moveTo(x, y);
+        else         ctx.lineTo(x, y);
+      }
+      ctx.closePath();
+      ctx.stroke();
+
+      /* Center point */
+      ctx.fillStyle = hsla(pal.hue, pal.sat, 95, 0.9);
+      ctx.beginPath();
+      ctx.arc(0, 0, 3 + phaseBreath * 2, 0, TAU);
+      ctx.fill();
+
+      ctx.restore();
     }
 
-    function setTarget(v) {
-      target = clamp(v, 0, 1);
-      requestRender();
+    /* ---------- Vignette ---------- */
+    function drawVignette() {
+      const g = ctx.createRadialGradient(CX, CY, Math.min(W, H) * 0.25, CX, CY, Math.max(W, H) * 0.75);
+      g.addColorStop(0, 'rgba(0,0,0,0)');
+      g.addColorStop(1, 'rgba(0,0,0,0.55)');
+      ctx.fillStyle = g;
+      ctx.fillRect(0, 0, W, H);
     }
 
-    /* ---------- Input handlers ---------- */
-    const WHEEL_SENS = 0.0007;
-    const TOUCH_SENS = 0.0025;
-    const KEY_STEP   = 0.06;
+    /* ---------- Scroll progress (virtual) ---------- */
+    let target  = 0;
+    let current = 0;
+    let mouseX  = null;
+    let mouseY  = null;
+    let smoothMX = null;
+    let smoothMY = null;
+
+    const intro        = document.getElementById('intro');
+    const hint         = document.getElementById('hint');
+    const restartBtn   = document.getElementById('restart');
+    const progressRail = document.getElementById('progressRail');
+    const dots         = document.querySelectorAll('#progressDots .dot');
+    const movements    = [
+      document.getElementById('mov1'),
+      document.getElementById('mov2'),
+      document.getElementById('mov3'),
+      document.getElementById('mov4')
+    ];
+    const cursor = document.getElementById('cursor');
+
+    function updateOverlay(p) {
+      intro.classList.toggle('hidden', p > 0.02);
+      hint.classList.toggle('hidden', p > 0.02);
+      restartBtn.classList.toggle('visible', p > 0.97);
+
+      progressRail.style.setProperty('--p', (p * 100) + '%');
+
+      /* Movement labels: show near each quadrant's midpoint */
+      const centers = [0.12, 0.38, 0.62, 0.88];
+      movements.forEach((el, i) => {
+        const dist = Math.abs(p - centers[i]);
+        const vis  = dist < 0.09 ? 1 - dist / 0.09 : 0;
+        el.style.opacity = vis.toFixed(3);
+        const ty = (1 - vis) * 20;
+        el.style.transform = `translate(-50%, calc(-50% + ${ty}px))`;
+      });
+
+      const active = Math.min(3, Math.floor(p * 4));
+      dots.forEach((d, i) => d.classList.toggle('active', i === active));
+    }
+
+    /* ---------- Main loop ---------- */
+    let t0 = performance.now();
+    function frame(now) {
+      const t = (now - t0) * 0.001;
+
+      /* Smooth progress */
+      current += (target - current) * 0.06;
+
+      /* Smooth mouse for organic feel */
+      if (mouseX !== null) {
+        if (smoothMX === null) { smoothMX = mouseX; smoothMY = mouseY; }
+        smoothMX += (mouseX - smoothMX) * 0.15;
+        smoothMY += (mouseY - smoothMY) * 0.15;
+      }
+
+      /* Fade previous frame for motion trails */
+      const fadeAlpha = 0.06 + current * 0.04;
+      ctx.fillStyle = `rgba(6, 6, 12, ${fadeAlpha})`;
+      ctx.fillRect(0, 0, W, H);
+
+      const pal = paletteAt(current);
+
+      ctx.globalCompositeOperation = 'lighter';
+      for (let i = 0; i < particles.length; i++) {
+        const pt = particles[i];
+        pt.update(current, smoothMX, smoothMY, t);
+        pt.draw(pal, current);
+      }
+      ctx.globalCompositeOperation = 'source-over';
+
+      drawForm(current, t, pal);
+      drawVignette();
+
+      updateOverlay(current);
+
+      requestAnimationFrame(frame);
+    }
+    requestAnimationFrame(frame);
+
+    /* ---------- Input ---------- */
+    const WHEEL_SENS = 0.00055;
+    const TOUCH_SENS = 0.002;
+    const KEY_STEP   = 0.05;
+
+    function setTarget(v) { target = clamp(v, 0, 1); }
 
     window.addEventListener('wheel', (e) => {
       e.preventDefault();
@@ -560,37 +621,48 @@
     let touchY = null;
     window.addEventListener('touchstart', (e) => {
       touchY = e.touches[0].clientY;
+      mouseX = e.touches[0].clientX;
+      mouseY = e.touches[0].clientY;
     }, { passive: true });
 
     window.addEventListener('touchmove', (e) => {
       if (touchY === null) return;
       e.preventDefault();
-      const y  = e.touches[0].clientY;
-      const dy = touchY - y;
-      setTarget(target + dy * TOUCH_SENS);
+      const y = e.touches[0].clientY;
+      setTarget(target + (touchY - y) * TOUCH_SENS);
       touchY = y;
+      mouseX = e.touches[0].clientX;
+      mouseY = e.touches[0].clientY;
     }, { passive: false });
 
-    window.addEventListener('touchend', () => { touchY = null; }, { passive: true });
+    window.addEventListener('touchend', () => {
+      touchY = null;
+      mouseX = mouseY = null;
+    }, { passive: true });
 
     window.addEventListener('keydown', (e) => {
-      if (e.key === 'ArrowDown' || e.key === 'PageDown' || e.key === ' ') {
-        e.preventDefault();
-        setTarget(target + KEY_STEP);
-      } else if (e.key === 'ArrowUp' || e.key === 'PageUp') {
-        e.preventDefault();
-        setTarget(target - KEY_STEP);
-      } else if (e.key === 'Home') {
-        setTarget(0);
-      } else if (e.key === 'End') {
-        setTarget(1);
-      }
+      if (['ArrowDown', 'PageDown', ' '].includes(e.key)) { e.preventDefault(); setTarget(target + KEY_STEP); }
+      else if (['ArrowUp', 'PageUp'].includes(e.key))     { e.preventDefault(); setTarget(target - KEY_STEP); }
+      else if (e.key === 'Home')                          { setTarget(0); }
+      else if (e.key === 'End')                           { setTarget(1); }
+    });
+
+    window.addEventListener('mousemove', (e) => {
+      mouseX = e.clientX;
+      mouseY = e.clientY;
+      cursor.style.transform = `translate(${mouseX}px, ${mouseY}px) translate(-50%, -50%)`;
+    });
+
+    window.addEventListener('mouseleave', () => {
+      mouseX = mouseY = null;
+      smoothMX = smoothMY = null;
     });
 
     restartBtn.addEventListener('click', () => setTarget(0));
 
-    /* Initial render */
-    render(0);
+    /* Prime the canvas with solid background */
+    ctx.fillStyle = '#06060c';
+    ctx.fillRect(0, 0, W, H);
   </script>
 </body>
 </html>
