@@ -2,7 +2,7 @@
 <html lang="it">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
   <title>Viaggio nella Sila · Lorica</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -10,7 +10,13 @@
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
-    html, body { overflow-x: hidden; }
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      overscroll-behavior: none;
+      touch-action: none;
+    }
 
     body {
       font-family: 'Inter', sans-serif;
@@ -19,59 +25,12 @@
       line-height: 1.6;
     }
 
-    /* ---------- Intro ---------- */
-    .hero {
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      padding: 2rem;
-      background: radial-gradient(circle at center, #1a1a3a 0%, #000 80%);
-      position: relative;
-      overflow: hidden;
-    }
-
-    .hero h1 {
-      font-family: 'Cinzel', serif;
-      font-size: clamp(2.2rem, 6vw, 4.5rem);
-      font-weight: 600;
-      letter-spacing: 0.12em;
-      margin-bottom: 1rem;
-      text-shadow: 0 0 40px rgba(200, 220, 255, 0.4);
-    }
-
-    .hero p { opacity: 0.75; max-width: 520px; font-weight: 300; }
-
-    .scroll-arrow {
-      margin-top: 3rem;
-      font-size: 1.6rem;
-      animation: bounce 2s infinite;
-      opacity: 0.6;
-    }
-    @keyframes bounce {
-      0%, 100% { transform: translateY(0); }
-      50%      { transform: translateY(12px); }
-    }
-
-    /* ---------- Pinned cinematic scene ---------- */
-    .pin-section {
-      position: relative;
-      height: 700vh;
-      background: #000;
-    }
-
-    .pin-wrapper {
-      position: sticky;
-      top: 0;
-      height: 100vh;
-      width: 100%;
+    .scene {
+      position: fixed;
+      inset: 0;
       overflow: hidden;
       background: #000;
     }
-
-    .scene { position: absolute; inset: 0; }
 
     .layer {
       position: absolute;
@@ -127,7 +86,7 @@
       transform: scale(0.05);
     }
 
-    /* Sky gradient revealed after atmosphere */
+    /* Sky */
     .sky {
       background: linear-gradient(to bottom,
         #0a1e55 0%,
@@ -162,24 +121,19 @@
 
     /* Mountains */
     .mountains {
-      bottom: 0;
-      top: auto;
+      bottom: 0; top: auto;
       height: 100%;
       pointer-events: none;
     }
-
     .mountains svg {
       position: absolute;
-      bottom: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
+      bottom: 0; left: 0;
+      width: 100%; height: 100%;
     }
 
     /* Forest */
     .forest {
-      bottom: 0;
-      top: auto;
+      bottom: 0; top: auto;
       height: 100%;
       pointer-events: none;
     }
@@ -187,8 +141,7 @@
     /* Lake */
     .lake {
       position: absolute;
-      bottom: 0;
-      left: 0;
+      bottom: 0; left: 0;
       width: 100%;
       height: 22%;
       background: linear-gradient(to bottom,
@@ -198,19 +151,16 @@
       box-shadow: inset 0 20px 40px rgba(0, 0, 0, 0.4);
       opacity: 0;
     }
-
     .lake::before {
       content: "";
       position: absolute;
-      top: 10%;
-      left: 0;
-      width: 100%;
-      height: 1px;
+      top: 10%; left: 0;
+      width: 100%; height: 1px;
       background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.35), transparent);
       box-shadow: 0 0 10px rgba(255, 255, 255, 0.4);
     }
 
-    /* Mist between mountains and forest */
+    /* Mist */
     .mist {
       position: absolute;
       bottom: 25%;
@@ -228,7 +178,35 @@
       pointer-events: none;
     }
 
-    /* Title */
+    /* Intro overlay */
+    .intro-overlay {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 2rem;
+      pointer-events: none;
+      z-index: 10;
+    }
+    .intro-overlay h1 {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(2.2rem, 6vw, 4.5rem);
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      margin-bottom: 1rem;
+      text-shadow: 0 0 40px rgba(200, 220, 255, 0.5);
+    }
+    .intro-overlay p {
+      opacity: 0.8;
+      max-width: 520px;
+      font-weight: 300;
+      margin-bottom: 2.5rem;
+    }
+
+    /* Title at the end */
     .title-layer {
       display: flex;
       flex-direction: column;
@@ -237,8 +215,8 @@
       text-align: center;
       opacity: 0;
       pointer-events: none;
+      z-index: 12;
     }
-
     .title-main {
       font-family: 'Cinzel', serif;
       font-size: clamp(3rem, 10vw, 7rem);
@@ -250,190 +228,187 @@
       -webkit-text-fill-color: transparent;
       filter: drop-shadow(0 0 30px rgba(255, 255, 255, 0.5));
     }
-
     .title-divider {
-      width: 120px;
-      height: 1px;
+      width: 120px; height: 1px;
       background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.7), transparent);
       margin: 1.2rem 0;
     }
-
     .title-sub {
       font-family: 'Cinzel', serif;
       font-size: clamp(0.9rem, 1.8vw, 1.4rem);
-      font-weight: 400;
       letter-spacing: 0.5em;
       text-transform: uppercase;
       opacity: 0.9;
       padding-left: 0.5em;
     }
+    .title-caption {
+      margin-top: 2rem;
+      font-size: 0.9rem;
+      opacity: 0.7;
+      max-width: 420px;
+      font-weight: 300;
+    }
 
-    /* Progress indicator */
+    /* UI */
     .progress-bar {
       position: fixed;
-      top: 0;
-      left: 0;
+      top: 0; left: 0;
       height: 3px;
       background: linear-gradient(90deg, #a0c8d8, #e8ddc4);
       width: 0;
       z-index: 100;
       box-shadow: 0 0 8px rgba(200, 220, 255, 0.6);
+      transition: width 0.2s ease-out;
     }
 
-    /* Hint */
     .hint {
       position: fixed;
-      bottom: 24px;
+      bottom: 28px;
       left: 50%;
       transform: translateX(-50%);
       font-size: 0.75rem;
-      opacity: 0.5;
+      opacity: 0.6;
       letter-spacing: 0.3em;
       text-transform: uppercase;
       pointer-events: none;
-      transition: opacity 0.4s;
+      transition: opacity 0.5s;
       z-index: 50;
+      text-align: center;
+      white-space: nowrap;
+    }
+    .hint .arrow {
+      display: inline-block;
+      margin-left: 0.5em;
+      animation: bounce 2s infinite;
+    }
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50%      { transform: translateY(4px); }
     }
     .hint.hidden { opacity: 0; }
 
-    /* Outro */
-    .outro {
-      min-height: 80vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      padding: 3rem;
-      background: linear-gradient(to bottom, #0a3060 0%, #052040 50%, #000 100%);
+    .restart {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      padding: 10px 18px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      color: #fff;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.75rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      cursor: pointer;
+      backdrop-filter: blur(10px);
+      opacity: 0;
+      transition: opacity 0.4s;
+      z-index: 60;
+      border-radius: 2px;
     }
-
-    .outro h2 {
-      font-family: 'Cinzel', serif;
-      font-size: clamp(1.6rem, 3vw, 2.4rem);
-      letter-spacing: 0.15em;
-      margin-bottom: 1rem;
-    }
-
-    .outro p {
-      max-width: 520px;
-      opacity: 0.75;
-      font-weight: 300;
-    }
+    .restart.visible { opacity: 1; }
+    .restart:hover { background: rgba(255, 255, 255, 0.18); }
   </style>
 </head>
 <body>
 
   <div class="progress-bar" id="progressBar"></div>
 
-  <section class="hero">
-    <h1>Entra nella Sila</h1>
-    <p>Un viaggio dallo spazio profondo fino al cuore incantato della Calabria, tra gli altopiani e i boschi di Lorica.</p>
-    <div class="scroll-arrow">&#8595;</div>
-  </section>
+  <div class="scene">
 
-  <section class="pin-section" id="pinSection">
-    <div class="pin-wrapper">
-      <div class="scene">
+    <div class="layer nebula" id="nebula"></div>
+    <div class="layer stars" id="stars"></div>
 
-        <div class="layer nebula" id="nebula"></div>
-        <div class="layer stars" id="stars"></div>
-
-        <div class="layer earth" id="earth">
-          <div class="earth-ball" id="earthBall"></div>
-        </div>
-
-        <div class="layer sky" id="sky"></div>
-
-        <div class="sun" id="sun"></div>
-
-        <div class="layer" id="clouds">
-          <div class="cloud" style="top: 22%; left: -25%; width: 340px; height: 70px;"></div>
-          <div class="cloud" style="top: 38%; left: 55%; width: 280px; height: 55px;"></div>
-          <div class="cloud" style="top: 14%; left: 30%; width: 220px; height: 50px;"></div>
-          <div class="cloud" style="top: 48%; left: -10%; width: 380px; height: 80px;"></div>
-          <div class="cloud" style="top: 30%; left: 75%; width: 260px; height: 60px;"></div>
-        </div>
-
-        <div class="layer mountains" id="mountainsBack">
-          <svg viewBox="0 0 1200 400" preserveAspectRatio="none">
-            <defs>
-              <linearGradient id="mBack" x1="0" x2="0" y1="0" y2="1">
-                <stop offset="0%" stop-color="#8aa8c4" />
-                <stop offset="100%" stop-color="#4a6890" />
-              </linearGradient>
-            </defs>
-            <path d="M0 280 L80 200 L160 240 L260 150 L360 210 L460 130 L580 190 L700 120 L820 180 L940 140 L1060 200 L1200 160 L1200 400 L0 400 Z"
-                  fill="url(#mBack)" />
-          </svg>
-        </div>
-
-        <div class="layer mist" id="mist"></div>
-
-        <div class="layer mountains" id="mountainsMid">
-          <svg viewBox="0 0 1200 400" preserveAspectRatio="none">
-            <defs>
-              <linearGradient id="mMid" x1="0" x2="0" y1="0" y2="1">
-                <stop offset="0%" stop-color="#5a7860" />
-                <stop offset="100%" stop-color="#2d4838" />
-              </linearGradient>
-            </defs>
-            <path d="M0 340 L120 240 L240 300 L360 200 L500 270 L640 180 L780 250 L920 190 L1060 260 L1200 220 L1200 400 L0 400 Z"
-                  fill="url(#mMid)" />
-          </svg>
-        </div>
-
-        <div class="layer mountains" id="mountainsFront">
-          <svg viewBox="0 0 1200 400" preserveAspectRatio="none">
-            <defs>
-              <linearGradient id="mFront" x1="0" x2="0" y1="0" y2="1">
-                <stop offset="0%" stop-color="#2a4830" />
-                <stop offset="100%" stop-color="#0f2018" />
-              </linearGradient>
-            </defs>
-            <path d="M0 380 L100 300 L220 350 L340 250 L480 320 L620 230 L760 300 L900 240 L1040 310 L1200 270 L1200 400 L0 400 Z"
-                  fill="url(#mFront)" />
-          </svg>
-        </div>
-
-        <div class="layer forest" id="forest">
-          <svg viewBox="0 0 1200 400" preserveAspectRatio="none">
-            <defs>
-              <linearGradient id="treeGrad" x1="0" x2="0" y1="0" y2="1">
-                <stop offset="0%" stop-color="#1a3820" />
-                <stop offset="100%" stop-color="#081808" />
-              </linearGradient>
-            </defs>
-            <g fill="url(#treeGrad)" id="treeGroup"></g>
-          </svg>
-        </div>
-
-        <div class="lake" id="lake"></div>
-
-        <div class="layer vignette"></div>
-
-        <div class="layer title-layer" id="title">
-          <div class="title-main">La Sila</div>
-          <div class="title-divider"></div>
-          <div class="title-sub">Lorica</div>
-        </div>
-
-      </div>
+    <div class="layer earth" id="earth">
+      <div class="earth-ball" id="earthBall"></div>
     </div>
-  </section>
 
-  <div class="hint" id="hint">Scorri per iniziare il viaggio</div>
+    <div class="layer sky" id="sky"></div>
+    <div class="sun" id="sun"></div>
 
-  <section class="outro">
-    <h2>Benvenuto</h2>
-    <p>Hai raggiunto Lorica, nel cuore del Parco Nazionale della Sila. Respira l'aria dei boschi e il silenzio del lago Arvo.</p>
-  </section>
+    <div class="layer" id="clouds">
+      <div class="cloud" style="top: 22%; left: -25%; width: 340px; height: 70px;"></div>
+      <div class="cloud" style="top: 38%; left: 55%; width: 280px; height: 55px;"></div>
+      <div class="cloud" style="top: 14%; left: 30%; width: 220px; height: 50px;"></div>
+      <div class="cloud" style="top: 48%; left: -10%; width: 380px; height: 80px;"></div>
+      <div class="cloud" style="top: 30%; left: 75%; width: 260px; height: 60px;"></div>
+    </div>
+
+    <div class="layer mountains" id="mountainsBack">
+      <svg viewBox="0 0 1200 400" preserveAspectRatio="none">
+        <defs>
+          <linearGradient id="mBack" x1="0" x2="0" y1="0" y2="1">
+            <stop offset="0%" stop-color="#8aa8c4" />
+            <stop offset="100%" stop-color="#4a6890" />
+          </linearGradient>
+        </defs>
+        <path d="M0 280 L80 200 L160 240 L260 150 L360 210 L460 130 L580 190 L700 120 L820 180 L940 140 L1060 200 L1200 160 L1200 400 L0 400 Z" fill="url(#mBack)" />
+      </svg>
+    </div>
+
+    <div class="layer mist" id="mist"></div>
+
+    <div class="layer mountains" id="mountainsMid">
+      <svg viewBox="0 0 1200 400" preserveAspectRatio="none">
+        <defs>
+          <linearGradient id="mMid" x1="0" x2="0" y1="0" y2="1">
+            <stop offset="0%" stop-color="#5a7860" />
+            <stop offset="100%" stop-color="#2d4838" />
+          </linearGradient>
+        </defs>
+        <path d="M0 340 L120 240 L240 300 L360 200 L500 270 L640 180 L780 250 L920 190 L1060 260 L1200 220 L1200 400 L0 400 Z" fill="url(#mMid)" />
+      </svg>
+    </div>
+
+    <div class="layer mountains" id="mountainsFront">
+      <svg viewBox="0 0 1200 400" preserveAspectRatio="none">
+        <defs>
+          <linearGradient id="mFront" x1="0" x2="0" y1="0" y2="1">
+            <stop offset="0%" stop-color="#2a4830" />
+            <stop offset="100%" stop-color="#0f2018" />
+          </linearGradient>
+        </defs>
+        <path d="M0 380 L100 300 L220 350 L340 250 L480 320 L620 230 L760 300 L900 240 L1040 310 L1200 270 L1200 400 L0 400 Z" fill="url(#mFront)" />
+      </svg>
+    </div>
+
+    <div class="layer forest" id="forest">
+      <svg viewBox="0 0 1200 400" preserveAspectRatio="none">
+        <defs>
+          <linearGradient id="treeGrad" x1="0" x2="0" y1="0" y2="1">
+            <stop offset="0%" stop-color="#1a3820" />
+            <stop offset="100%" stop-color="#081808" />
+          </linearGradient>
+        </defs>
+        <g fill="url(#treeGrad)" id="treeGroup"></g>
+      </svg>
+    </div>
+
+    <div class="lake" id="lake"></div>
+
+    <div class="layer vignette"></div>
+
+    <div class="intro-overlay" id="intro">
+      <h1>Entra nella Sila</h1>
+      <p>Un viaggio dallo spazio profondo fino al cuore incantato della Calabria, tra gli altopiani e i boschi di Lorica.</p>
+    </div>
+
+    <div class="layer title-layer" id="title">
+      <div class="title-main">La Sila</div>
+      <div class="title-divider"></div>
+      <div class="title-sub">Lorica</div>
+      <div class="title-caption">Nel cuore del Parco Nazionale della Sila</div>
+    </div>
+
+  </div>
+
+  <div class="hint" id="hint">Scorri per iniziare il viaggio<span class="arrow">&#8595;</span></div>
+  <button class="restart" id="restart">Ricomincia</button>
 
   <script>
     /* ---------- Generate stars ---------- */
     const starsLayer = document.getElementById('stars');
-    const STAR_COUNT = 220;
-    for (let i = 0; i < STAR_COUNT; i++) {
+    for (let i = 0; i < 220; i++) {
       const s = document.createElement('div');
       s.className = 'star';
       const size = Math.random() * 2.2 + 0.4;
@@ -447,23 +422,21 @@
       starsLayer.appendChild(s);
     }
 
-    /* ---------- Generate forest trees ---------- */
+    /* ---------- Generate forest ---------- */
     const treeGroup = document.getElementById('treeGroup');
-    const TREE_COUNT = 40;
     let treesSVG = '';
-    for (let i = 0; i < TREE_COUNT; i++) {
+    for (let i = 0; i < 40; i++) {
       const x = Math.random() * 1200;
       const scale = 0.5 + Math.random() * 0.9;
       const h = 80 * scale;
       const w = 30 * scale;
       const y = 400 - h + Math.random() * 10;
-      treesSVG += `<polygon points="${x},${y} ${x - w/2},${y + h} ${x + w/2},${y + h}" opacity="${0.75 + Math.random() * 0.25}" />`;
-      treesSVG += `<polygon points="${x},${y + h*0.2} ${x - w*0.7},${y + h*0.75} ${x + w*0.7},${y + h*0.75}" opacity="${0.75 + Math.random() * 0.25}" />`;
+      treesSVG += `<polygon points="${x},${y} ${x - w/2},${y + h} ${x + w/2},${y + h}" opacity="${(0.75 + Math.random() * 0.25).toFixed(2)}" />`;
+      treesSVG += `<polygon points="${x},${y + h*0.2} ${x - w*0.7},${y + h*0.75} ${x + w*0.7},${y + h*0.75}" opacity="${(0.75 + Math.random() * 0.25).toFixed(2)}" />`;
     }
     treeGroup.innerHTML = treesSVG;
 
-    /* ---------- Scroll-driven animation ---------- */
-    const pinSection     = document.getElementById('pinSection');
+    /* ---------- Elements ---------- */
     const progressBar    = document.getElementById('progressBar');
     const nebula         = document.getElementById('nebula');
     const earthBall      = document.getElementById('earthBall');
@@ -477,43 +450,47 @@
     const mist           = document.getElementById('mist');
     const lake           = document.getElementById('lake');
     const title          = document.getElementById('title');
+    const intro          = document.getElementById('intro');
     const hint           = document.getElementById('hint');
+    const restartBtn     = document.getElementById('restart');
 
     const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
     const range = (p, s, e) => clamp((p - s) / (e - s), 0, 1);
 
-    let ticking = false;
+    /* ---------- Virtual scroll progress (page doesn't scroll) ---------- */
+    let target  = 0;   // 0..1 target set by input
+    let current = 0;   // 0..1 smoothed value driving the scene
+    let rafId   = null;
 
-    function update() {
-      const rect     = pinSection.getBoundingClientRect();
-      const total    = pinSection.offsetHeight - window.innerHeight;
-      const scrolled = clamp(-rect.top, 0, total);
-      const p        = total > 0 ? scrolled / total : 0;
-
+    function render(p) {
       progressBar.style.width = (p * 100) + '%';
 
-      /* Stars + nebula fade as we approach Earth */
+      /* Intro fades out quickly */
+      intro.style.opacity   = 1 - range(p, 0, 0.08);
+      intro.style.transform = `scale(${1 - range(p, 0, 0.15) * 0.1})`;
+
+      /* Cosmos */
       starsLayer.style.opacity = 1 - range(p, 0.22, 0.45);
       nebula.style.opacity     = 1 - range(p, 0.18, 0.42);
 
-      /* Earth: tiny dot → fills screen → fades */
+      /* Earth grows from dot to full screen, then fades */
       const earthApproach = range(p, 0, 0.45);
       const earthScale    = 0.05 + Math.pow(earthApproach, 2.2) * 11;
       earthBall.style.transform = `scale(${earthScale})`;
       earthBall.style.opacity   = 1 - range(p, 0.42, 0.50);
 
-      /* Sky reveal after breaking atmosphere */
+      /* Atmosphere and sky */
       sky.style.opacity = range(p, 0.40, 0.56);
 
-      /* Clouds sweep past during atmosphere entry */
+      /* Clouds rush past */
       const cP = range(p, 0.42, 0.62);
       clouds.style.opacity   = cP < 0.5 ? cP * 2 : (1 - cP) * 2;
       clouds.style.transform = `scale(${1 + cP * 3.5})`;
 
-      /* Sun rising */
+      /* Sun */
       sun.style.opacity = range(p, 0.52, 0.62);
 
-      /* Mountains emerge in layers */
+      /* Mountains in depth */
       const mB = range(p, 0.50, 0.74);
       mountainsBack.style.transform = `translateY(${(1 - mB) * 25}%) scale(${0.92 + mB * 0.25})`;
       mountainsBack.style.opacity   = mB;
@@ -526,38 +503,94 @@
       mountainsFront.style.transform = `translateY(${(1 - mF) * 65}%) scale(${0.88 + mF * 0.45})`;
       mountainsFront.style.opacity   = mF;
 
-      /* Mist drifts between peaks */
+      /* Mist drifts */
       mist.style.opacity   = range(p, 0.65, 0.82) * (1 - range(p, 0.92, 1));
       mist.style.transform = `translateX(${Math.sin(p * Math.PI * 3) * 30}px)`;
 
-      /* Forest rises */
+      /* Forest */
       const f = range(p, 0.70, 0.92);
       forest.style.transform = `translateY(${(1 - f) * 90}%) scale(${0.82 + f * 0.55})`;
       forest.style.opacity   = f;
 
-      /* Lake reveal */
+      /* Lake */
       lake.style.opacity = range(p, 0.82, 0.96);
 
-      /* Title appears at destination */
+      /* Title */
       const t = range(p, 0.88, 1);
       title.style.opacity   = t;
       title.style.transform = `translateY(${(1 - t) * 40}px) scale(${0.95 + t * 0.05})`;
 
-      /* Hide hint after first scroll */
+      /* UI */
       hint.classList.toggle('hidden', p > 0.03);
-
-      ticking = false;
+      restartBtn.classList.toggle('visible', p > 0.95);
     }
 
-    window.addEventListener('scroll', () => {
-      if (!ticking) {
-        requestAnimationFrame(update);
-        ticking = true;
+    function tick() {
+      const diff = target - current;
+      if (Math.abs(diff) < 0.0001) {
+        current = target;
+        render(current);
+        rafId = null;
+        return;
       }
+      current += diff * 0.08;
+      render(current);
+      rafId = requestAnimationFrame(tick);
+    }
+
+    function requestRender() {
+      if (rafId === null) rafId = requestAnimationFrame(tick);
+    }
+
+    function setTarget(v) {
+      target = clamp(v, 0, 1);
+      requestRender();
+    }
+
+    /* ---------- Input handlers ---------- */
+    const WHEEL_SENS = 0.0007;
+    const TOUCH_SENS = 0.0025;
+    const KEY_STEP   = 0.06;
+
+    window.addEventListener('wheel', (e) => {
+      e.preventDefault();
+      setTarget(target + e.deltaY * WHEEL_SENS);
+    }, { passive: false });
+
+    let touchY = null;
+    window.addEventListener('touchstart', (e) => {
+      touchY = e.touches[0].clientY;
     }, { passive: true });
 
-    window.addEventListener('resize', update);
-    update();
+    window.addEventListener('touchmove', (e) => {
+      if (touchY === null) return;
+      e.preventDefault();
+      const y  = e.touches[0].clientY;
+      const dy = touchY - y;
+      setTarget(target + dy * TOUCH_SENS);
+      touchY = y;
+    }, { passive: false });
+
+    window.addEventListener('touchend', () => { touchY = null; }, { passive: true });
+
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowDown' || e.key === 'PageDown' || e.key === ' ') {
+        e.preventDefault();
+        setTarget(target + KEY_STEP);
+      } else if (e.key === 'ArrowUp' || e.key === 'PageUp') {
+        e.preventDefault();
+        setTarget(target - KEY_STEP);
+      } else if (e.key === 'Home') {
+        setTarget(0);
+      } else if (e.key === 'End') {
+        setTarget(1);
+      }
+    });
+
+    restartBtn.addEventListener('click', () => setTarget(0));
+
+    /* Initial render */
+    render(0);
   </script>
 </body>
 </html>
