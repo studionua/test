@@ -3,169 +3,268 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Scroll Loader Animato</title>
+  <title>Scroll Loader Pinned</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
+    html { scroll-behavior: smooth; }
+
     body {
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+      background: #0f0c29;
       color: #fff;
-      min-height: 300vh;
       line-height: 1.6;
+      overflow-x: hidden;
     }
 
-    .scroll-progress {
-      position: fixed;
+    .hero, .outro {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 40px;
+      text-align: center;
+      background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+    }
+
+    .hero h1, .outro h1 {
+      font-size: clamp(2rem, 5vw, 4rem);
+      margin-bottom: 1rem;
+    }
+
+    .hero p, .outro p {
+      font-size: 1.2rem;
+      max-width: 600px;
+      opacity: 0.85;
+    }
+
+    .scroll-arrow {
+      margin-top: 40px;
+      font-size: 2rem;
+      animation: bounce 1.8s infinite;
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); opacity: 0.6; }
+      50%      { transform: translateY(10px); opacity: 1; }
+    }
+
+    /* Pinned section: total height controls scroll duration */
+    .pin-section {
+      position: relative;
+      height: 400vh;
+      background: #0f0c29;
+    }
+
+    .pin-wrapper {
+      position: sticky;
       top: 0;
-      left: 0;
+      height: 100vh;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: radial-gradient(circle at center, #1a1a4d 0%, #0f0c29 70%);
+    }
+
+    .loader-stage {
+      position: relative;
+      width: 260px;
+      height: 260px;
+    }
+
+    .loader-stage svg {
       width: 100%;
-      height: 6px;
-      background: rgba(255, 255, 255, 0.1);
-      z-index: 1000;
-    }
-
-    .scroll-progress__bar {
       height: 100%;
-      width: 0;
-      background: linear-gradient(90deg, #ff6b6b, #feca57, #48dbfb, #1dd1a1);
-      background-size: 300% 100%;
-      box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
-      transition: width 0.1s ease-out;
-      animation: shimmer 3s linear infinite;
-    }
-
-    @keyframes shimmer {
-      0%   { background-position:   0% 50%; }
-      100% { background-position: 300% 50%; }
-    }
-
-    .scroll-circle {
-      position: fixed;
-      bottom: 30px;
-      right: 30px;
-      width: 70px;
-      height: 70px;
-      z-index: 1000;
-    }
-
-    .scroll-circle svg {
       transform: rotate(-90deg);
-      width: 100%;
-      height: 100%;
     }
 
-    .scroll-circle__track {
+    .ring-track {
       fill: none;
-      stroke: rgba(255, 255, 255, 0.15);
-      stroke-width: 6;
+      stroke: rgba(255, 255, 255, 0.08);
+      stroke-width: 8;
     }
 
-    .scroll-circle__fill {
+    .ring-fill {
       fill: none;
-      stroke: url(#grad);
-      stroke-width: 6;
+      stroke: url(#ringGrad);
+      stroke-width: 8;
       stroke-linecap: round;
-      stroke-dasharray: 188.5;
-      stroke-dashoffset: 188.5;
-      transition: stroke-dashoffset 0.1s ease-out;
-      filter: drop-shadow(0 0 6px rgba(72, 219, 251, 0.8));
+      stroke-dasharray: 754;
+      stroke-dashoffset: 754;
+      filter: drop-shadow(0 0 12px rgba(72, 219, 251, 0.7));
     }
 
-    .scroll-circle__text {
+    .percent {
       position: absolute;
       inset: 0;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 14px;
-      font-weight: 600;
+      font-size: 3.5rem;
+      font-weight: 700;
+      letter-spacing: -2px;
+      background: linear-gradient(135deg, #ff6b6b, #feca57, #48dbfb);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
     }
 
-    section {
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 40px;
-      text-align: center;
+    .label {
+      position: absolute;
+      left: 50%;
+      bottom: -60px;
+      transform: translateX(-50%);
+      font-size: 0.9rem;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      opacity: 0.6;
+      white-space: nowrap;
     }
 
-    h1 { font-size: clamp(2rem, 5vw, 4rem); margin-bottom: 1rem; }
-    p  { font-size: 1.2rem; max-width: 600px; opacity: 0.85; }
+    /* Orbiting dots */
+    .orbit {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+    }
+
+    .dot {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 14px;
+      height: 14px;
+      margin: -7px 0 0 -7px;
+      border-radius: 50%;
+      background: #48dbfb;
+      box-shadow: 0 0 15px #48dbfb;
+    }
+
+    .dot:nth-child(1) { background: #ff6b6b; box-shadow: 0 0 15px #ff6b6b; }
+    .dot:nth-child(2) { background: #feca57; box-shadow: 0 0 15px #feca57; }
+    .dot:nth-child(3) { background: #48dbfb; box-shadow: 0 0 15px #48dbfb; }
+    .dot:nth-child(4) { background: #1dd1a1; box-shadow: 0 0 15px #1dd1a1; }
+
+    .hint {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 0.85rem;
+      opacity: 0.6;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      pointer-events: none;
+      transition: opacity 0.3s;
+      z-index: 10;
+    }
+
+    .hint.hidden { opacity: 0; }
   </style>
 </head>
 <body>
 
-  <div class="scroll-progress">
-    <div class="scroll-progress__bar" id="progressBar"></div>
-  </div>
+  <section class="hero">
+    <h1>Scorri per iniziare</h1>
+    <p>La pagina si "blocca" e il loader si anima in base allo scroll. Al 100% la pagina riparte.</p>
+    <div class="scroll-arrow">&#8595;</div>
+  </section>
 
-  <div class="scroll-circle">
-    <svg viewBox="0 0 70 70">
-      <defs>
-        <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%"   stop-color="#ff6b6b" />
-          <stop offset="50%"  stop-color="#feca57" />
-          <stop offset="100%" stop-color="#48dbfb" />
-        </linearGradient>
-      </defs>
-      <circle class="scroll-circle__track" cx="35" cy="35" r="30" />
-      <circle class="scroll-circle__fill"  cx="35" cy="35" r="30" id="circleFill" />
-    </svg>
-    <div class="scroll-circle__text" id="circleText">0%</div>
-  </div>
+  <section class="pin-section" id="pinSection">
+    <div class="pin-wrapper">
+      <div class="loader-stage">
+        <svg viewBox="0 0 260 260">
+          <defs>
+            <linearGradient id="ringGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%"   stop-color="#ff6b6b" />
+              <stop offset="50%"  stop-color="#feca57" />
+              <stop offset="100%" stop-color="#48dbfb" />
+            </linearGradient>
+          </defs>
+          <circle class="ring-track" cx="130" cy="130" r="120" />
+          <circle class="ring-fill"  cx="130" cy="130" r="120" id="ringFill" />
+        </svg>
 
-  <section>
-    <div>
-      <h1>Scroll Loader Animato</h1>
-      <p>Scorri verso il basso per vedere la barra e il cerchio riempirsi in base alla posizione dello scroll.</p>
+        <div class="orbit" id="orbit">
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+        </div>
+
+        <div class="percent" id="percent">0%</div>
+        <div class="label" id="label">Loading</div>
+      </div>
     </div>
   </section>
 
-  <section>
-    <div>
-      <h1>Sezione 2</h1>
-      <p>Il gradiente della barra si anima lateralmente creando un effetto luminoso continuo.</p>
-    </div>
+  <section class="outro">
+    <h1>Contenuto rivelato</h1>
+    <p>L'animazione ha terminato e adesso lo scroll è tornato normale. Puoi risalire per rivedere l'effetto.</p>
   </section>
 
-  <section>
-    <div>
-      <h1>Sezione 3</h1>
-      <p>Il cerchio in basso a destra mostra la percentuale esatta di avanzamento.</p>
-    </div>
-  </section>
+  <div class="hint" id="hint">Scorri &#8595;</div>
 
   <script>
-    const progressBar = document.getElementById('progressBar');
-    const circleFill  = document.getElementById('circleFill');
-    const circleText  = document.getElementById('circleText');
-    const CIRCUMFERENCE = 2 * Math.PI * 30;
+    const pinSection = document.getElementById('pinSection');
+    const ringFill   = document.getElementById('ringFill');
+    const percentEl  = document.getElementById('percent');
+    const labelEl    = document.getElementById('label');
+    const orbit      = document.getElementById('orbit');
+    const dots       = orbit.querySelectorAll('.dot');
+    const hint       = document.getElementById('hint');
+
+    const CIRCUMFERENCE = 2 * Math.PI * 120;
+
+    const labels = [
+      { from: 0.00, text: 'Loading' },
+      { from: 0.25, text: 'Caricamento risorse' },
+      { from: 0.50, text: 'Preparazione' },
+      { from: 0.75, text: 'Quasi pronto' },
+      { from: 0.99, text: 'Completato' }
+    ];
 
     let ticking = false;
 
-    function updateLoader() {
-      const scrollTop = window.scrollY;
-      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
-      const progress  = docHeight > 0 ? Math.min(scrollTop / docHeight, 1) : 0;
+    function update() {
+      const rect      = pinSection.getBoundingClientRect();
+      const total     = pinSection.offsetHeight - window.innerHeight;
+      const scrolled  = Math.min(Math.max(-rect.top, 0), total);
+      const progress  = total > 0 ? scrolled / total : 0;
       const percent   = Math.round(progress * 100);
 
-      progressBar.style.width = (progress * 100) + '%';
-      circleFill.style.strokeDashoffset = CIRCUMFERENCE * (1 - progress);
-      circleText.textContent = percent + '%';
+      ringFill.style.strokeDashoffset = CIRCUMFERENCE * (1 - progress);
+      percentEl.textContent = percent + '%';
+
+      const current = labels.filter(l => progress >= l.from).pop();
+      if (current) labelEl.textContent = current.text;
+
+      const angle  = progress * 720;
+      const radius = 130 + Math.sin(progress * Math.PI * 2) * 10;
+      dots.forEach((dot, i) => {
+        const a = (angle + i * 90) * Math.PI / 180;
+        const x = Math.cos(a) * radius;
+        const y = Math.sin(a) * radius;
+        const scale = 0.5 + progress * 0.8;
+        dot.style.transform = `translate(${x}px, ${y}px) scale(${scale})`;
+      });
+
+      hint.classList.toggle('hidden', progress > 0.05);
 
       ticking = false;
     }
 
     window.addEventListener('scroll', () => {
       if (!ticking) {
-        requestAnimationFrame(updateLoader);
+        requestAnimationFrame(update);
         ticking = true;
       }
     }, { passive: true });
 
-    updateLoader();
+    window.addEventListener('resize', update);
+    update();
   </script>
 </body>
 </html>
