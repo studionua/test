@@ -1,0 +1,44 @@
+.split-char-heading {
+  opacity: 0;
+  transform: translateX(0.75rem);
+}
+
+.split-char-meta {
+  opacity: 0;
+  transform: translateX(0.5rem);
+}
+
+[heading-hero-animation] {
+  opacity: 0;
+}
+
+[meta-hero-animation] {
+  opacity: 0;
+}
+
+[divider-hero-animation] {
+  width: 0%;
+  transform: translateX(3rem);
+}
+
+[heading-move-wrap] {
+  overflow: hidden;
+  width: 100%;
+}
+
+[heading-move] {
+  display: flex;
+  flex-wrap: nowrap;
+  width: max-content;
+}
+
+[heading-set] {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  flex: 0 0 auto;
+}
+
+[heading-set] > * {
+  flex: 0 0 auto;
+}
