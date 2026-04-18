@@ -3,255 +3,548 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Scroll Loader Pinned</title>
+  <title>Viaggio nella Sila · Lorica</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@300;400&display=swap" rel="stylesheet">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
-    html { scroll-behavior: smooth; }
+    html, body { overflow-x: hidden; }
 
     body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background: #0f0c29;
+      font-family: 'Inter', sans-serif;
+      background: #000;
       color: #fff;
       line-height: 1.6;
-      overflow-x: hidden;
     }
 
-    .hero, .outro {
+    /* ---------- Intro ---------- */
+    .hero {
       min-height: 100vh;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: 40px;
       text-align: center;
-      background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+      padding: 2rem;
+      background: radial-gradient(circle at center, #1a1a3a 0%, #000 80%);
+      position: relative;
+      overflow: hidden;
     }
 
-    .hero h1, .outro h1 {
-      font-size: clamp(2rem, 5vw, 4rem);
+    .hero h1 {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(2.2rem, 6vw, 4.5rem);
+      font-weight: 600;
+      letter-spacing: 0.12em;
       margin-bottom: 1rem;
+      text-shadow: 0 0 40px rgba(200, 220, 255, 0.4);
     }
 
-    .hero p, .outro p {
-      font-size: 1.2rem;
-      max-width: 600px;
-      opacity: 0.85;
-    }
+    .hero p { opacity: 0.75; max-width: 520px; font-weight: 300; }
 
     .scroll-arrow {
-      margin-top: 40px;
-      font-size: 2rem;
-      animation: bounce 1.8s infinite;
+      margin-top: 3rem;
+      font-size: 1.6rem;
+      animation: bounce 2s infinite;
+      opacity: 0.6;
     }
-
     @keyframes bounce {
-      0%, 100% { transform: translateY(0); opacity: 0.6; }
-      50%      { transform: translateY(10px); opacity: 1; }
+      0%, 100% { transform: translateY(0); }
+      50%      { transform: translateY(12px); }
     }
 
-    /* Pinned section: total height controls scroll duration */
+    /* ---------- Pinned cinematic scene ---------- */
     .pin-section {
       position: relative;
-      height: 400vh;
-      background: #0f0c29;
+      height: 700vh;
+      background: #000;
     }
 
     .pin-wrapper {
       position: sticky;
       top: 0;
       height: 100vh;
-      overflow: hidden;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: radial-gradient(circle at center, #1a1a4d 0%, #0f0c29 70%);
-    }
-
-    .loader-stage {
-      position: relative;
-      width: 260px;
-      height: 260px;
-    }
-
-    .loader-stage svg {
       width: 100%;
-      height: 100%;
-      transform: rotate(-90deg);
+      overflow: hidden;
+      background: #000;
     }
 
-    .ring-track {
-      fill: none;
-      stroke: rgba(255, 255, 255, 0.08);
-      stroke-width: 8;
-    }
+    .scene { position: absolute; inset: 0; }
 
-    .ring-fill {
-      fill: none;
-      stroke: url(#ringGrad);
-      stroke-width: 8;
-      stroke-linecap: round;
-      stroke-dasharray: 754;
-      stroke-dashoffset: 754;
-      filter: drop-shadow(0 0 12px rgba(72, 219, 251, 0.7));
-    }
-
-    .percent {
+    .layer {
       position: absolute;
       inset: 0;
+      will-change: transform, opacity;
+    }
+
+    /* Stars */
+    .star {
+      position: absolute;
+      background: #fff;
+      border-radius: 50%;
+      box-shadow: 0 0 6px rgba(255, 255, 255, 0.8);
+      animation: twinkle var(--dur, 3s) ease-in-out infinite;
+    }
+    @keyframes twinkle {
+      0%, 100% { opacity: var(--op, 0.8); }
+      50%      { opacity: calc(var(--op, 0.8) * 0.3); }
+    }
+
+    /* Nebula */
+    .nebula {
+      background:
+        radial-gradient(ellipse 60% 40% at 20% 30%, rgba(140, 70, 200, 0.35), transparent 60%),
+        radial-gradient(ellipse 50% 40% at 80% 70%, rgba(40, 90, 200, 0.35), transparent 60%),
+        radial-gradient(ellipse 40% 30% at 60% 20%, rgba(200, 60, 120, 0.2), transparent 60%);
+    }
+
+    /* Earth */
+    .earth {
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 3.5rem;
-      font-weight: 700;
-      letter-spacing: -2px;
-      background: linear-gradient(135deg, #ff6b6b, #feca57, #48dbfb);
-      -webkit-background-clip: text;
-      background-clip: text;
-      -webkit-text-fill-color: transparent;
     }
 
-    .label {
-      position: absolute;
-      left: 50%;
-      bottom: -60px;
-      transform: translateX(-50%);
-      font-size: 0.9rem;
-      letter-spacing: 4px;
-      text-transform: uppercase;
-      opacity: 0.6;
-      white-space: nowrap;
+    .earth-ball {
+      width: 40vmin;
+      height: 40vmin;
+      border-radius: 50%;
+      background:
+        radial-gradient(circle at 30% 30%, rgba(255,255,255,0.25) 0%, transparent 35%),
+        radial-gradient(circle at 68% 55%, #2d7a45 0%, transparent 22%),
+        radial-gradient(circle at 28% 68%, #3a8a55 0%, transparent 18%),
+        radial-gradient(circle at 60% 28%, #4a9a60 0%, transparent 15%),
+        radial-gradient(circle at 45% 75%, #2a6a40 0%, transparent 18%),
+        radial-gradient(circle at 80% 30%, #3a7a50 0%, transparent 14%),
+        linear-gradient(135deg, #1e5ea0, #0a3880);
+      box-shadow:
+        inset -25px -25px 70px rgba(0, 0, 0, 0.55),
+        inset 10px 10px 40px rgba(120, 200, 255, 0.2),
+        0 0 80px rgba(120, 200, 255, 0.5),
+        0 0 160px rgba(80, 160, 230, 0.25);
+      transform: scale(0.05);
     }
 
-    /* Orbiting dots */
-    .orbit {
+    /* Sky gradient revealed after atmosphere */
+    .sky {
+      background: linear-gradient(to bottom,
+        #0a1e55 0%,
+        #1d4a95 25%,
+        #4a90c5 55%,
+        #a8c8dd 85%,
+        #e8ddc4 100%);
+      opacity: 0;
+    }
+
+    /* Sun */
+    .sun {
       position: absolute;
-      inset: 0;
+      top: 18%;
+      right: 18%;
+      width: 90px;
+      height: 90px;
+      border-radius: 50%;
+      background: radial-gradient(circle, #fff8d0 0%, #ffd490 45%, rgba(255, 180, 100, 0.3) 70%, transparent 85%);
+      box-shadow: 0 0 100px rgba(255, 210, 120, 0.6);
+      opacity: 0;
+    }
+
+    /* Clouds */
+    .cloud {
+      position: absolute;
+      background: rgba(255, 255, 255, 0.85);
+      border-radius: 100px;
+      filter: blur(10px);
+      box-shadow: 0 0 40px rgba(255, 255, 255, 0.4);
+    }
+
+    /* Mountains */
+    .mountains {
+      bottom: 0;
+      top: auto;
+      height: 100%;
       pointer-events: none;
     }
 
-    .dot {
+    .mountains svg {
       position: absolute;
-      top: 50%;
-      left: 50%;
-      width: 14px;
-      height: 14px;
-      margin: -7px 0 0 -7px;
-      border-radius: 50%;
-      background: #48dbfb;
-      box-shadow: 0 0 15px #48dbfb;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
     }
 
-    .dot:nth-child(1) { background: #ff6b6b; box-shadow: 0 0 15px #ff6b6b; }
-    .dot:nth-child(2) { background: #feca57; box-shadow: 0 0 15px #feca57; }
-    .dot:nth-child(3) { background: #48dbfb; box-shadow: 0 0 15px #48dbfb; }
-    .dot:nth-child(4) { background: #1dd1a1; box-shadow: 0 0 15px #1dd1a1; }
+    /* Forest */
+    .forest {
+      bottom: 0;
+      top: auto;
+      height: 100%;
+      pointer-events: none;
+    }
 
+    /* Lake */
+    .lake {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 22%;
+      background: linear-gradient(to bottom,
+        rgba(60, 110, 150, 0.4) 0%,
+        rgba(35, 75, 115, 0.85) 40%,
+        rgba(20, 50, 90, 1) 100%);
+      box-shadow: inset 0 20px 40px rgba(0, 0, 0, 0.4);
+      opacity: 0;
+    }
+
+    .lake::before {
+      content: "";
+      position: absolute;
+      top: 10%;
+      left: 0;
+      width: 100%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.35), transparent);
+      box-shadow: 0 0 10px rgba(255, 255, 255, 0.4);
+    }
+
+    /* Mist between mountains and forest */
+    .mist {
+      position: absolute;
+      bottom: 25%;
+      left: 0;
+      width: 100%;
+      height: 15%;
+      background: linear-gradient(to bottom, transparent, rgba(220, 230, 240, 0.5), transparent);
+      filter: blur(6px);
+      opacity: 0;
+    }
+
+    /* Vignette */
+    .vignette {
+      background: radial-gradient(ellipse at center, transparent 45%, rgba(0, 0, 0, 0.55) 100%);
+      pointer-events: none;
+    }
+
+    /* Title */
+    .title-layer {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .title-main {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(3rem, 10vw, 7rem);
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      background: linear-gradient(180deg, #ffffff 0%, #d0e8f0 60%, #a0c8d8 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      filter: drop-shadow(0 0 30px rgba(255, 255, 255, 0.5));
+    }
+
+    .title-divider {
+      width: 120px;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.7), transparent);
+      margin: 1.2rem 0;
+    }
+
+    .title-sub {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(0.9rem, 1.8vw, 1.4rem);
+      font-weight: 400;
+      letter-spacing: 0.5em;
+      text-transform: uppercase;
+      opacity: 0.9;
+      padding-left: 0.5em;
+    }
+
+    /* Progress indicator */
+    .progress-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 3px;
+      background: linear-gradient(90deg, #a0c8d8, #e8ddc4);
+      width: 0;
+      z-index: 100;
+      box-shadow: 0 0 8px rgba(200, 220, 255, 0.6);
+    }
+
+    /* Hint */
     .hint {
       position: fixed;
       bottom: 24px;
       left: 50%;
       transform: translateX(-50%);
-      font-size: 0.85rem;
-      opacity: 0.6;
-      letter-spacing: 2px;
+      font-size: 0.75rem;
+      opacity: 0.5;
+      letter-spacing: 0.3em;
       text-transform: uppercase;
       pointer-events: none;
-      transition: opacity 0.3s;
-      z-index: 10;
+      transition: opacity 0.4s;
+      z-index: 50;
+    }
+    .hint.hidden { opacity: 0; }
+
+    /* Outro */
+    .outro {
+      min-height: 80vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 3rem;
+      background: linear-gradient(to bottom, #0a3060 0%, #052040 50%, #000 100%);
     }
 
-    .hint.hidden { opacity: 0; }
+    .outro h2 {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(1.6rem, 3vw, 2.4rem);
+      letter-spacing: 0.15em;
+      margin-bottom: 1rem;
+    }
+
+    .outro p {
+      max-width: 520px;
+      opacity: 0.75;
+      font-weight: 300;
+    }
   </style>
 </head>
 <body>
 
+  <div class="progress-bar" id="progressBar"></div>
+
   <section class="hero">
-    <h1>Scorri per iniziare</h1>
-    <p>La pagina si "blocca" e il loader si anima in base allo scroll. Al 100% la pagina riparte.</p>
+    <h1>Entra nella Sila</h1>
+    <p>Un viaggio dallo spazio profondo fino al cuore incantato della Calabria, tra gli altopiani e i boschi di Lorica.</p>
     <div class="scroll-arrow">&#8595;</div>
   </section>
 
   <section class="pin-section" id="pinSection">
     <div class="pin-wrapper">
-      <div class="loader-stage">
-        <svg viewBox="0 0 260 260">
-          <defs>
-            <linearGradient id="ringGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%"   stop-color="#ff6b6b" />
-              <stop offset="50%"  stop-color="#feca57" />
-              <stop offset="100%" stop-color="#48dbfb" />
-            </linearGradient>
-          </defs>
-          <circle class="ring-track" cx="130" cy="130" r="120" />
-          <circle class="ring-fill"  cx="130" cy="130" r="120" id="ringFill" />
-        </svg>
+      <div class="scene">
 
-        <div class="orbit" id="orbit">
-          <div class="dot"></div>
-          <div class="dot"></div>
-          <div class="dot"></div>
-          <div class="dot"></div>
+        <div class="layer nebula" id="nebula"></div>
+        <div class="layer stars" id="stars"></div>
+
+        <div class="layer earth" id="earth">
+          <div class="earth-ball" id="earthBall"></div>
         </div>
 
-        <div class="percent" id="percent">0%</div>
-        <div class="label" id="label">Loading</div>
+        <div class="layer sky" id="sky"></div>
+
+        <div class="sun" id="sun"></div>
+
+        <div class="layer" id="clouds">
+          <div class="cloud" style="top: 22%; left: -25%; width: 340px; height: 70px;"></div>
+          <div class="cloud" style="top: 38%; left: 55%; width: 280px; height: 55px;"></div>
+          <div class="cloud" style="top: 14%; left: 30%; width: 220px; height: 50px;"></div>
+          <div class="cloud" style="top: 48%; left: -10%; width: 380px; height: 80px;"></div>
+          <div class="cloud" style="top: 30%; left: 75%; width: 260px; height: 60px;"></div>
+        </div>
+
+        <div class="layer mountains" id="mountainsBack">
+          <svg viewBox="0 0 1200 400" preserveAspectRatio="none">
+            <defs>
+              <linearGradient id="mBack" x1="0" x2="0" y1="0" y2="1">
+                <stop offset="0%" stop-color="#8aa8c4" />
+                <stop offset="100%" stop-color="#4a6890" />
+              </linearGradient>
+            </defs>
+            <path d="M0 280 L80 200 L160 240 L260 150 L360 210 L460 130 L580 190 L700 120 L820 180 L940 140 L1060 200 L1200 160 L1200 400 L0 400 Z"
+                  fill="url(#mBack)" />
+          </svg>
+        </div>
+
+        <div class="layer mist" id="mist"></div>
+
+        <div class="layer mountains" id="mountainsMid">
+          <svg viewBox="0 0 1200 400" preserveAspectRatio="none">
+            <defs>
+              <linearGradient id="mMid" x1="0" x2="0" y1="0" y2="1">
+                <stop offset="0%" stop-color="#5a7860" />
+                <stop offset="100%" stop-color="#2d4838" />
+              </linearGradient>
+            </defs>
+            <path d="M0 340 L120 240 L240 300 L360 200 L500 270 L640 180 L780 250 L920 190 L1060 260 L1200 220 L1200 400 L0 400 Z"
+                  fill="url(#mMid)" />
+          </svg>
+        </div>
+
+        <div class="layer mountains" id="mountainsFront">
+          <svg viewBox="0 0 1200 400" preserveAspectRatio="none">
+            <defs>
+              <linearGradient id="mFront" x1="0" x2="0" y1="0" y2="1">
+                <stop offset="0%" stop-color="#2a4830" />
+                <stop offset="100%" stop-color="#0f2018" />
+              </linearGradient>
+            </defs>
+            <path d="M0 380 L100 300 L220 350 L340 250 L480 320 L620 230 L760 300 L900 240 L1040 310 L1200 270 L1200 400 L0 400 Z"
+                  fill="url(#mFront)" />
+          </svg>
+        </div>
+
+        <div class="layer forest" id="forest">
+          <svg viewBox="0 0 1200 400" preserveAspectRatio="none">
+            <defs>
+              <linearGradient id="treeGrad" x1="0" x2="0" y1="0" y2="1">
+                <stop offset="0%" stop-color="#1a3820" />
+                <stop offset="100%" stop-color="#081808" />
+              </linearGradient>
+            </defs>
+            <g fill="url(#treeGrad)" id="treeGroup"></g>
+          </svg>
+        </div>
+
+        <div class="lake" id="lake"></div>
+
+        <div class="layer vignette"></div>
+
+        <div class="layer title-layer" id="title">
+          <div class="title-main">La Sila</div>
+          <div class="title-divider"></div>
+          <div class="title-sub">Lorica</div>
+        </div>
+
       </div>
     </div>
   </section>
 
+  <div class="hint" id="hint">Scorri per iniziare il viaggio</div>
+
   <section class="outro">
-    <h1>Contenuto rivelato</h1>
-    <p>L'animazione ha terminato e adesso lo scroll è tornato normale. Puoi risalire per rivedere l'effetto.</p>
+    <h2>Benvenuto</h2>
+    <p>Hai raggiunto Lorica, nel cuore del Parco Nazionale della Sila. Respira l'aria dei boschi e il silenzio del lago Arvo.</p>
   </section>
 
-  <div class="hint" id="hint">Scorri &#8595;</div>
-
   <script>
-    const pinSection = document.getElementById('pinSection');
-    const ringFill   = document.getElementById('ringFill');
-    const percentEl  = document.getElementById('percent');
-    const labelEl    = document.getElementById('label');
-    const orbit      = document.getElementById('orbit');
-    const dots       = orbit.querySelectorAll('.dot');
-    const hint       = document.getElementById('hint');
+    /* ---------- Generate stars ---------- */
+    const starsLayer = document.getElementById('stars');
+    const STAR_COUNT = 220;
+    for (let i = 0; i < STAR_COUNT; i++) {
+      const s = document.createElement('div');
+      s.className = 'star';
+      const size = Math.random() * 2.2 + 0.4;
+      s.style.width  = size + 'px';
+      s.style.height = size + 'px';
+      s.style.left = (Math.random() * 100) + '%';
+      s.style.top  = (Math.random() * 100) + '%';
+      s.style.setProperty('--op',  (Math.random() * 0.7 + 0.3).toFixed(2));
+      s.style.setProperty('--dur', (Math.random() * 4 + 2).toFixed(1) + 's');
+      s.style.animationDelay = (Math.random() * 4).toFixed(1) + 's';
+      starsLayer.appendChild(s);
+    }
 
-    const CIRCUMFERENCE = 2 * Math.PI * 120;
+    /* ---------- Generate forest trees ---------- */
+    const treeGroup = document.getElementById('treeGroup');
+    const TREE_COUNT = 40;
+    let treesSVG = '';
+    for (let i = 0; i < TREE_COUNT; i++) {
+      const x = Math.random() * 1200;
+      const scale = 0.5 + Math.random() * 0.9;
+      const h = 80 * scale;
+      const w = 30 * scale;
+      const y = 400 - h + Math.random() * 10;
+      treesSVG += `<polygon points="${x},${y} ${x - w/2},${y + h} ${x + w/2},${y + h}" opacity="${0.75 + Math.random() * 0.25}" />`;
+      treesSVG += `<polygon points="${x},${y + h*0.2} ${x - w*0.7},${y + h*0.75} ${x + w*0.7},${y + h*0.75}" opacity="${0.75 + Math.random() * 0.25}" />`;
+    }
+    treeGroup.innerHTML = treesSVG;
 
-    const labels = [
-      { from: 0.00, text: 'Loading' },
-      { from: 0.25, text: 'Caricamento risorse' },
-      { from: 0.50, text: 'Preparazione' },
-      { from: 0.75, text: 'Quasi pronto' },
-      { from: 0.99, text: 'Completato' }
-    ];
+    /* ---------- Scroll-driven animation ---------- */
+    const pinSection     = document.getElementById('pinSection');
+    const progressBar    = document.getElementById('progressBar');
+    const nebula         = document.getElementById('nebula');
+    const earthBall      = document.getElementById('earthBall');
+    const sky            = document.getElementById('sky');
+    const sun            = document.getElementById('sun');
+    const clouds         = document.getElementById('clouds');
+    const mountainsBack  = document.getElementById('mountainsBack');
+    const mountainsMid   = document.getElementById('mountainsMid');
+    const mountainsFront = document.getElementById('mountainsFront');
+    const forest         = document.getElementById('forest');
+    const mist           = document.getElementById('mist');
+    const lake           = document.getElementById('lake');
+    const title          = document.getElementById('title');
+    const hint           = document.getElementById('hint');
+
+    const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+    const range = (p, s, e) => clamp((p - s) / (e - s), 0, 1);
 
     let ticking = false;
 
     function update() {
-      const rect      = pinSection.getBoundingClientRect();
-      const total     = pinSection.offsetHeight - window.innerHeight;
-      const scrolled  = Math.min(Math.max(-rect.top, 0), total);
-      const progress  = total > 0 ? scrolled / total : 0;
-      const percent   = Math.round(progress * 100);
+      const rect     = pinSection.getBoundingClientRect();
+      const total    = pinSection.offsetHeight - window.innerHeight;
+      const scrolled = clamp(-rect.top, 0, total);
+      const p        = total > 0 ? scrolled / total : 0;
 
-      ringFill.style.strokeDashoffset = CIRCUMFERENCE * (1 - progress);
-      percentEl.textContent = percent + '%';
+      progressBar.style.width = (p * 100) + '%';
 
-      const current = labels.filter(l => progress >= l.from).pop();
-      if (current) labelEl.textContent = current.text;
+      /* Stars + nebula fade as we approach Earth */
+      starsLayer.style.opacity = 1 - range(p, 0.22, 0.45);
+      nebula.style.opacity     = 1 - range(p, 0.18, 0.42);
 
-      const angle  = progress * 720;
-      const radius = 130 + Math.sin(progress * Math.PI * 2) * 10;
-      dots.forEach((dot, i) => {
-        const a = (angle + i * 90) * Math.PI / 180;
-        const x = Math.cos(a) * radius;
-        const y = Math.sin(a) * radius;
-        const scale = 0.5 + progress * 0.8;
-        dot.style.transform = `translate(${x}px, ${y}px) scale(${scale})`;
-      });
+      /* Earth: tiny dot → fills screen → fades */
+      const earthApproach = range(p, 0, 0.45);
+      const earthScale    = 0.05 + Math.pow(earthApproach, 2.2) * 11;
+      earthBall.style.transform = `scale(${earthScale})`;
+      earthBall.style.opacity   = 1 - range(p, 0.42, 0.50);
 
-      hint.classList.toggle('hidden', progress > 0.05);
+      /* Sky reveal after breaking atmosphere */
+      sky.style.opacity = range(p, 0.40, 0.56);
+
+      /* Clouds sweep past during atmosphere entry */
+      const cP = range(p, 0.42, 0.62);
+      clouds.style.opacity   = cP < 0.5 ? cP * 2 : (1 - cP) * 2;
+      clouds.style.transform = `scale(${1 + cP * 3.5})`;
+
+      /* Sun rising */
+      sun.style.opacity = range(p, 0.52, 0.62);
+
+      /* Mountains emerge in layers */
+      const mB = range(p, 0.50, 0.74);
+      mountainsBack.style.transform = `translateY(${(1 - mB) * 25}%) scale(${0.92 + mB * 0.25})`;
+      mountainsBack.style.opacity   = mB;
+
+      const mM = range(p, 0.56, 0.80);
+      mountainsMid.style.transform = `translateY(${(1 - mM) * 45}%) scale(${0.9 + mM * 0.35})`;
+      mountainsMid.style.opacity   = mM;
+
+      const mF = range(p, 0.62, 0.86);
+      mountainsFront.style.transform = `translateY(${(1 - mF) * 65}%) scale(${0.88 + mF * 0.45})`;
+      mountainsFront.style.opacity   = mF;
+
+      /* Mist drifts between peaks */
+      mist.style.opacity   = range(p, 0.65, 0.82) * (1 - range(p, 0.92, 1));
+      mist.style.transform = `translateX(${Math.sin(p * Math.PI * 3) * 30}px)`;
+
+      /* Forest rises */
+      const f = range(p, 0.70, 0.92);
+      forest.style.transform = `translateY(${(1 - f) * 90}%) scale(${0.82 + f * 0.55})`;
+      forest.style.opacity   = f;
+
+      /* Lake reveal */
+      lake.style.opacity = range(p, 0.82, 0.96);
+
+      /* Title appears at destination */
+      const t = range(p, 0.88, 1);
+      title.style.opacity   = t;
+      title.style.transform = `translateY(${(1 - t) * 40}px) scale(${0.95 + t * 0.05})`;
+
+      /* Hide hint after first scroll */
+      hint.classList.toggle('hidden', p > 0.03);
 
       ticking = false;
     }
