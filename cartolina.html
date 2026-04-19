@@ -63,14 +63,14 @@
       100% { transform: rotateY(0deg)   translateZ(0)    rotateZ(0deg); }
     }
 
+    /* IMPORTANTE: niente `overflow: hidden` o `border-radius` qui,
+       altrimenti Chrome/Safari creano un compositing layer che rompe
+       il backface-visibility e mostra di nuovo il fronte sul retro. */
     .face {
       position: absolute;
       inset: 0;
       backface-visibility: hidden;
       -webkit-backface-visibility: hidden;
-      border-radius: 18px;
-      overflow: hidden;
-      background: #ece7d3;
     }
 
     .face img {
@@ -78,6 +78,7 @@
       height: 100%;
       display: block;
       object-fit: cover;
+      border-radius: 18px;
       user-select: none;
       -webkit-user-drag: none;
     }
