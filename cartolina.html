@@ -76,9 +76,10 @@
       position: absolute;
       left: 11%;
       right: 11%;
+      height: 22px;           /* altezza fissa: niente assestamenti */
+      line-height: 22px;
       font-family: 'Caveat', cursive;
       font-size: 22px;
-      line-height: 1;
       color: #ece7d3;
       white-space: nowrap;
       overflow: hidden;
@@ -91,18 +92,6 @@
     .handwriting .line:nth-child(2) { top: 59.3%; transform: rotate(0.4deg); }
     .handwriting .line:nth-child(3) { top: 69.1%; transform: rotate(-0.3deg); }
     .handwriting .line:nth-child(4) { top: 78.9%; transform: rotate(0.5deg); }
-
-    .handwriting .line.writing::after {
-      content: "";
-      display: inline-block;
-      width: 2px;
-      height: 18px;
-      background: #ece7d3;
-      margin-left: 2px;
-      vertical-align: middle;
-      animation: blink 0.7s steps(2) infinite;
-    }
-    @keyframes blink { 50% { opacity: 0; } }
 
     .hint {
       position: fixed;
