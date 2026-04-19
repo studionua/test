@@ -139,6 +139,45 @@
       color: #5a5a4f;
       opacity: 0.7;
     }
+
+    /* ---- Neve: canvas full-viewport + toggle ---- */
+    #snow {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 5;
+      opacity: 0;
+      transition: opacity 0.8s ease;
+    }
+    body.snowing #snow { opacity: 1; }
+
+    .snow-toggle {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      width: 46px;
+      height: 46px;
+      border-radius: 50%;
+      border: 1px solid #2b3321;
+      background: #F9F6EF;
+      color: #2b3321;
+      font-size: 22px;
+      line-height: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: transform 0.4s ease, background 0.3s ease, color 0.3s ease;
+      z-index: 20;
+      user-select: none;
+    }
+    .snow-toggle:hover { transform: scale(1.08); }
+    body.snowing .snow-toggle {
+      background: #2b3321;
+      color: #F9F6EF;
+      animation: spin 6s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
   </style>
 </head>
 <body>
@@ -168,7 +207,7 @@
           <img src="de-giuseppe/la_standard.png" alt="Fronte Standard" />
         </div>
         <div class="face back">
-          <img src="de-giuseppe/PROVA%20CARTOLINA2.png" alt="Retro Standard" />
+          <img src="de-giuseppe/la_standardretro.png" alt="Retro Standard" />
           <div class="handwriting">
             <div class="line" data-text="Camera adatta alle coppie che vogliono"></div>
             <div class="line" data-text="vivere il tempo della vacanza con la"></div>
@@ -185,7 +224,7 @@
           <img src="de-giuseppe/la_deluxe.png" alt="Fronte Deluxe" />
         </div>
         <div class="face back">
-          <img src="de-giuseppe/PROVA%20CARTOLINA2.png" alt="Retro Deluxe" />
+          <img src="de-giuseppe/la_deluxeretro.png" alt="Retro Deluxe" />
           <div class="handwriting">
             <div class="line" data-text="Camera con spazi adatti ad una coppia"></div>
             <div class="line" data-text="esigente e che vuole ritrovare la"></div>
@@ -197,6 +236,9 @@
     </div>
 
   </div>
+
+  <canvas id="snow"></canvas>
+  <button class="snow-toggle" id="snowToggle" aria-label="Attiva neve" title="Neve">&#10052;</button>
 
   <div class="hint">clicca su una cartolina</div>
 
@@ -400,6 +442,76 @@
         }
       });
     });
+
+    /* ===========================================================
+       NEVE – canvas con fiocchi sinusoidali, toggleabile
+       =========================================================== */
+    (function snowModule() {
+      const canvas = document.getElementById('snow');
+      const ctx    = canvas.getContext('2d');
+      const toggle = document.getElementById('snowToggle');
+
+      let W, H, DPR, active = false, flakes = [];
+
+      function resize() {
+        DPR = Math.min(window.devicePixelRatio || 1, 2);
+        W = window.innerWidth; H = window.innerHeight;
+        canvas.width  = W * DPR;
+        canvas.height = H * DPR;
+        canvas.style.width  = W + 'px';
+        canvas.style.height = H + 'px';
+        ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+      }
+      window.addEventListener('resize', resize);
+      resize();
+
+      const COUNT = Math.max(80, Math.floor(W * H / 14000));
+
+      function makeFlake(top = false) {
+        const r = 1 + Math.random() * 2.8;
+        return {
+          x: Math.random() * W,
+          y: top ? -20 - Math.random() * H : Math.random() * H,
+          r,
+          vy: 0.3 + r * 0.35,        /* più grande = più veloce */
+          vxAmp: 0.4 + Math.random() * 0.9,
+          phase: Math.random() * Math.PI * 2,
+          omega: 0.004 + Math.random() * 0.008,
+          alpha: 0.55 + Math.random() * 0.45
+        };
+      }
+
+      for (let i = 0; i < COUNT; i++) flakes.push(makeFlake(false));
+
+      function frame() {
+        ctx.clearRect(0, 0, W, H);
+        if (active) {
+          for (const f of flakes) {
+            f.phase += f.omega;
+            f.x += Math.sin(f.phase) * f.vxAmp * 0.6;
+            f.y += f.vy;
+            if (f.y > H + 10) { Object.assign(f, makeFlake(true)); }
+            if (f.x < -10) f.x = W + 10;
+            if (f.x > W + 10) f.x = -10;
+
+            ctx.beginPath();
+            ctx.fillStyle = `rgba(255,255,255,${f.alpha})`;
+            ctx.shadowColor = 'rgba(255,255,255,0.6)';
+            ctx.shadowBlur  = 4;
+            ctx.arc(f.x, f.y, f.r, 0, Math.PI * 2);
+            ctx.fill();
+          }
+          ctx.shadowBlur = 0;
+        }
+        requestAnimationFrame(frame);
+      }
+      requestAnimationFrame(frame);
+
+      toggle.addEventListener('click', () => {
+        active = !active;
+        document.body.classList.toggle('snowing', active);
+      });
+    })();
   </script>
 </body>
 </html>
