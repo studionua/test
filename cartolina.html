@@ -28,8 +28,6 @@
       perspective: 1600px;
     }
 
-    .scene { perspective: 1600px; }
-
     .card {
       position: relative;
       width: 100%;
@@ -37,30 +35,14 @@
       transform-style: preserve-3d;
       cursor: pointer;
       filter: drop-shadow(0 18px 28px rgba(0,0,0,0.35));
-      transform: rotateY(0deg);
+      transition: transform 1.2s cubic-bezier(0.55, 0.1, 0.35, 1);
+      will-change: transform;
     }
 
-    /* Flip fisico: rotazione sul proprio asse con piccolo sollevamento
-       e leggero strappo di rotazione, simulando una mano che gira la carta. */
+    /* Rotazione sul proprio asse: il retro viene mostrato */
     .scene:hover .card,
     .scene.flipped .card {
-      animation: flip 1.3s cubic-bezier(0.55, 0.1, 0.35, 1) forwards;
-    }
-
-    .scene.unflipping .card {
-      animation: unflip 1.3s cubic-bezier(0.55, 0.1, 0.35, 1) forwards;
-    }
-
-    @keyframes flip {
-      0%   { transform: rotateY(0deg)   translateZ(0)    rotateZ(0deg); }
-      50%  { transform: rotateY(90deg)  translateZ(70px) rotateZ(-2.5deg); }
-      100% { transform: rotateY(180deg) translateZ(0)    rotateZ(0deg); }
-    }
-
-    @keyframes unflip {
-      0%   { transform: rotateY(180deg) translateZ(0)    rotateZ(0deg); }
-      50%  { transform: rotateY(90deg)  translateZ(70px) rotateZ(2.5deg); }
-      100% { transform: rotateY(0deg)   translateZ(0)    rotateZ(0deg); }
+      transform: rotateY(180deg);
     }
 
     /* IMPORTANTE: niente `overflow: hidden` o `border-radius` qui,
@@ -83,7 +65,10 @@
       -webkit-user-drag: none;
     }
 
-    .back { transform: rotateY(180deg); }
+    /* Ogni faccia su un proprio piano 3D, per evitare z-fighting
+       e garantire che backface-visibility funzioni in modo affidabile */
+    .front { transform: rotateY(0deg)   translateZ(1px); }
+    .back  { transform: rotateY(180deg) translateZ(1px); }
 
     /* ---- Scritta a mano sulle righe del retro ---- */
     .handwriting {
@@ -245,32 +230,10 @@
       writing = false;
     }
 
-    /* ---- Gestione flip/unflip per l'animazione di ritorno ---- */
-    let isFlipped = false;
-
-    scene.addEventListener('mouseenter', () => {
-      scene.classList.remove('unflipping');
-      isFlipped = true;
-      writeAll();
-    });
-
-    scene.addEventListener('mouseleave', () => {
-      if (!isFlipped) return;
-      isFlipped = false;
-      /* Forza l'animazione di ritorno */
-      scene.classList.add('unflipping');
-    });
-
-    /* Tap su mobile */
+    scene.addEventListener('mouseenter', writeAll);
     scene.addEventListener('click', () => {
-      if (scene.classList.contains('flipped')) {
-        scene.classList.remove('flipped');
-        scene.classList.add('unflipping');
-      } else {
-        scene.classList.remove('unflipping');
-        scene.classList.add('flipped');
-        writeAll();
-      }
+      scene.classList.toggle('flipped');
+      if (scene.classList.contains('flipped')) writeAll();
     });
   </script>
 </body>
