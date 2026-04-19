@@ -381,7 +381,7 @@
     });
 
     /* ===========================================================
-       NEVE – fiocchi + accumulo sul bordo superiore delle card
+       NEVE – solo fiocchi che cadono, nessun accumulo
        =========================================================== */
     (function snowModule() {
       const canvas = document.getElementById('snow');
@@ -390,10 +390,6 @@
 
       let W, H, DPR, active = false;
       const flakes = [];
-      const BIN = 3;                 /* larghezza in px di ogni colonna di neve */
-      const MAX_PILE = 14;           /* altezza massima dell'accumulo in px */
-      const cards = Array.from(document.querySelectorAll('.scene'));
-      const piles = cards.map(() => ({ bins: [], top: 0, left: 0, width: 0 }));
 
       function resize() {
         DPR = Math.min(window.devicePixelRatio || 1, 2);
@@ -403,23 +399,8 @@
         canvas.style.width  = W + 'px';
         canvas.style.height = H + 'px';
         ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
-        measurePiles(true);
       }
-
-      function measurePiles(keep) {
-        cards.forEach((scene, i) => {
-          const r = scene.getBoundingClientRect();
-          const p = piles[i];
-          p.top   = r.top;
-          p.left  = r.left;
-          p.width = r.width;
-          const n = Math.max(1, Math.ceil(r.width / BIN));
-          if (!keep || p.bins.length !== n) p.bins = new Array(n).fill(0);
-        });
-      }
-
       window.addEventListener('resize', resize);
-      window.addEventListener('scroll', () => measurePiles(true), { passive: true });
       resize();
 
       const COUNT = Math.max(80, Math.floor(W * H / 14000));
@@ -440,60 +421,13 @@
 
       for (let i = 0; i < COUNT; i++) flakes.push(makeFlake(false));
 
-      /* Verifica collisione di un fiocco con una pila:
-         se tocca il bordo superiore della card, viene assorbito
-         e la bin corrispondente cresce. */
-      function collide(f) {
-        for (const p of piles) {
-          if (p.width === 0) continue;
-          if (f.x < p.left || f.x > p.left + p.width) continue;
-          const bin = Math.max(0, Math.min(p.bins.length - 1, Math.floor((f.x - p.left) / BIN)));
-          const surfaceY = p.top - p.bins[bin];
-          if (f.y >= surfaceY && f.y <= surfaceY + 20) {
-            /* aggiungi al mucchietto + distribuzione ai vicini */
-            p.bins[bin] = Math.min(MAX_PILE, p.bins[bin] + 0.45);
-            if (bin > 0) p.bins[bin - 1] = Math.min(MAX_PILE, p.bins[bin - 1] + 0.18);
-            if (bin < p.bins.length - 1) p.bins[bin + 1] = Math.min(MAX_PILE, p.bins[bin + 1] + 0.18);
-            return true;
-          }
-        }
-        return false;
-      }
-
-      function drawPiles() {
-        ctx.fillStyle   = 'rgba(255,255,255,0.95)';
-        ctx.strokeStyle = 'rgba(255,255,255,0.75)';
-        ctx.lineWidth   = 1;
-        for (const p of piles) {
-          if (p.width === 0) continue;
-          ctx.beginPath();
-          ctx.moveTo(p.left, p.top + 1);
-          for (let i = 0; i < p.bins.length; i++) {
-            const x = p.left + i * BIN + BIN / 2;
-            const y = p.top - p.bins[i];
-            ctx.lineTo(x, y);
-          }
-          ctx.lineTo(p.left + p.width, p.top + 1);
-          ctx.closePath();
-          ctx.fill();
-        }
-      }
-
       function frame() {
         ctx.clearRect(0, 0, W, H);
-        /* Sempre visibile: la neve accumulata resta anche a neve spenta */
-        drawPiles();
-
         if (active) {
           for (const f of flakes) {
             f.phase += f.omega;
             f.x += Math.sin(f.phase) * f.vxAmp * 0.6;
             f.y += f.vy;
-
-            if (collide(f)) {
-              Object.assign(f, makeFlake(true));
-              continue;
-            }
             if (f.y > H + 10) { Object.assign(f, makeFlake(true)); continue; }
             if (f.x < -10) f.x = W + 10;
             if (f.x > W + 10) f.x = -10;
@@ -507,9 +441,6 @@
           }
           ctx.shadowBlur = 0;
         }
-
-        /* Ri-misura periodicamente per seguire eventuali spostamenti */
-        if ((frame.count = (frame.count || 0) + 1) % 30 === 0) measurePiles(true);
         requestAnimationFrame(frame);
       }
       requestAnimationFrame(frame);
@@ -517,8 +448,6 @@
       toggle.addEventListener('click', () => {
         active = !active;
         document.body.classList.toggle('snowing', active);
-        /* Reset accumulo se spegni la neve */
-        if (!active) piles.forEach(p => p.bins.fill(0));
       });
     })();
   </script>
