@@ -539,7 +539,7 @@ function initHeadingMarquee(scope = nextPage, immediate = false) {
       track,
       {
         xPercent: -50,
-        duration: 40,
+        duration: 90,
         ease: "none",
         repeat: -1,
       },

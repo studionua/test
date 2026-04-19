@@ -10,11 +10,32 @@
         '[meta-animation]',
         '[heading-hero-animation]'
     ];
+    // Translate English template headings to Italian once rehydrated.
+    var copyMap = {
+        'Book Now': 'Prenota',
+        'Who are we': 'Chi siamo',
+        'Get to know': 'Scopri',
+        'Order Online': 'Ordina online',
+        'Reserve': 'Prenota',
+        'View Menu': 'Vedi menu',
+        'Menu': 'Menu',
+        'Cooks Note': 'Note dello chef',
+        'Restaurant': 'Ristorante',
+        'Articles': 'Articoli',
+        'Cocktail': 'Cocktail',
+        'This Weeks Special': 'Piatto della settimana',
+        'Our Shop': 'Il nostro shop',
+        'Book a table': 'Prenota un tavolo'
+    };
+
     document.querySelectorAll(splitSelectors.join(',')).forEach(function (el) {
         // The saved markup wraps text as: <div><div>W</div><div>o</div>...</div>
         // textContent collapses it; we restore innerHTML to that flat text
         // preserving single spaces between words.
         var text = el.textContent.replace(/\s+/g, ' ').trim();
+        if (Object.prototype.hasOwnProperty.call(copyMap, text)) {
+            text = copyMap[text];
+        }
         el.innerHTML = text;
         el.removeAttribute('aria-label');
         delete el.dataset.headingAnimationInitialized;
