@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cartolina · Camigliatello Silano</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html, body {
+      width: 100%;
+      min-height: 100%;
+      background: #e8e4d8;
+      font-family: system-ui, sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 20px;
+    }
+
+    /* ---- Scena 3D ---- */
+    .scene {
+      width: 320px;
+      height: 500px;
+      perspective: 1600px;
+    }
+
+    .card {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      transform-style: preserve-3d;
+      transition: transform 1.1s cubic-bezier(0.22, 0.8, 0.28, 1);
+      cursor: pointer;
+      filter: drop-shadow(0 18px 24px rgba(0,0,0,0.25));
+    }
+
+    .scene:hover .card { transform: rotateY(180deg); }
+
+    .face {
+      position: absolute;
+      inset: 0;
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+      border-radius: 18px;
+      overflow: hidden;
+    }
+
+    .face img {
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: cover;
+      user-select: none;
+      -webkit-user-drag: none;
+    }
+
+    .back { transform: rotateY(180deg); }
+
+    /* ---- Righe dove appare il testo scritto a mano ---- */
+    .handwriting {
+      position: absolute;
+      /* Posizione sulle righe del retro cartolina */
+      left: 10.5%;
+      right: 10.5%;
+      top: 47%;
+      bottom: 18%;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      pointer-events: none;
+    }
+
+    .handwriting .line {
+      font-family: 'Caveat', cursive;
+      font-size: 22px;
+      line-height: 1;
+      color: #1a1a1a;
+      white-space: nowrap;
+      overflow: hidden;
+      transform: translateY(-4px) rotate(-0.6deg);
+      letter-spacing: 0.3px;
+    }
+
+    .handwriting .line:nth-child(2) { transform: translateY(-4px) rotate(0.4deg); }
+    .handwriting .line:nth-child(3) { transform: translateY(-4px) rotate(-0.3deg); }
+    .handwriting .line:nth-child(4) { transform: translateY(-4px) rotate(0.5deg); }
+
+    /* Cursore lampeggiante simulando la punta della penna */
+    .handwriting .line.writing::after {
+      content: "";
+      display: inline-block;
+      width: 2px;
+      height: 18px;
+      background: #1a1a1a;
+      margin-left: 2px;
+      vertical-align: middle;
+      animation: blink 0.7s steps(2) infinite;
+    }
+    @keyframes blink { 50% { opacity: 0; } }
+
+    .hint {
+      position: fixed;
+      bottom: 20px;
+      left: 0; right: 0;
+      text-align: center;
+      font-size: 12px;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: #5a5a4f;
+      opacity: 0.7;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="scene" id="scene">
+    <div class="card">
+      <div class="face front">
+        <img src="fronte.jpg" alt="Fronte cartolina" />
+      </div>
+      <div class="face back">
+        <img src="retro.jpg" alt="Retro cartolina" />
+        <div class="handwriting" id="handwriting">
+          <div class="line" data-text="Cara Anna,"></div>
+          <div class="line" data-text="la neve qui è incantevole,"></div>
+          <div class="line" data-text="ti penso ad ogni passo."></div>
+          <div class="line" data-text="Con affetto, Giulio"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="hint">passa il mouse sulla cartolina</div>
+
+  <script>
+    /* =========================================================
+       Flip card con scrittura a mano + suono di penna
+       ========================================================= */
+
+    const scene  = document.getElementById('scene');
+    const lines  = document.querySelectorAll('#handwriting .line');
+
+    /* --- Audio: suono di penna generato via Web Audio API --- */
+    let audioCtx = null;
+    let noiseBuffer = null;
+
+    function ensureAudio() {
+      if (audioCtx) return;
+      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+      /* Precalcola un buffer di rumore bianco (250 ms) */
+      const len = audioCtx.sampleRate * 0.25;
+      noiseBuffer = audioCtx.createBuffer(1, len, audioCtx.sampleRate);
+      const data = noiseBuffer.getChannelData(0);
+      for (let i = 0; i < len; i++) data[i] = Math.random() * 2 - 1;
+    }
+
+    /* Un breve "graffio" della penna: rumore filtrato con inviluppo rapido */
+    function penTick() {
+      if (!audioCtx) return;
+      const now = audioCtx.currentTime;
+
+      const src = audioCtx.createBufferSource();
+      src.buffer = noiseBuffer;
+      src.playbackRate.value = 0.8 + Math.random() * 0.5;
+
+      /* Band-pass per suono asciutto, alto, come penna su carta */
+      const bp = audioCtx.createBiquadFilter();
+      bp.type = 'bandpass';
+      bp.frequency.value = 2200 + Math.random() * 1800;
+      bp.Q.value = 1.2;
+
+      const hp = audioCtx.createBiquadFilter();
+      hp.type = 'highpass';
+      hp.frequency.value = 1200;
+
+      const gain = audioCtx.createGain();
+      const dur  = 0.035 + Math.random() * 0.03;
+      const peak = 0.08 + Math.random() * 0.05;
+      gain.gain.setValueAtTime(0, now);
+      gain.gain.linearRampToValueAtTime(peak, now + 0.004);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + dur);
+
+      src.connect(bp).connect(hp).connect(gain).connect(audioCtx.destination);
+      src.start(now);
+      src.stop(now + dur + 0.02);
+    }
+
+    /* --- Scrittura progressiva carattere per carattere --- */
+    const CHAR_MS       = 55;   /* velocità media per carattere */
+    const CHAR_JITTER   = 40;   /* variazione naturale          */
+    const SPACE_PAUSE   = 90;   /* pausa extra su spazi/virgole */
+    const LINE_PAUSE    = 420;  /* pausa tra una riga e l'altra */
+
+    const rand = (a, b) => a + Math.random() * (b - a);
+    const wait = ms => new Promise(r => setTimeout(r, ms));
+
+    let writing = false;
+    let written = false;
+
+    async function writeAll() {
+      if (writing || written) return;
+      writing = true;
+      ensureAudio();
+      if (audioCtx.state === 'suspended') await audioCtx.resume();
+
+      for (const line of lines) {
+        const text = line.dataset.text;
+        line.textContent = '';
+        line.classList.add('writing');
+
+        for (let i = 0; i < text.length; i++) {
+          const ch = text[i];
+          line.textContent += ch;
+
+          /* Il suono solo sui caratteri visibili */
+          if (ch !== ' ') penTick();
+
+          let delay = CHAR_MS + rand(-CHAR_JITTER, CHAR_JITTER);
+          if (ch === ' ' || ch === ',' || ch === '.') delay += SPACE_PAUSE;
+          await wait(delay);
+        }
+
+        line.classList.remove('writing');
+        await wait(LINE_PAUSE);
+      }
+
+      written = true;
+      writing = false;
+    }
+
+    /* Fai partire la scrittura quando si gira la cartolina */
+    scene.addEventListener('mouseenter', writeAll);
+
+    /* Tap su mobile: alterna flip e avvia scrittura */
+    scene.addEventListener('click', () => {
+      scene.classList.toggle('flipped');
+      if (scene.classList.contains('flipped')) writeAll();
+    });
+
+    /* Supporto al tap: forza il flip via classe */
+    const style = document.createElement('style');
+    style.textContent = `.scene.flipped .card { transform: rotateY(180deg); }`;
+    document.head.appendChild(style);
+  </script>
+</body>
+</html>
