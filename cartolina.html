@@ -211,6 +211,155 @@
     const rand = (a, b) => a + Math.random() * (b - a);
     const wait = ms => new Promise(r => setTimeout(r, ms));
 
+    /* ===========================================================
+       AUDIO – Web Audio API
+       - playPen(): suono di penna su carta, sintetizzato con
+         noise filtrato + sub-tono basso + envelope a colpo.
+       - playBell(): campanellina inarmonica molto breve, con
+         più armoniche e piccola coda riverberata.
+       =========================================================== */
+    let audioCtx = null;
+    let masterGain = null;
+    let convolver = null;
+
+    function initAudio() {
+      if (audioCtx) return;
+      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+      /* Volume master */
+      masterGain = audioCtx.createGain();
+      masterGain.gain.value = 0.9;
+      masterGain.connect(audioCtx.destination);
+
+      /* Piccolo riverbero (impulse response sintetizzato) */
+      const irLen = audioCtx.sampleRate * 0.6;
+      const ir    = audioCtx.createBuffer(2, irLen, audioCtx.sampleRate);
+      for (let c = 0; c < 2; c++) {
+        const d = ir.getChannelData(c);
+        for (let i = 0; i < irLen; i++) {
+          d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / irLen, 2.4);
+        }
+      }
+      convolver = audioCtx.createConvolver();
+      convolver.buffer = ir;
+      const wet = audioCtx.createGain();
+      wet.gain.value = 0.25;
+      convolver.connect(wet).connect(masterGain);
+    }
+
+    async function ensureAudioRunning() {
+      initAudio();
+      if (audioCtx.state === 'suspended') {
+        try { await audioCtx.resume(); } catch(e) {}
+      }
+    }
+
+    /* Precalcola un buffer di noise */
+    let _noise = null;
+    function noiseBuffer() {
+      if (_noise) return _noise;
+      const len = audioCtx.sampleRate * 0.3;
+      _noise = audioCtx.createBuffer(1, len, audioCtx.sampleRate);
+      const d = _noise.getChannelData(0);
+      for (let i = 0; i < len; i++) d[i] = Math.random() * 2 - 1;
+      return _noise;
+    }
+
+    /* ---- Penna su carta ---- */
+    function playPen() {
+      if (!audioCtx) return;
+      const now = audioCtx.currentTime;
+
+      /* Rumore filtrato: corpo acuto del graffio */
+      const src = audioCtx.createBufferSource();
+      src.buffer = noiseBuffer();
+      src.playbackRate.value = 0.75 + Math.random() * 0.5;
+
+      const bp = audioCtx.createBiquadFilter();
+      bp.type = 'bandpass';
+      bp.frequency.value = 2600 + Math.random() * 2200;
+      bp.Q.value = 1.4;
+
+      const hp = audioCtx.createBiquadFilter();
+      hp.type = 'highpass';
+      hp.frequency.value = 1100;
+
+      const g = audioCtx.createGain();
+      const dur  = 0.028 + Math.random() * 0.03;
+      const peak = 0.12 + Math.random() * 0.06;
+      g.gain.setValueAtTime(0, now);
+      g.gain.linearRampToValueAtTime(peak, now + 0.003);
+      g.gain.exponentialRampToValueAtTime(0.0005, now + dur);
+
+      src.connect(bp).connect(hp).connect(g);
+      g.connect(masterGain);
+      g.connect(convolver);
+      src.start(now);
+      src.stop(now + dur + 0.05);
+
+      /* Piccolo "tap" sub-tonale per dare corpo al colpo */
+      const thump = audioCtx.createOscillator();
+      const tg    = audioCtx.createGain();
+      thump.type  = 'triangle';
+      thump.frequency.setValueAtTime(180 + Math.random() * 60, now);
+      thump.frequency.exponentialRampToValueAtTime(60, now + 0.05);
+      tg.gain.setValueAtTime(0, now);
+      tg.gain.linearRampToValueAtTime(0.04, now + 0.002);
+      tg.gain.exponentialRampToValueAtTime(0.0005, now + 0.05);
+      thump.connect(tg).connect(masterGain);
+      thump.start(now);
+      thump.stop(now + 0.07);
+    }
+
+    /* ---- Campanellina: inarmonica, brevissima, cristallina ---- */
+    function playBell() {
+      if (!audioCtx) return;
+      const now = audioCtx.currentTime;
+
+      /* Frequenze inarmoniche tipiche di una piccola campanella */
+      const partials = [
+        { f: 1760, amp: 0.22, decay: 0.42 },
+        { f: 2640, amp: 0.14, decay: 0.28 },
+        { f: 3520, amp: 0.10, decay: 0.22 },
+        { f: 4620, amp: 0.07, decay: 0.16 },
+        { f: 880,  amp: 0.06, decay: 0.55 }
+      ];
+
+      const out = audioCtx.createGain();
+      out.gain.value = 0.9;
+      out.connect(masterGain);
+      out.connect(convolver);
+
+      partials.forEach((p, i) => {
+        const osc = audioCtx.createOscillator();
+        osc.type  = 'sine';
+        osc.frequency.value = p.f * (1 + (Math.random() - 0.5) * 0.004);
+
+        const g = audioCtx.createGain();
+        g.gain.setValueAtTime(0, now);
+        g.gain.linearRampToValueAtTime(p.amp, now + 0.003 + i * 0.001);
+        g.gain.exponentialRampToValueAtTime(0.0005, now + p.decay);
+
+        osc.connect(g).connect(out);
+        osc.start(now);
+        osc.stop(now + p.decay + 0.05);
+      });
+
+      /* Piccolo "ping" iniziale, rumore molto breve filtrato alto */
+      const src = audioCtx.createBufferSource();
+      src.buffer = noiseBuffer();
+      const hp = audioCtx.createBiquadFilter();
+      hp.type = 'highpass';
+      hp.frequency.value = 3500;
+      const pg = audioCtx.createGain();
+      pg.gain.setValueAtTime(0, now);
+      pg.gain.linearRampToValueAtTime(0.18, now + 0.002);
+      pg.gain.exponentialRampToValueAtTime(0.0005, now + 0.04);
+      src.connect(hp).connect(pg).connect(masterGain);
+      src.start(now);
+      src.stop(now + 0.06);
+    }
+
     /* Inizializza ogni cartolina in modo indipendente */
     document.querySelectorAll('.scene').forEach((scene) => {
       const lines = scene.querySelectorAll('.handwriting .line');
@@ -229,9 +378,10 @@
           line.textContent = '';
 
           for (let i = 0; i < text.length; i++) {
-            line.textContent += text[i];
-            let delay = CHAR_MS + rand(-CHAR_JITTER, CHAR_JITTER);
             const ch = text[i];
+            line.textContent += ch;
+            if (ch !== ' ') playPen();
+            let delay = CHAR_MS + rand(-CHAR_JITTER, CHAR_JITTER);
             if (ch === ' ' || ch === ',' || ch === '.') delay += SPACE_PAUSE;
             await wait(delay);
             if (myToken !== writeToken) return;
@@ -241,9 +391,13 @@
         }
       }
 
-      scene.addEventListener('click', () => {
+      scene.addEventListener('click', async () => {
+        await ensureAudioRunning();
         scene.classList.toggle('flipped');
-        if (scene.classList.contains('flipped')) writeAll();
+        if (scene.classList.contains('flipped')) {
+          playBell();
+          writeAll();
+        }
       });
     });
   </script>
