@@ -6,7 +6,7 @@
   <title>Cartolina · Camigliatello Silano</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;600&family=UnifrakturMaguntia&family=Cormorant+Garamond:wght@400;600&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -19,6 +19,15 @@
       align-items: center;
       justify-content: center;
       padding: 40px 20px;
+    }
+
+    /* ---- Palette ---- */
+    :root {
+      --green:  #2b3321;
+      --green2: #3a4430;
+      --cream:  #ece7d3;
+      --ink:    #1a1a1a;
+      --stamp-red: #8a1a22;
     }
 
     /* ---- Scena 3D ---- */
@@ -38,7 +47,8 @@
       filter: drop-shadow(0 18px 24px rgba(0,0,0,0.25));
     }
 
-    .scene:hover .card { transform: rotateY(180deg); }
+    .scene:hover .card,
+    .scene.flipped .card { transform: rotateY(180deg); }
 
     .face {
       position: absolute;
@@ -47,27 +57,29 @@
       -webkit-backface-visibility: hidden;
       border-radius: 18px;
       overflow: hidden;
+      background: var(--cream);
     }
 
-    .face img {
-      width: 100%;
-      height: 100%;
-      display: block;
-      object-fit: cover;
-      user-select: none;
-      -webkit-user-drag: none;
-    }
+    .face svg { display: block; width: 100%; height: 100%; }
 
     .back { transform: rotateY(180deg); }
 
-    /* ---- Righe dove appare il testo scritto a mano ---- */
+    /* ---- Monogramma AB ---- */
+    .monogram {
+      font-family: 'UnifrakturMaguntia', serif;
+      font-size: 34px;
+      fill: var(--green);
+      letter-spacing: -2px;
+    }
+    .monogram.cream { fill: var(--cream); }
+
+    /* ---- Scritta a mano ---- */
     .handwriting {
       position: absolute;
-      /* Posizione sulle righe del retro cartolina */
-      left: 10.5%;
-      right: 10.5%;
-      top: 47%;
-      bottom: 18%;
+      left: 11%;
+      right: 11%;
+      top: 48%;
+      bottom: 17%;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
@@ -78,24 +90,23 @@
       font-family: 'Caveat', cursive;
       font-size: 22px;
       line-height: 1;
-      color: #1a1a1a;
+      color: var(--cream);
       white-space: nowrap;
       overflow: hidden;
-      transform: translateY(-4px) rotate(-0.6deg);
+      transform: translateY(-6px) rotate(-0.6deg);
       letter-spacing: 0.3px;
     }
 
-    .handwriting .line:nth-child(2) { transform: translateY(-4px) rotate(0.4deg); }
-    .handwriting .line:nth-child(3) { transform: translateY(-4px) rotate(-0.3deg); }
-    .handwriting .line:nth-child(4) { transform: translateY(-4px) rotate(0.5deg); }
+    .handwriting .line:nth-child(2) { transform: translateY(-6px) rotate(0.4deg); }
+    .handwriting .line:nth-child(3) { transform: translateY(-6px) rotate(-0.3deg); }
+    .handwriting .line:nth-child(4) { transform: translateY(-6px) rotate(0.5deg); }
 
-    /* Cursore lampeggiante simulando la punta della penna */
     .handwriting .line.writing::after {
       content: "";
       display: inline-block;
       width: 2px;
       height: 18px;
-      background: #1a1a1a;
+      background: var(--cream);
       margin-left: 2px;
       vertical-align: middle;
       animation: blink 0.7s steps(2) infinite;
@@ -119,11 +130,228 @@
 
   <div class="scene" id="scene">
     <div class="card">
+
+      <!-- ================== FRONTE ================== -->
       <div class="face front">
-        <img src="fronte.jpg" alt="Fronte cartolina" />
+        <svg viewBox="0 0 320 500" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0"  stop-color="#d9e4ec"/>
+              <stop offset="1"  stop-color="#f3efe4"/>
+            </linearGradient>
+            <linearGradient id="mountain" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0"  stop-color="#b9c4cf"/>
+              <stop offset="1"  stop-color="#8a97a4"/>
+            </linearGradient>
+            <clipPath id="frontClip">
+              <rect x="14" y="14" width="292" height="472" rx="10"/>
+            </clipPath>
+          </defs>
+
+          <!-- Bordo verde -->
+          <rect x="0" y="0" width="320" height="500" rx="18" fill="#2b3321"/>
+          <rect x="14" y="14" width="292" height="472" rx="10" fill="url(#sky)"/>
+
+          <g clip-path="url(#frontClip)">
+            <!-- Montagne lontane -->
+            <polygon points="140,150 185,95 225,145 260,110 300,165 306,180 14,180 14,165 60,130 95,160" fill="url(#mountain)"/>
+            <!-- neve sulle cime con piccoli triangoli bianchi -->
+            <polygon points="172,140 185,115 198,140" fill="#fff" opacity="0.9"/>
+            <polygon points="250,140 260,125 270,140" fill="#fff" opacity="0.9"/>
+            <polygon points="80,160 95,145 108,160" fill="#fff" opacity="0.8"/>
+            <!-- Neve sulle cime -->
+            <path d="M160,135 L185,95 L210,135 L198,140 L185,115 L172,140 Z" fill="#fff"/>
+            <path d="M240,130 L260,110 L280,140 L270,142 L260,125 L250,142 Z" fill="#fff"/>
+
+            <!-- File di case di legno -->
+            <g>
+              <!-- casa grande sinistra -->
+              <rect x="40" y="185" width="90" height="70" fill="#7a4a2a"/>
+              <polygon points="35,185 85,148 135,185" fill="#5a3820"/>
+              <polygon points="35,185 85,148 135,185 130,180 85,156 40,180" fill="#fff"/>
+              <rect x="55" y="210" width="14" height="22" fill="#f4d27a"/>
+              <rect x="82" y="210" width="14" height="22" fill="#f4d27a"/>
+              <rect x="108" y="210" width="14" height="22" fill="#f4d27a"/>
+              <rect x="78" y="235" width="20" height="22" fill="#3a2418"/>
+
+              <!-- chiesa centrale con campanile -->
+              <rect x="140" y="175" width="55" height="85" fill="#8a5a38"/>
+              <polygon points="135,175 167,140 200,175" fill="#4a2e1c"/>
+              <polygon points="135,175 167,140 200,175 195,172 167,150 140,172" fill="#fff"/>
+              <rect x="160" y="155" width="14" height="25" fill="#4a2e1c"/>
+              <polygon points="157,155 167,140 177,155" fill="#2a1a10"/>
+              <rect x="155" y="200" width="10" height="16" fill="#f4d27a"/>
+              <rect x="170" y="200" width="10" height="16" fill="#f4d27a"/>
+
+              <!-- casa destra -->
+              <rect x="200" y="190" width="70" height="65" fill="#6a3f24"/>
+              <polygon points="195,190 235,158 278,190" fill="#4a2818"/>
+              <polygon points="195,190 235,158 278,190 272,187 235,166 200,187" fill="#fff"/>
+              <rect x="215" y="215" width="12" height="18" fill="#f4d27a"/>
+              <rect x="240" y="215" width="12" height="18" fill="#f4d27a"/>
+            </g>
+
+            <!-- Pini a sinistra -->
+            <g>
+              <polygon points="25,230 5,200 15,200 0,170 20,170 10,140 30,140 45,170 35,170 50,200 40,200 55,230" fill="#2d4a2a"/>
+              <polygon points="25,232 5,202 15,202 0,172 20,172 10,142 30,142 45,172 35,172 50,202 40,202 55,232" fill="#fff" opacity="0.35"/>
+              <rect x="26" y="228" width="6" height="14" fill="#4a2e1c"/>
+
+              <polygon points="70,260 55,235 63,235 50,210 67,210 58,185 78,185 92,210 82,210 98,235 88,235 102,260" fill="#25402a"/>
+              <polygon points="70,262 55,237 63,237 50,212 67,212 58,187 78,187 92,212 82,212 98,237 88,237 102,262" fill="#fff" opacity="0.28"/>
+              <rect x="78" y="257" width="6" height="12" fill="#4a2e1c"/>
+            </g>
+
+            <!-- Strada/neve -->
+            <path d="M14,290 Q160,250 306,285 L306,360 L14,380 Z" fill="#f4f1e6"/>
+            <path d="M14,290 Q160,250 306,285" stroke="#d7d2bf" stroke-width="1" fill="none"/>
+            <!-- tracce di strada -->
+            <path d="M100,300 Q180,285 280,300" stroke="#cfc9b5" stroke-width="2" fill="none" opacity="0.7"/>
+            <path d="M110,320 Q190,305 290,318" stroke="#cfc9b5" stroke-width="2" fill="none" opacity="0.6"/>
+
+            <!-- Piccoli personaggi in strada -->
+            <g>
+              <!-- gruppo centrale -->
+              <circle cx="158" cy="270" r="3" fill="#2a2a2a"/>
+              <rect x="155" y="273" width="6" height="10" fill="#2a2a2a"/>
+              <circle cx="168" cy="272" r="3" fill="#2a2a2a"/>
+              <rect x="165" y="275" width="6" height="10" fill="#2a2a2a"/>
+              <circle cx="178" cy="270" r="3" fill="#2a2a2a"/>
+              <rect x="175" y="273" width="6" height="10" fill="#2a2a2a"/>
+              <circle cx="195" cy="273" r="3" fill="#2a2a2a"/>
+              <rect x="192" y="276" width="6" height="11" fill="#2a2a2a"/>
+            </g>
+
+            <!-- Due donne con cappotto rosso/verde in primo piano -->
+            <g>
+              <circle cx="70" cy="335" r="5" fill="#e8b07a"/>
+              <path d="M62,340 L78,340 L80,380 L60,380 Z" fill="#8a1a22"/>
+              <rect x="63" y="378" width="6" height="10" fill="#2a1a10"/>
+              <rect x="71" y="378" width="6" height="10" fill="#2a1a10"/>
+
+              <circle cx="100" cy="340" r="5" fill="#e8b07a"/>
+              <path d="M92,345 L108,345 L110,385 L90,385 Z" fill="#2d5a3a"/>
+              <rect x="93" y="383" width="6" height="10" fill="#2a1a10"/>
+              <rect x="101" y="383" width="6" height="10" fill="#2a1a10"/>
+            </g>
+
+            <!-- Ciclista -->
+            <g transform="translate(200,330)">
+              <circle cx="0" cy="20" r="8" fill="none" stroke="#2a2a2a" stroke-width="1.5"/>
+              <circle cx="22" cy="20" r="8" fill="none" stroke="#2a2a2a" stroke-width="1.5"/>
+              <path d="M0,20 L11,8 L22,20" stroke="#2a2a2a" stroke-width="1.5" fill="none"/>
+              <path d="M11,8 L14,-2" stroke="#2a2a2a" stroke-width="1.5"/>
+              <circle cx="14" cy="-6" r="3" fill="#2a2a2a"/>
+            </g>
+
+            <!-- Automobile d'epoca -->
+            <g transform="translate(248,340)">
+              <rect x="0" y="5" width="45" height="14" rx="3" fill="#6a8a9a"/>
+              <path d="M5,5 Q10,-4 22,-4 Q34,-4 40,5" fill="#6a8a9a"/>
+              <rect x="10" y="-2" width="10" height="7" fill="#cde3ec"/>
+              <rect x="24" y="-2" width="10" height="7" fill="#cde3ec"/>
+              <circle cx="10" cy="20" r="4" fill="#1a1a1a"/>
+              <circle cx="35" cy="20" r="4" fill="#1a1a1a"/>
+            </g>
+
+            <!-- Pannello crema in basso -->
+            <rect x="14" y="400" width="292" height="86" fill="#ece7d3"/>
+          </g>
+
+          <!-- Monogramma AB fronte -->
+          <text x="160" y="462" text-anchor="middle" class="monogram">AB</text>
+          <!-- piccola cornice sotto il monogramma -->
+          <path d="M138,470 Q160,478 182,470" stroke="#2b3321" stroke-width="0.8" fill="none" opacity="0.6"/>
+        </svg>
       </div>
+
+      <!-- ================== RETRO ================== -->
       <div class="face back">
-        <img src="retro.jpg" alt="Retro cartolina" />
+        <svg viewBox="0 0 320 500" xmlns="http://www.w3.org/2000/svg">
+          <!-- Sfondo verde con cornice interna crema -->
+          <rect x="0" y="0" width="320" height="500" rx="18" fill="#2b3321"/>
+          <rect x="16" y="16" width="288" height="468" rx="8"
+                fill="none" stroke="#ece7d3" stroke-width="1" opacity="0.7"/>
+
+          <!-- Francobollo in alto a destra -->
+          <g transform="translate(200,40)">
+            <!-- perforazione: bordo a cerchietti (rettangolo + piccoli cerchi verdi) -->
+            <rect x="0" y="0" width="90" height="100" fill="#ece7d3"/>
+            <!-- perforazioni simulate: mascheriamo con cerchi dello stesso verde -->
+            <g fill="#2b3321">
+              <!-- top -->
+              <circle cx="0"  cy="0" r="3"/><circle cx="10" cy="0" r="3"/>
+              <circle cx="20" cy="0" r="3"/><circle cx="30" cy="0" r="3"/>
+              <circle cx="40" cy="0" r="3"/><circle cx="50" cy="0" r="3"/>
+              <circle cx="60" cy="0" r="3"/><circle cx="70" cy="0" r="3"/>
+              <circle cx="80" cy="0" r="3"/><circle cx="90" cy="0" r="3"/>
+              <!-- bottom -->
+              <circle cx="0"  cy="100" r="3"/><circle cx="10" cy="100" r="3"/>
+              <circle cx="20" cy="100" r="3"/><circle cx="30" cy="100" r="3"/>
+              <circle cx="40" cy="100" r="3"/><circle cx="50" cy="100" r="3"/>
+              <circle cx="60" cy="100" r="3"/><circle cx="70" cy="100" r="3"/>
+              <circle cx="80" cy="100" r="3"/><circle cx="90" cy="100" r="3"/>
+              <!-- left -->
+              <circle cx="0" cy="10" r="3"/><circle cx="0" cy="20" r="3"/>
+              <circle cx="0" cy="30" r="3"/><circle cx="0" cy="40" r="3"/>
+              <circle cx="0" cy="50" r="3"/><circle cx="0" cy="60" r="3"/>
+              <circle cx="0" cy="70" r="3"/><circle cx="0" cy="80" r="3"/>
+              <circle cx="0" cy="90" r="3"/>
+              <!-- right -->
+              <circle cx="90" cy="10" r="3"/><circle cx="90" cy="20" r="3"/>
+              <circle cx="90" cy="30" r="3"/><circle cx="90" cy="40" r="3"/>
+              <circle cx="90" cy="50" r="3"/><circle cx="90" cy="60" r="3"/>
+              <circle cx="90" cy="70" r="3"/><circle cx="90" cy="80" r="3"/>
+              <circle cx="90" cy="90" r="3"/>
+            </g>
+
+            <!-- Scritta verticale sinistra -->
+            <text x="10" y="90" transform="rotate(-90 10,90)"
+                  font-family="Cormorant Garamond, serif" font-size="7"
+                  letter-spacing="2" fill="#2b3321">
+              ALBERGO ANETTE BIANCO
+            </text>
+
+            <!-- "Buon Natale" in alto -->
+            <text x="68" y="22" text-anchor="end"
+                  font-family="Caveat, cursive" font-style="italic"
+                  font-size="14" fill="#2b3321">Buon</text>
+            <text x="80" y="34" text-anchor="end"
+                  font-family="Caveat, cursive" font-style="italic"
+                  font-size="14" fill="#2b3321">Natale</text>
+
+            <!-- Pacchetto regalo -->
+            <g transform="translate(36,40)">
+              <rect x="0" y="10" width="36" height="30" fill="#8a1a22"/>
+              <rect x="15" y="10" width="6" height="30" fill="#ece7d3"/>
+              <rect x="0" y="20" width="36" height="4" fill="#ece7d3"/>
+              <!-- fiocco -->
+              <path d="M18,10 C10,2 4,2 10,10 Z" fill="#8a1a22"/>
+              <path d="M18,10 C26,2 32,2 26,10 Z" fill="#8a1a22"/>
+              <circle cx="18" cy="10" r="2" fill="#ece7d3"/>
+            </g>
+
+            <!-- Didascalia in basso -->
+            <text x="45" y="95" text-anchor="middle"
+                  font-family="Cormorant Garamond, serif" font-size="5.5"
+                  letter-spacing="1.2" fill="#2b3321">
+              CAMIGLIATELLO SILANO
+            </text>
+          </g>
+
+          <!-- Quattro righe per la scrittura -->
+          <g stroke="#ece7d3" stroke-width="1" opacity="0.85">
+            <line x1="36" y1="260" x2="284" y2="260"/>
+            <line x1="36" y1="305" x2="284" y2="305"/>
+            <line x1="36" y1="350" x2="284" y2="350"/>
+            <line x1="36" y1="395" x2="284" y2="395"/>
+          </g>
+
+          <!-- Monogramma AB retro -->
+          <text x="160" y="458" text-anchor="middle" class="monogram cream">AB</text>
+          <path d="M138,466 Q160,474 182,466" stroke="#ece7d3" stroke-width="0.8" fill="none" opacity="0.7"/>
+        </svg>
+
         <div class="handwriting" id="handwriting">
           <div class="line" data-text="Cara Anna,"></div>
           <div class="line" data-text="la neve qui è incantevole,"></div>
@@ -131,44 +359,36 @@
           <div class="line" data-text="Con affetto, Giulio"></div>
         </div>
       </div>
+
     </div>
   </div>
 
   <div class="hint">passa il mouse sulla cartolina</div>
 
   <script>
-    /* =========================================================
-       Flip card con scrittura a mano + suono di penna
-       ========================================================= */
+    const scene = document.getElementById('scene');
+    const lines = document.querySelectorAll('#handwriting .line');
 
-    const scene  = document.getElementById('scene');
-    const lines  = document.querySelectorAll('#handwriting .line');
-
-    /* --- Audio: suono di penna generato via Web Audio API --- */
+    /* ---- Suono penna via Web Audio API ---- */
     let audioCtx = null;
     let noiseBuffer = null;
 
     function ensureAudio() {
       if (audioCtx) return;
       audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-
-      /* Precalcola un buffer di rumore bianco (250 ms) */
       const len = audioCtx.sampleRate * 0.25;
       noiseBuffer = audioCtx.createBuffer(1, len, audioCtx.sampleRate);
       const data = noiseBuffer.getChannelData(0);
       for (let i = 0; i < len; i++) data[i] = Math.random() * 2 - 1;
     }
 
-    /* Un breve "graffio" della penna: rumore filtrato con inviluppo rapido */
     function penTick() {
       if (!audioCtx) return;
       const now = audioCtx.currentTime;
-
       const src = audioCtx.createBufferSource();
       src.buffer = noiseBuffer;
       src.playbackRate.value = 0.8 + Math.random() * 0.5;
 
-      /* Band-pass per suono asciutto, alto, come penna su carta */
       const bp = audioCtx.createBiquadFilter();
       bp.type = 'bandpass';
       bp.frequency.value = 2200 + Math.random() * 1800;
@@ -190,11 +410,11 @@
       src.stop(now + dur + 0.02);
     }
 
-    /* --- Scrittura progressiva carattere per carattere --- */
-    const CHAR_MS       = 55;   /* velocità media per carattere */
-    const CHAR_JITTER   = 40;   /* variazione naturale          */
-    const SPACE_PAUSE   = 90;   /* pausa extra su spazi/virgole */
-    const LINE_PAUSE    = 420;  /* pausa tra una riga e l'altra */
+    /* ---- Scrittura progressiva ---- */
+    const CHAR_MS     = 55;
+    const CHAR_JITTER = 40;
+    const SPACE_PAUSE = 90;
+    const LINE_PAUSE  = 420;
 
     const rand = (a, b) => a + Math.random() * (b - a);
     const wait = ms => new Promise(r => setTimeout(r, ms));
@@ -216,10 +436,7 @@
         for (let i = 0; i < text.length; i++) {
           const ch = text[i];
           line.textContent += ch;
-
-          /* Il suono solo sui caratteri visibili */
           if (ch !== ' ') penTick();
-
           let delay = CHAR_MS + rand(-CHAR_JITTER, CHAR_JITTER);
           if (ch === ' ' || ch === ',' || ch === '.') delay += SPACE_PAUSE;
           await wait(delay);
@@ -233,19 +450,11 @@
       writing = false;
     }
 
-    /* Fai partire la scrittura quando si gira la cartolina */
     scene.addEventListener('mouseenter', writeAll);
-
-    /* Tap su mobile: alterna flip e avvia scrittura */
     scene.addEventListener('click', () => {
       scene.classList.toggle('flipped');
       if (scene.classList.contains('flipped')) writeAll();
     });
-
-    /* Supporto al tap: forza il flip via classe */
-    const style = document.createElement('style');
-    style.textContent = `.scene.flipped .card { transform: rotateY(180deg); }`;
-    document.head.appendChild(style);
   </script>
 </body>
 </html>
