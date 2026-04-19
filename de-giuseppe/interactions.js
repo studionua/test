@@ -136,67 +136,26 @@
     }
 
     // ------------------------------------------------------------------
-    // RESERVE card
+    // RESERVE — navigate to prenota.html (no card animation)
     // ------------------------------------------------------------------
     function setupReserve() {
-        var trigger  = document.querySelector('.reserveinteractiontrigger');
-        var card     = document.querySelector('.reservecard');
-        var blackout = document.querySelector('.reserveblackoverlay');
-        var closeBtn = document.querySelector('.rerserveclosebutton');
-
-        log('reserve setup', { trigger: !!trigger, card: !!card, blackout: !!blackout, closeBtn: !!closeBtn });
-        if (!trigger || !card) return;
-
-        var isOpen = false;
-
-        gsap.set(card,    { autoAlpha: 0, y: '2rem', display: 'none' });
-        if (blackout) gsap.set(blackout, { autoAlpha: 0, display: 'none' });
-
-        function open() {
-            if (isOpen) return;
-            isOpen = true;
-            document.body.style.overflow = 'hidden';
-            if (blackout) {
-                blackout.style.display = 'block';
-                gsap.to(blackout, { autoAlpha: 1, duration: 0.3, ease: 'power2.out' });
-            }
-            card.style.display = 'flex';
-            gsap.fromTo(card,
-                { autoAlpha: 0, y: '2rem' },
-                { autoAlpha: 1, y: 0, duration: 0.55, ease: 'power3.out' });
-        }
-        function close() {
-            if (!isOpen) return;
-            isOpen = false;
-            document.body.style.overflow = '';
-            gsap.to(card, { autoAlpha: 0, y: '2rem', duration: 0.35, ease: 'power2.in',
-                onComplete: function () { card.style.display = 'none'; }});
-            if (blackout) gsap.to(blackout, { autoAlpha: 0, duration: 0.3, ease: 'power2.in',
-                onComplete: function () { blackout.style.display = 'none'; }});
-        }
+        var trigger = document.querySelector('.reserveinteractiontrigger');
+        if (!trigger) return;
+        trigger.style.cursor = 'pointer';
 
         document.addEventListener('click', function (e) {
-            if (!isOpen && e.target.closest('.reserveinteractiontrigger')) {
+            if (e.target.closest('.reserveinteractiontrigger')) {
                 e.preventDefault();
                 e.stopPropagation();
-                open();
-                return;
-            }
-            if (isOpen && (e.target.closest('.rerserveclosebutton') || e.target === blackout)) {
-                e.preventDefault();
-                close();
-                return;
+                window.location.href = './prenota.html';
             }
         }, true);
 
-        trigger.style.cursor = 'pointer';
-        if (closeBtn) closeBtn.style.cursor = 'pointer';
-
-        document.addEventListener('keydown', function (e) {
-            if (e.key === 'Escape' && isOpen) close();
-        });
-
-        window.__reserve = { open: open, close: close };
+        // Hide the residual reserve card DOM so it doesn't flash on load
+        var card = document.querySelector('.reservecard');
+        var blackout = document.querySelector('.reserveblackoverlay');
+        if (card) card.style.display = 'none';
+        if (blackout) blackout.style.display = 'none';
     }
 })();
 

@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prenota — De Giuseppe Pizzeria</title>
+    <meta name="description" content="Prenota il tuo tavolo da De Giuseppe Pizzeria.">
+
+    <link rel="stylesheet" href="./Da Maria - Webflow Ecommerce website template_files/damaria-roma.shared.68af16eab.min.css" crossorigin="anonymous">
+    <link rel="stylesheet" href="./Da Maria - Webflow Ecommerce website template_files/css" media="all">
+    <link rel="stylesheet" href="./Da Maria - Webflow Ecommerce website template_files/styles.css">
+
+    <style>
+        :root { --red100: #1a1a1a !important; --red200: #1a1a1a !important; }
+
+        /* Neutralize any color: red rules from shared min.css */
+        h1, h2, h3, h4, h5, h6 { color: #1a1a1a; }
+        .textcolorred, .bgcolorred, .gault-milleau-listed { color: #1a1a1a !important; background-color: transparent !important; }
+        svg path[fill="#E7A9A8"] { fill: #c9c4ba !important; }
+        svg path[stroke="#E7A9A8"] { stroke: #c9c4ba !important; }
+
+        body {
+            margin: 0;
+            font-family: 'PT Sans', sans-serif;
+            background: var(--beige-body-in-combination-with-paper-structure-bg, #f7f4ec);
+            color: #1a1a1a;
+            min-height: 100vh;
+        }
+
+        .prenota-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem 3rem;
+            border-bottom: 1px solid #1a1a1a;
+        }
+        .prenota-nav .brand {
+            font-family: 'Bitter', serif;
+            font-weight: 700;
+            font-size: 1.4rem;
+            color: #1a1a1a;
+            text-decoration: none;
+            letter-spacing: 0.05em;
+        }
+        .prenota-nav .brand em {
+            font-style: italic;
+            font-weight: 400;
+            font-size: 0.85rem;
+            margin-left: 0.5rem;
+            color: #1a1a1a;
+        }
+        .prenota-nav .back {
+            font-family: 'PT Sans', sans-serif;
+            font-size: 0.85rem;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: #1a1a1a;
+            text-decoration: none;
+            border: 1px solid #1a1a1a;
+            padding: 0.6rem 1.4rem;
+            border-radius: 999px;
+            transition: background 0.3s ease, color 0.3s ease;
+        }
+        .prenota-nav .back:hover {
+            background: #1a1a1a;
+            color: #f7f4ec;
+        }
+
+        .prenota-wrap {
+            max-width: 920px;
+            margin: 0 auto;
+            padding: 5rem 2rem;
+            text-align: center;
+        }
+        .prenota-eyebrow {
+            font-family: 'PT Sans', sans-serif;
+            font-size: 0.78rem;
+            letter-spacing: 0.25em;
+            text-transform: uppercase;
+            color: #1a1a1a;
+            margin-bottom: 1.5rem;
+        }
+        .prenota-eyebrow::before {
+            content: "";
+            display: inline-block;
+            width: 28px;
+            height: 1px;
+            background: #1a1a1a;
+            vertical-align: middle;
+            margin-right: 0.7rem;
+            transform: translateY(-2px);
+        }
+        .prenota-title {
+            font-family: 'Bitter', serif;
+            font-weight: 700;
+            font-size: clamp(4rem, 12vw, 10rem);
+            line-height: 0.95;
+            letter-spacing: -0.02em;
+            color: #1a1a1a;
+            margin: 0 0 1rem;
+        }
+        .prenota-sub {
+            font-family: 'Bitter', serif;
+            font-style: italic;
+            font-size: clamp(1.2rem, 2vw, 1.6rem);
+            color: #1a1a1a;
+            margin-bottom: 3rem;
+        }
+
+        .thefork-placeholder {
+            border: 2px dashed #1a1a1a;
+            background: #ffffff;
+            padding: 4rem 2rem;
+            margin: 0 auto;
+            max-width: 720px;
+            text-align: center;
+            font-family: 'PT Sans', sans-serif;
+            position: relative;
+        }
+        .thefork-placeholder::before {
+            content: "TheFork widget placeholder";
+            display: inline-block;
+            font-size: 0.72rem;
+            letter-spacing: 0.24em;
+            text-transform: uppercase;
+            background: #1a1a1a;
+            color: #f7f4ec;
+            padding: 0.3rem 0.8rem;
+            position: absolute;
+            top: -14px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        .thefork-placeholder h2 {
+            font-family: 'Bitter', serif;
+            font-weight: 400;
+            font-size: 2rem;
+            margin: 0 0 1rem;
+            color: #1a1a1a !important;
+        }
+        .thefork-placeholder p {
+            font-size: 1rem;
+            line-height: 1.7;
+            color: #333;
+            max-width: 48ch;
+            margin: 0 auto 2rem;
+        }
+        .thefork-placeholder code {
+            display: block;
+            background: #f0ede3;
+            padding: 1rem;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 0.85rem;
+            text-align: left;
+            overflow-x: auto;
+            margin-top: 1rem;
+            white-space: pre;
+        }
+        .thefork-cta {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.85rem 2rem;
+            background: #1a1a1a;
+            color: #f7f4ec;
+            text-decoration: none;
+            font-size: 0.82rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            border-radius: 999px;
+            font-weight: 700;
+            transition: background 0.3s ease;
+            margin-top: 1rem;
+        }
+        .thefork-cta:hover { background: #444; }
+
+        .prenota-info {
+            margin-top: 4rem;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            text-align: left;
+            max-width: 720px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .prenota-info .info-block h3 {
+            font-family: 'PT Sans', sans-serif;
+            font-size: 0.72rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            margin-bottom: 0.5rem;
+            color: #1a1a1a;
+        }
+        .prenota-info .info-block p {
+            font-family: 'Bitter', serif;
+            font-size: 1rem;
+            line-height: 1.5;
+            color: #1a1a1a;
+        }
+
+        @media (max-width: 700px) {
+            .prenota-nav { padding: 1rem 1.5rem; }
+            .prenota-nav .brand { font-size: 1.1rem; }
+            .prenota-wrap { padding: 3rem 1.5rem; }
+            .prenota-info { grid-template-columns: 1fr; gap: 1.5rem; }
+            .thefork-placeholder { padding: 3rem 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+<nav class="prenota-nav">
+    <a href="./index.html" class="brand">DE GIUSEPPE <em>Pizzeria</em></a>
+    <a href="./index.html" class="back">← Torna al sito</a>
+</nav>
+
+<main class="prenota-wrap">
+    <p class="prenota-eyebrow">Prenota online</p>
+    <h1 class="prenota-title">Prenota</h1>
+    <p class="prenota-sub">La tua tavola a De Giuseppe</p>
+
+    <!-- ========================================================
+         TheFork widget goes here. Replace the placeholder below
+         with the exact snippet provided by TheFork, es.:
+
+         <div id="fork-widget-container"></div>
+         <script src="https://widget.thefork.com/..." async></script>
+
+         or the iframe-based embed.
+         ======================================================== -->
+    <div class="thefork-placeholder" id="fork-widget-container">
+        <h2>Widget TheFork</h2>
+        <p>
+            Qui andrà lo snippet di prenotazione fornito da TheFork.
+            Incollalo al posto di questo placeholder.
+        </p>
+        <code>&lt;a class="thefork-widget-button" data-restaurant="ID_RISTORANTE"&gt;Prenota&lt;/a&gt;
+&lt;script src="https://widget.thefork.com/widget.js" async&gt;&lt;/script&gt;</code>
+        <a href="#" class="thefork-cta">Prenota ora →</a>
+    </div>
+
+    <section class="prenota-info">
+        <div class="info-block">
+            <h3>Orari</h3>
+            <p>Cena: 19:30 — 23:30<br>Pranzo Dom: 12:30 — 15:00</p>
+        </div>
+        <div class="info-block">
+            <h3>Dove</h3>
+            <p>De Giuseppe Pizzeria<br>Calabria, Italia</p>
+        </div>
+        <div class="info-block">
+            <h3>Contatti</h3>
+            <p>+39 000 000 0000<br>prenota@degiuseppe.it</p>
+        </div>
+    </section>
+</main>
+
+</body>
+</html>
