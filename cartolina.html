@@ -68,6 +68,19 @@
         min-width: 316px;
         scroll-snap-align: center;
       }
+
+      /* Icona neve: sul mobile evita di sovrapporsi alle card:
+         spostala in basso a destra con più margine. */
+      .snow-toggle {
+        top: auto;
+        bottom: 24px;
+        right: 18px;
+        width: 42px;
+        height: 42px;
+        font-size: 20px;
+      }
+
+      .hint { bottom: 78px; }
     }
 
     .card {
@@ -352,10 +365,18 @@
 
       scene.addEventListener('click', async () => {
         await ensureAudioRunning();
+        const wasFlipped = scene.classList.contains('flipped');
         scene.classList.toggle('flipped');
-        if (scene.classList.contains('flipped')) {
+
+        if (!wasFlipped) {
+          /* Verso il retro: bell + scrittura */
           playBell();
           writeAll();
+        } else {
+          /* Torno al fronte mentre sto scrivendo: annulla il loop
+             di scrittura in corso. L'audio penna si ferma dal `finally`
+             della writeAll (fade-out morbido). */
+          writeToken++;
         }
       });
     });
