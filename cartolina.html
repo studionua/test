@@ -79,8 +79,6 @@
         height: 42px;
         font-size: 20px;
       }
-      .snow-toggle.storm { right: 70px; }
-
       .hint { display: none; }
     }
 
@@ -188,16 +186,13 @@
       z-index: 20;
       user-select: none;
     }
-    .snow-toggle.storm { right: 76px; }
     .snow-toggle:hover { transform: scale(1.08); }
 
-    body.snowing #snowToggle,
-    body.storming #stormToggle {
+    body.snowing .snow-toggle {
       background: #2b3321;
       color: #F9F6EF;
+      animation: spin 6s linear infinite;
     }
-    body.snowing #snowToggle   { animation: spin 6s linear infinite; }
-    body.storming #stormToggle { animation: spin 1.5s linear infinite; }
     @keyframes spin { to { transform: rotate(360deg); } }
   </style>
 </head>
@@ -260,27 +255,7 @@
 
   <canvas id="snow"></canvas>
 
-  <button class="snow-toggle storm" id="stormToggle" aria-label="Tempesta di neve" title="Tempesta">
-    <svg viewBox="0 0 32 32" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round">
-      <g transform="translate(16 17)">
-        <line x1="0" y1="-8" x2="0" y2="8"/>
-        <line x1="-7" y1="-4" x2="7" y2="4"/>
-        <line x1="-7" y1="4" x2="7" y2="-4"/>
-      </g>
-      <g transform="translate(25 6)">
-        <line x1="0" y1="-3.5" x2="0" y2="3.5"/>
-        <line x1="-3" y1="-1.7" x2="3" y2="1.7"/>
-        <line x1="-3" y1="1.7" x2="3" y2="-1.7"/>
-      </g>
-      <g transform="translate(7 26)">
-        <line x1="0" y1="-3" x2="0" y2="3"/>
-        <line x1="-2.5" y1="-1.5" x2="2.5" y2="1.5"/>
-        <line x1="-2.5" y1="1.5" x2="2.5" y2="-1.5"/>
-      </g>
-    </svg>
-  </button>
-
-  <button class="snow-toggle" id="snowToggle" aria-label="Nevicata leggera" title="Neve">
+  <button class="snow-toggle" id="snowToggle" aria-label="Attiva neve" title="Neve">
     <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
       <line x1="12" y1="3" x2="12" y2="21"/>
       <line x1="4.5" y1="7.5" x2="19.5" y2="16.5"/>
@@ -419,18 +394,14 @@
     });
 
     /* ===========================================================
-       NEVE – due modalità: calma (snow) e tempesta (storm)
+       NEVE – singolo toggle: fiocchi che cadono
        =========================================================== */
     (function snowModule() {
       const canvas = document.getElementById('snow');
       const ctx    = canvas.getContext('2d');
-      const snowBtn  = document.getElementById('snowToggle');
-      const stormBtn = document.getElementById('stormToggle');
+      const toggle = document.getElementById('snowToggle');
 
-      let W, H, DPR;
-      let mode = 'off';       /* 'off' | 'snow' | 'storm' */
-      let intensity = 0;      /* eased 0 → 1 in base al mode */
-      let windPhase = 0;
+      let W, H, DPR, active = false;
       const flakes = [];
 
       function resize() {
@@ -445,15 +416,13 @@
       window.addEventListener('resize', resize);
       resize();
 
-      /* Popoliamo abbastanza fiocchi per la tempesta; in modalità
-         normale ne disegniamo solo una frazione. */
-      const MAX_FLAKES = Math.max(300, Math.floor(W * H / 4500));
+      const COUNT = Math.max(80, Math.floor(W * H / 14000));
 
       function makeFlake(fromTop = false) {
         const r = 1 + Math.random() * 2.8;
         return {
           x: Math.random() * W,
-          y: fromTop ? -20 - Math.random() * 120 : Math.random() * H,
+          y: fromTop ? -20 - Math.random() * 80 : Math.random() * H,
           r,
           vy: 0.3 + r * 0.35,
           vxAmp: 0.4 + Math.random() * 0.9,
@@ -463,73 +432,36 @@
         };
       }
 
-      for (let i = 0; i < MAX_FLAKES; i++) flakes.push(makeFlake(false));
+      for (let i = 0; i < COUNT; i++) flakes.push(makeFlake(false));
 
       function frame() {
         ctx.clearRect(0, 0, W, H);
-
-        /* Transizione morbida della intensità */
-        const target = mode === 'off' ? 0 : (mode === 'storm' ? 1 : 0.4);
-        intensity += (target - intensity) * 0.05;
-
-        if (intensity > 0.01) {
-          const active = Math.floor(intensity * flakes.length);
-          const stormK = Math.max(0, (intensity - 0.45) / 0.55); /* 0 quando snow, 1 quando storm */
-          const windBase = 0.9 + stormK * 3.2;                   /* vento crescente in tempesta */
-          windPhase += 0.003 + stormK * 0.006;
-          const wind = windBase * (0.5 + Math.sin(windPhase) * 0.5);
-          const speedMul = 1 + stormK * 2.4;
-
-          for (let i = 0; i < active; i++) {
-            const f = flakes[i];
-            f.phase += f.omega * (1 + stormK * 1.5);
-            f.x += Math.sin(f.phase) * f.vxAmp * (0.6 + stormK) + wind;
-            f.y += f.vy * speedMul;
-
+        if (active) {
+          for (const f of flakes) {
+            f.phase += f.omega;
+            f.x += Math.sin(f.phase) * f.vxAmp * 0.6;
+            f.y += f.vy;
             if (f.y > H + 10) { Object.assign(f, makeFlake(true)); continue; }
-            if (f.x < -20) f.x = W + 20;
-            if (f.x > W + 20) f.x = -20;
+            if (f.x < -10) f.x = W + 10;
+            if (f.x > W + 10) f.x = -10;
 
             ctx.beginPath();
             ctx.fillStyle = `rgba(255,255,255,${f.alpha})`;
             ctx.shadowColor = 'rgba(255,255,255,0.6)';
             ctx.shadowBlur  = 4;
-            if (stormK > 0.3) {
-              /* in tempesta i fiocchi si allungano nel verso del vento */
-              const len = 2 + stormK * 6;
-              ctx.fillRect(f.x, f.y, f.r + 0.5, f.r + 0.5);
-              ctx.beginPath();
-              ctx.strokeStyle = `rgba(255,255,255,${f.alpha * 0.7})`;
-              ctx.lineWidth = f.r * 0.7;
-              ctx.moveTo(f.x, f.y);
-              ctx.lineTo(f.x - wind * 0.8, f.y - len);
-              ctx.stroke();
-            } else {
-              ctx.arc(f.x, f.y, f.r, 0, Math.PI * 2);
-              ctx.fill();
-            }
+            ctx.arc(f.x, f.y, f.r, 0, Math.PI * 2);
+            ctx.fill();
           }
           ctx.shadowBlur = 0;
-
-          /* Velo opaco in tempesta, white-out parziale */
-          if (stormK > 0.2) {
-            ctx.fillStyle = `rgba(230,235,240,${0.06 + stormK * 0.12})`;
-            ctx.fillRect(0, 0, W, H);
-          }
         }
-
         requestAnimationFrame(frame);
       }
       requestAnimationFrame(frame);
 
-      function setMode(next) {
-        mode = next;
-        document.body.classList.toggle('snowing',  mode === 'snow');
-        document.body.classList.toggle('storming', mode === 'storm');
-      }
-
-      snowBtn.addEventListener('click', () => setMode(mode === 'snow' ? 'off' : 'snow'));
-      stormBtn.addEventListener('click', () => setMode(mode === 'storm' ? 'off' : 'storm'));
+      toggle.addEventListener('click', () => {
+        active = !active;
+        document.body.classList.toggle('snowing', active);
+      });
     })();
   </script>
 </body>
