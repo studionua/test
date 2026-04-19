@@ -41,6 +41,35 @@
       perspective: 1600px;
     }
 
+    /* ---- Mobile: carosello scorrevole, una card alla volta ---- */
+    @media (max-width: 768px) {
+      html, body {
+        display: block;
+        padding: 0;
+        overflow-x: hidden;
+      }
+
+      .row {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        overflow-y: hidden;
+        scroll-snap-type: x mandatory;
+        -webkit-overflow-scrolling: touch;
+        padding: 40px calc(50vw - 158px);  /* 158 = metà card */
+        gap: 32px;
+        justify-content: flex-start;
+        scrollbar-width: none;
+      }
+      .row::-webkit-scrollbar { display: none; }
+
+      .scene {
+        flex: 0 0 auto;
+        width: 316px;
+        min-width: 316px;
+        scroll-snap-align: center;
+      }
+    }
+
     .card {
       position: relative;
       width: 100%;
