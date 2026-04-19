@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Cartolina · Camigliatello Silano</title>
+  <title>Cartoline · Camigliatello Silano</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;600&display=swap" rel="stylesheet">
@@ -21,12 +21,22 @@
       padding: 40px 20px;
     }
 
+    /* Riga orizzontale di tre cartoline */
+    .row {
+      display: flex;
+      gap: clamp(16px, 3vw, 48px);
+      align-items: center;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
     /* ---- Scena 3D ----
        Aspect-ratio esatto dell'immagine (316×509) così la cartolina
        non viene mai ritagliata, e `object-fit: contain` la preserva
        integrale. */
     .scene {
-      width: min(90vw, 316px);
+      width: min(30vw, 316px);
+      min-width: 240px;
       aspect-ratio: 316 / 509;
       perspective: 1600px;
     }
@@ -63,9 +73,7 @@
     .front { transform: rotateY(0deg)   translateZ(1px); }
     .back  { transform: rotateY(180deg) translateZ(1px); }
 
-    /* ---- Scritta a mano sulle righe del retro ----
-       Ogni riga è posizionata in assoluto (percentuali) così il testo
-       non si sposta mai mentre le altre righe vengono composte. */
+    /* ---- Scritta a mano sulle righe del retro ---- */
     .handwriting {
       position: absolute;
       inset: 0;
@@ -76,7 +84,7 @@
       position: absolute;
       left: 11%;
       right: 5%;
-      height: 22px;           /* altezza fissa: niente assestamenti */
+      height: 22px;
       line-height: 22px;
       font-family: 'Caveat', cursive;
       font-size: 19px;
@@ -86,8 +94,6 @@
       letter-spacing: 0.3px;
     }
 
-    /* Posizione di ogni riga: il baseline del testo cade poco sopra
-       la riga stampata sulla cartolina. */
     .handwriting .line:nth-child(1) { top: 49.5%; transform: rotate(-0.6deg); }
     .handwriting .line:nth-child(2) { top: 59.3%; transform: rotate(0.4deg); }
     .handwriting .line:nth-child(3) { top: 67.4%; transform: rotate(-0.3deg); }
@@ -108,83 +114,108 @@
 </head>
 <body>
 
-  <div class="scene" id="scene">
-    <div class="card">
-      <div class="face front">
-        <img src="de-giuseppe/la%20suite.png" alt="Fronte cartolina" />
-      </div>
-      <div class="face back">
-        <img src="de-giuseppe/PROVA%20CARTOLINA2.png" alt="Retro cartolina" />
-        <div class="handwriting" id="handwriting">
-          <div class="line" data-text="Camera con ampi spazi per esigenze"></div>
-          <div class="line" data-text="familiari o di coppie in cerca di"></div>
-          <div class="line" data-text="un vero e proprio spazio da vivere"></div>
-          <div class="line" data-text="in piena libertà."></div>
+  <div class="row">
+
+    <div class="scene">
+      <div class="card">
+        <div class="face front">
+          <img src="de-giuseppe/la%20suite.png" alt="Fronte cartolina 1" />
+        </div>
+        <div class="face back">
+          <img src="de-giuseppe/PROVA%20CARTOLINA2.png" alt="Retro cartolina 1" />
+          <div class="handwriting">
+            <div class="line" data-text="Camera con ampi spazi per esigenze"></div>
+            <div class="line" data-text="familiari o di coppie in cerca di"></div>
+            <div class="line" data-text="un vero e proprio spazio da vivere"></div>
+            <div class="line" data-text="in piena libertà."></div>
+          </div>
         </div>
       </div>
     </div>
+
+    <div class="scene">
+      <div class="card">
+        <div class="face front">
+          <img src="de-giuseppe/la%20suite.png" alt="Fronte cartolina 2" />
+        </div>
+        <div class="face back">
+          <img src="de-giuseppe/PROVA%20CARTOLINA2.png" alt="Retro cartolina 2" />
+          <div class="handwriting">
+            <div class="line" data-text="Camera con ampi spazi per esigenze"></div>
+            <div class="line" data-text="familiari o di coppie in cerca di"></div>
+            <div class="line" data-text="un vero e proprio spazio da vivere"></div>
+            <div class="line" data-text="in piena libertà."></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="scene">
+      <div class="card">
+        <div class="face front">
+          <img src="de-giuseppe/la%20suite.png" alt="Fronte cartolina 3" />
+        </div>
+        <div class="face back">
+          <img src="de-giuseppe/PROVA%20CARTOLINA2.png" alt="Retro cartolina 3" />
+          <div class="handwriting">
+            <div class="line" data-text="Camera con ampi spazi per esigenze"></div>
+            <div class="line" data-text="familiari o di coppie in cerca di"></div>
+            <div class="line" data-text="un vero e proprio spazio da vivere"></div>
+            <div class="line" data-text="in piena libertà."></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
   </div>
 
-  <div class="hint">clicca sulla cartolina</div>
+  <div class="hint">clicca su una cartolina</div>
 
   <script>
-    const scene = document.getElementById('scene');
-    const lines = document.querySelectorAll('#handwriting .line');
-
-    /* ---- Scrittura progressiva ---- */
+    /* ---- Parametri scrittura ---- */
     const CHAR_MS     = 55;
     const CHAR_JITTER = 40;
     const SPACE_PAUSE = 90;
     const LINE_PAUSE  = 420;
-    const START_DELAY = 700; /* parte dopo che la cartolina ha quasi finito il flip */
+    const START_DELAY = 700;
 
     const rand = (a, b) => a + Math.random() * (b - a);
     const wait = ms => new Promise(r => setTimeout(r, ms));
 
-    /* Token per annullare una scrittura in corso se l'utente rigira la cartolina */
-    let writeToken = 0;
+    /* Inizializza ogni cartolina in modo indipendente */
+    document.querySelectorAll('.scene').forEach((scene) => {
+      const lines = scene.querySelectorAll('.handwriting .line');
+      let writeToken = 0;
 
-    function resetLines() {
-      lines.forEach(l => {
-        l.textContent = '';
-        l.classList.remove('writing');
-      });
-    }
+      const resetLines = () => lines.forEach(l => { l.textContent = ''; });
 
-    async function writeAll() {
-      const myToken = ++writeToken;
-      resetLines();
-      await wait(START_DELAY);
-      if (myToken !== writeToken) return;
-
-      for (const line of lines) {
-        const text = line.dataset.text;
-        line.textContent = '';
-        line.classList.add('writing');
-
-        for (let i = 0; i < text.length; i++) {
-          line.textContent += text[i];
-          let delay = CHAR_MS + rand(-CHAR_JITTER, CHAR_JITTER);
-          const ch = text[i];
-          if (ch === ' ' || ch === ',' || ch === '.') delay += SPACE_PAUSE;
-          await wait(delay);
-          if (myToken !== writeToken) { line.classList.remove('writing'); return; }
-        }
-
-        line.classList.remove('writing');
-        await wait(LINE_PAUSE);
+      async function writeAll() {
+        const myToken = ++writeToken;
+        resetLines();
+        await wait(START_DELAY);
         if (myToken !== writeToken) return;
-      }
-    }
 
-    /* Click: gira la cartolina. Ogni volta che si arriva al retro
-       la scrittura riparte da zero. Quando si torna al fronte il
-       testo resta: non viene ripulito, resta impresso sul retro. */
-    scene.addEventListener('click', () => {
-      scene.classList.toggle('flipped');
-      if (scene.classList.contains('flipped')) {
-        writeAll();
+        for (const line of lines) {
+          const text = line.dataset.text;
+          line.textContent = '';
+
+          for (let i = 0; i < text.length; i++) {
+            line.textContent += text[i];
+            let delay = CHAR_MS + rand(-CHAR_JITTER, CHAR_JITTER);
+            const ch = text[i];
+            if (ch === ' ' || ch === ',' || ch === '.') delay += SPACE_PAUSE;
+            await wait(delay);
+            if (myToken !== writeToken) return;
+          }
+          await wait(LINE_PAUSE);
+          if (myToken !== writeToken) return;
+        }
       }
+
+      scene.addEventListener('click', () => {
+        scene.classList.toggle('flipped');
+        if (scene.classList.contains('flipped')) writeAll();
+      });
     });
   </script>
 </body>
