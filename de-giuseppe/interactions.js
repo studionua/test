@@ -27,71 +27,81 @@
     // MENU overlay
     // ------------------------------------------------------------------
     function setupMenu() {
-        var trigger  = document.querySelector('.menuwrap');
-        var overlay  = document.querySelector('.mainwrapmenu .menu');
-        var panel    = document.querySelector('.mainwrapmenu .menucontent');
-        var closeBtn = document.querySelector('.menuclosebutton');
+        var trigger     = document.querySelector('.menuwrap');
+        var overlay     = document.querySelector('.mainwrapmenu .menu');
+        var closeBtn    = document.querySelector('.menuclosebutton');
+        var mainwrap    = document.querySelector('.mainwrap');
         var mainwrapmenu = document.querySelector('.mainwrapmenu');
 
-        log('menu setup', { trigger: !!trigger, overlay: !!overlay, panel: !!panel, closeBtn: !!closeBtn });
-        if (!trigger || !overlay) return;
+        log('menu setup', { trigger: !!trigger, overlay: !!overlay, mainwrap: !!mainwrap });
+        if (!trigger || !overlay || !mainwrap) return;
 
-        var bullets = overlay.querySelectorAll('.menubulletpointwrap');
-        var texts   = overlay.querySelectorAll('.menulink');
-        var bottom  = overlay.querySelector('.menucontentbottom');
         var isOpen = false;
 
-        // Prepare hidden state using GSAP (writes inline styles)
-        gsap.set(overlay, { autoAlpha: 0, display: 'none', zIndex: 9999 });
-        if (panel) gsap.set(panel, { xPercent: -100 });
-        gsap.set(bullets, { x: '-2rem', rotate: -60, transformOrigin: '50% 50%' });
-        gsap.set(texts,   { x: '-1rem', opacity: 0 });
-        if (bottom) gsap.set(bottom, { opacity: 0, y: '1.5rem' });
+        // Initial state: menu hidden (display none), mainwrapmenu sits behind.
+        gsap.set(overlay, { autoAlpha: 0, display: 'none' });
 
         function open() {
             if (isOpen) return;
             isOpen = true;
             log('open');
             document.body.style.overflow = 'hidden';
-            // Lift the whole mainwrapmenu above .mainwrap so the overlay isn't
-            // occluded by sibling sections.
+
+            // Park mainwrapmenu BEHIND the mainwrap, filling the viewport, so
+            // when mainwrap tilts/translates away, the menu below is revealed.
             if (mainwrapmenu) {
                 mainwrapmenu.style.position = 'fixed';
                 mainwrapmenu.style.top = '0';
                 mainwrapmenu.style.left = '0';
                 mainwrapmenu.style.right = '0';
                 mainwrapmenu.style.bottom = '0';
-                mainwrapmenu.style.zIndex = '9999';
+                mainwrapmenu.style.zIndex = '1';
             }
+            // Lift mainwrap onto its own stacking context above the menu.
+            mainwrap.style.position = 'relative';
+            mainwrap.style.zIndex = '5';
+
+            // Make menu visible (it's behind mainwrap until mainwrap moves).
             overlay.style.display = 'flex';
-            var tl = gsap.timeline();
-            tl.to(overlay, { autoAlpha: 1, duration: 0.25, ease: 'power2.out' }, 0);
-            if (panel) tl.to(panel, { xPercent: 0, duration: 0.65, ease: 'power3.out' }, 0);
-            tl.to(bullets, { x: '0rem', rotate: 0, duration: 0.5, stagger: 0.05, ease: 'power2.out' }, 0.2);
-            tl.to(texts,   { x: '0rem', opacity: 1, duration: 0.5, stagger: 0.05, ease: 'power2.out' }, 0.22);
-            if (bottom) tl.to(bottom, { opacity: 1, y: 0, duration: 0.4, ease: 'power2.out' }, 0.45);
+            gsap.set(overlay, { autoAlpha: 1 });
+
+            // Animate mainwrap: slide right + tilt clockwise, revealing menu.
+            gsap.set(mainwrap, { transformOrigin: '50% 0%', willChange: 'transform' });
+            gsap.to(mainwrap, {
+                x: '65%',
+                y: '2rem',
+                rotation: 6,
+                duration: 0.7,
+                ease: 'power2.inOut'
+            });
         }
         function close() {
             if (!isOpen) return;
             isOpen = false;
             log('close');
             document.body.style.overflow = '';
-            var tl = gsap.timeline({ onComplete: function () {
-                overlay.style.display = 'none';
-                if (mainwrapmenu) {
-                    mainwrapmenu.style.position = '';
-                    mainwrapmenu.style.top = '';
-                    mainwrapmenu.style.left = '';
-                    mainwrapmenu.style.right = '';
-                    mainwrapmenu.style.bottom = '';
-                    mainwrapmenu.style.zIndex = '';
+
+            gsap.to(mainwrap, {
+                x: 0,
+                y: 0,
+                rotation: 0,
+                duration: 0.6,
+                ease: 'power2.inOut',
+                onComplete: function () {
+                    mainwrap.style.zIndex = '';
+                    mainwrap.style.position = '';
+                    if (mainwrapmenu) {
+                        mainwrapmenu.style.position = '';
+                        mainwrapmenu.style.top = '';
+                        mainwrapmenu.style.left = '';
+                        mainwrapmenu.style.right = '';
+                        mainwrapmenu.style.bottom = '';
+                        mainwrapmenu.style.zIndex = '';
+                    }
+                    overlay.style.display = 'none';
+                    gsap.set(overlay, { autoAlpha: 0 });
                 }
-            } });
-            if (bottom) tl.to(bottom, { opacity: 0, y: '1.5rem', duration: 0.25, ease: 'power2.in' }, 0);
-            tl.to(texts,   { x: '-1rem', opacity: 0, duration: 0.3, stagger: 0.03, ease: 'power2.in' }, 0);
-            tl.to(bullets, { x: '-2rem', rotate: -60, duration: 0.3, stagger: 0.03, ease: 'power2.in' }, 0);
-            if (panel) tl.to(panel, { xPercent: -100, duration: 0.5, ease: 'power3.in' }, 0.15);
-            tl.to(overlay, { autoAlpha: 0, duration: 0.25, ease: 'power2.in' }, 0.4);
+            });
         }
 
         // Bind via delegation on document (capture phase) so Lenis/barba
