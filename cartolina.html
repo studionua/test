@@ -55,7 +55,7 @@
         overflow-y: hidden;
         scroll-snap-type: x mandatory;
         -webkit-overflow-scrolling: touch;
-        padding: 40px calc(50vw - 158px);  /* 158 = metà card */
+        padding: 90px calc(50vw - 158px) 140px;  /* più aria sopra e sotto */
         gap: 32px;
         justify-content: flex-start;
         scrollbar-width: none;
@@ -73,14 +73,15 @@
          spostala in basso a destra con più margine. */
       .snow-toggle {
         top: auto;
-        bottom: 24px;
+        bottom: 36px;
         right: 18px;
         width: 42px;
         height: 42px;
         font-size: 20px;
       }
+      .snow-toggle.storm { right: 70px; }
 
-      .hint { bottom: 78px; }
+      .hint { display: none; }
     }
 
     .card {
@@ -187,12 +188,16 @@
       z-index: 20;
       user-select: none;
     }
+    .snow-toggle.storm { right: 76px; }
     .snow-toggle:hover { transform: scale(1.08); }
-    body.snowing .snow-toggle {
+
+    body.snowing #snowToggle,
+    body.storming #stormToggle {
       background: #2b3321;
       color: #F9F6EF;
-      animation: spin 6s linear infinite;
     }
+    body.snowing #snowToggle   { animation: spin 6s linear infinite; }
+    body.storming #stormToggle { animation: spin 1.5s linear infinite; }
     @keyframes spin { to { transform: rotate(360deg); } }
   </style>
 </head>
@@ -254,7 +259,8 @@
   </div>
 
   <canvas id="snow"></canvas>
-  <button class="snow-toggle" id="snowToggle" aria-label="Attiva neve" title="Neve">&#10052;</button>
+  <button class="snow-toggle storm" id="stormToggle" aria-label="Tempesta di neve" title="Tempesta">&#127752;</button>
+  <button class="snow-toggle" id="snowToggle" aria-label="Nevicata leggera" title="Neve">&#10052;</button>
 
   <div class="hint">clicca su una cartolina</div>
 
@@ -381,14 +387,18 @@
     });
 
     /* ===========================================================
-       NEVE – solo fiocchi che cadono, nessun accumulo
+       NEVE – due modalità: calma (snow) e tempesta (storm)
        =========================================================== */
     (function snowModule() {
       const canvas = document.getElementById('snow');
       const ctx    = canvas.getContext('2d');
-      const toggle = document.getElementById('snowToggle');
+      const snowBtn  = document.getElementById('snowToggle');
+      const stormBtn = document.getElementById('stormToggle');
 
-      let W, H, DPR, active = false;
+      let W, H, DPR;
+      let mode = 'off';       /* 'off' | 'snow' | 'storm' */
+      let intensity = 0;      /* eased 0 → 1 in base al mode */
+      let windPhase = 0;
       const flakes = [];
 
       function resize() {
@@ -403,13 +413,15 @@
       window.addEventListener('resize', resize);
       resize();
 
-      const COUNT = Math.max(80, Math.floor(W * H / 14000));
+      /* Popoliamo abbastanza fiocchi per la tempesta; in modalità
+         normale ne disegniamo solo una frazione. */
+      const MAX_FLAKES = Math.max(300, Math.floor(W * H / 4500));
 
       function makeFlake(fromTop = false) {
         const r = 1 + Math.random() * 2.8;
         return {
           x: Math.random() * W,
-          y: fromTop ? -20 - Math.random() * 80 : Math.random() * H,
+          y: fromTop ? -20 - Math.random() * 120 : Math.random() * H,
           r,
           vy: 0.3 + r * 0.35,
           vxAmp: 0.4 + Math.random() * 0.9,
@@ -419,36 +431,73 @@
         };
       }
 
-      for (let i = 0; i < COUNT; i++) flakes.push(makeFlake(false));
+      for (let i = 0; i < MAX_FLAKES; i++) flakes.push(makeFlake(false));
 
       function frame() {
         ctx.clearRect(0, 0, W, H);
-        if (active) {
-          for (const f of flakes) {
-            f.phase += f.omega;
-            f.x += Math.sin(f.phase) * f.vxAmp * 0.6;
-            f.y += f.vy;
+
+        /* Transizione morbida della intensità */
+        const target = mode === 'off' ? 0 : (mode === 'storm' ? 1 : 0.4);
+        intensity += (target - intensity) * 0.05;
+
+        if (intensity > 0.01) {
+          const active = Math.floor(intensity * flakes.length);
+          const stormK = Math.max(0, (intensity - 0.45) / 0.55); /* 0 quando snow, 1 quando storm */
+          const windBase = 0.9 + stormK * 3.2;                   /* vento crescente in tempesta */
+          windPhase += 0.003 + stormK * 0.006;
+          const wind = windBase * (0.5 + Math.sin(windPhase) * 0.5);
+          const speedMul = 1 + stormK * 2.4;
+
+          for (let i = 0; i < active; i++) {
+            const f = flakes[i];
+            f.phase += f.omega * (1 + stormK * 1.5);
+            f.x += Math.sin(f.phase) * f.vxAmp * (0.6 + stormK) + wind;
+            f.y += f.vy * speedMul;
+
             if (f.y > H + 10) { Object.assign(f, makeFlake(true)); continue; }
-            if (f.x < -10) f.x = W + 10;
-            if (f.x > W + 10) f.x = -10;
+            if (f.x < -20) f.x = W + 20;
+            if (f.x > W + 20) f.x = -20;
 
             ctx.beginPath();
             ctx.fillStyle = `rgba(255,255,255,${f.alpha})`;
             ctx.shadowColor = 'rgba(255,255,255,0.6)';
             ctx.shadowBlur  = 4;
-            ctx.arc(f.x, f.y, f.r, 0, Math.PI * 2);
-            ctx.fill();
+            if (stormK > 0.3) {
+              /* in tempesta i fiocchi si allungano nel verso del vento */
+              const len = 2 + stormK * 6;
+              ctx.fillRect(f.x, f.y, f.r + 0.5, f.r + 0.5);
+              ctx.beginPath();
+              ctx.strokeStyle = `rgba(255,255,255,${f.alpha * 0.7})`;
+              ctx.lineWidth = f.r * 0.7;
+              ctx.moveTo(f.x, f.y);
+              ctx.lineTo(f.x - wind * 0.8, f.y - len);
+              ctx.stroke();
+            } else {
+              ctx.arc(f.x, f.y, f.r, 0, Math.PI * 2);
+              ctx.fill();
+            }
           }
           ctx.shadowBlur = 0;
+
+          /* Velo opaco in tempesta, white-out parziale */
+          if (stormK > 0.2) {
+            ctx.fillStyle = `rgba(230,235,240,${0.06 + stormK * 0.12})`;
+            ctx.fillRect(0, 0, W, H);
+          }
         }
+
         requestAnimationFrame(frame);
       }
       requestAnimationFrame(frame);
 
-      toggle.addEventListener('click', () => {
-        active = !active;
-        document.body.classList.toggle('snowing', active);
-      });
+      function setMode(next) {
+        mode = next;
+        document.body.classList.toggle('snowing',  mode === 'snow');
+        document.body.classList.toggle('storming', mode === 'storm');
+      }
+
+      snowBtn.addEventListener('click', () => setMode(mode === 'snow' ? 'off' : 'snow'));
+      stormBtn.addEventListener('click', () => setMode(mode === 'storm' ? 'off' : 'storm'));
     })();
   </script>
 </body>
