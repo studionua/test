@@ -57,8 +57,6 @@
       display: block;
       object-fit: cover;
       border-radius: 18px;
-      /* ombra sull'immagine, così non serve filter sul 3D */
-      box-shadow: 0 18px 28px rgba(0,0,0,0.35);
       user-select: none;
       -webkit-user-drag: none;
     }
@@ -145,64 +143,31 @@
     const scene = document.getElementById('scene');
     const lines = document.querySelectorAll('#handwriting .line');
 
-    /* ---- Suono penna via Web Audio API ---- */
-    let audioCtx = null;
-    let noiseBuffer = null;
-
-    function ensureAudio() {
-      if (audioCtx) return;
-      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-      const len = audioCtx.sampleRate * 0.25;
-      noiseBuffer = audioCtx.createBuffer(1, len, audioCtx.sampleRate);
-      const data = noiseBuffer.getChannelData(0);
-      for (let i = 0; i < len; i++) data[i] = Math.random() * 2 - 1;
-    }
-
-    function penTick() {
-      if (!audioCtx) return;
-      const now = audioCtx.currentTime;
-      const src = audioCtx.createBufferSource();
-      src.buffer = noiseBuffer;
-      src.playbackRate.value = 0.8 + Math.random() * 0.5;
-
-      const bp = audioCtx.createBiquadFilter();
-      bp.type = 'bandpass';
-      bp.frequency.value = 2200 + Math.random() * 1800;
-      bp.Q.value = 1.2;
-
-      const hp = audioCtx.createBiquadFilter();
-      hp.type = 'highpass';
-      hp.frequency.value = 1200;
-
-      const gain = audioCtx.createGain();
-      const dur  = 0.035 + Math.random() * 0.03;
-      const peak = 0.08 + Math.random() * 0.05;
-      gain.gain.setValueAtTime(0, now);
-      gain.gain.linearRampToValueAtTime(peak, now + 0.004);
-      gain.gain.exponentialRampToValueAtTime(0.0001, now + dur);
-
-      src.connect(bp).connect(hp).connect(gain).connect(audioCtx.destination);
-      src.start(now);
-      src.stop(now + dur + 0.02);
-    }
-
     /* ---- Scrittura progressiva ---- */
     const CHAR_MS     = 55;
     const CHAR_JITTER = 40;
     const SPACE_PAUSE = 90;
     const LINE_PAUSE  = 420;
+    const START_DELAY = 700; /* parte dopo che la cartolina ha quasi finito il flip */
 
     const rand = (a, b) => a + Math.random() * (b - a);
     const wait = ms => new Promise(r => setTimeout(r, ms));
 
-    let writing = false;
-    let written = false;
+    /* Token per annullare una scrittura in corso se l'utente rigira la cartolina */
+    let writeToken = 0;
+
+    function resetLines() {
+      lines.forEach(l => {
+        l.textContent = '';
+        l.classList.remove('writing');
+      });
+    }
 
     async function writeAll() {
-      if (writing || written) return;
-      writing = true;
-      ensureAudio();
-      if (audioCtx.state === 'suspended') await audioCtx.resume();
+      const myToken = ++writeToken;
+      resetLines();
+      await wait(START_DELAY);
+      if (myToken !== writeToken) return;
 
       for (const line of lines) {
         const text = line.dataset.text;
@@ -210,26 +175,30 @@
         line.classList.add('writing');
 
         for (let i = 0; i < text.length; i++) {
-          const ch = text[i];
-          line.textContent += ch;
-          if (ch !== ' ') penTick();
+          line.textContent += text[i];
           let delay = CHAR_MS + rand(-CHAR_JITTER, CHAR_JITTER);
+          const ch = text[i];
           if (ch === ' ' || ch === ',' || ch === '.') delay += SPACE_PAUSE;
           await wait(delay);
+          if (myToken !== writeToken) { line.classList.remove('writing'); return; }
         }
 
         line.classList.remove('writing');
         await wait(LINE_PAUSE);
+        if (myToken !== writeToken) return;
       }
-
-      written = true;
-      writing = false;
     }
 
-    /* Solo click: la cartolina si gira, poi parte la scrittura */
+    /* Click: gira la cartolina. Ad ogni click che porta al retro
+       la scrittura riparte da zero. */
     scene.addEventListener('click', () => {
       scene.classList.toggle('flipped');
-      if (scene.classList.contains('flipped')) writeAll();
+      if (scene.classList.contains('flipped')) {
+        writeAll();
+      } else {
+        writeToken++;      /* annulla scrittura in corso */
+        resetLines();      /* pulisci le righe */
+      }
     });
   </script>
 </body>
