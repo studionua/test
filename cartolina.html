@@ -128,6 +128,9 @@
     .handwriting .line:nth-child(3) { top: 67.4%; transform: rotate(-0.3deg); }
     .handwriting .line:nth-child(4) { top: 76.5%; transform: rotate(0.5deg); }
 
+    /* Deluxe: testo in verde scuro invece del crema */
+    .scene.deluxe .handwriting .line { color: #2A331C; }
+
     .hint {
       position: fixed;
       bottom: 20px;
@@ -218,7 +221,7 @@
       </div>
     </div>
 
-    <div class="scene">
+    <div class="scene deluxe">
       <div class="card">
         <div class="face front">
           <img src="de-giuseppe/la_deluxe.png" alt="Fronte Deluxe" />
@@ -254,152 +257,62 @@
     const wait = ms => new Promise(r => setTimeout(r, ms));
 
     /* ===========================================================
-       AUDIO – Web Audio API
-       - playPen(): suono di penna su carta, sintetizzato con
-         noise filtrato + sub-tono basso + envelope a colpo.
-       - playBell(): campanellina inarmonica molto breve, con
-         più armoniche e piccola coda riverberata.
+       AUDIO – sample reali
+       - penna: loop continuo durante la scrittura
+       - campanelle: one-shot al flip
        =========================================================== */
-    let audioCtx = null;
-    let masterGain = null;
-    let convolver = null;
+    const pencilAudio = new Audio('de-giuseppe/floraphonic-pencil-writing-drawing-loop-5-211896.mp3');
+    pencilAudio.loop   = true;
+    pencilAudio.volume = 0.8;
+    pencilAudio.preload = 'auto';
 
-    function initAudio() {
-      if (audioCtx) return;
-      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const bellsAudio = new Audio('de-giuseppe/dragon-studio-bells-jingling-2-372467.mp3');
+    bellsAudio.volume = 0.9;
+    bellsAudio.preload = 'auto';
 
-      /* Volume master */
-      masterGain = audioCtx.createGain();
-      masterGain.gain.value = 0.9;
-      masterGain.connect(audioCtx.destination);
+    let pencilActive = 0; /* contatore: così più cartoline in scrittura non si pestano */
 
-      /* Piccolo riverbero (impulse response sintetizzato) */
-      const irLen = audioCtx.sampleRate * 0.6;
-      const ir    = audioCtx.createBuffer(2, irLen, audioCtx.sampleRate);
-      for (let c = 0; c < 2; c++) {
-        const d = ir.getChannelData(c);
-        for (let i = 0; i < irLen; i++) {
-          d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / irLen, 2.4);
-        }
+    function pencilStart() {
+      pencilActive++;
+      if (pencilActive === 1) {
+        try {
+          pencilAudio.currentTime = 0;
+          pencilAudio.play();
+        } catch(e) {}
       }
-      convolver = audioCtx.createConvolver();
-      convolver.buffer = ir;
-      const wet = audioCtx.createGain();
-      wet.gain.value = 0.25;
-      convolver.connect(wet).connect(masterGain);
+    }
+
+    function pencilStop() {
+      pencilActive = Math.max(0, pencilActive - 1);
+      if (pencilActive === 0) {
+        /* fade out morbido per evitare click di fine loop */
+        const start = pencilAudio.volume;
+        const steps = 10;
+        let i = 0;
+        const id = setInterval(() => {
+          i++;
+          pencilAudio.volume = Math.max(0, start * (1 - i / steps));
+          if (i >= steps) {
+            clearInterval(id);
+            pencilAudio.pause();
+            pencilAudio.currentTime = 0;
+            pencilAudio.volume = start;
+          }
+        }, 25);
+      }
+    }
+
+    function playBell() {
+      try {
+        /* clone per consentire flip ravvicinati sovrapposti */
+        const b = bellsAudio.cloneNode();
+        b.volume = bellsAudio.volume;
+        b.play();
+      } catch(e) {}
     }
 
     async function ensureAudioRunning() {
-      initAudio();
-      if (audioCtx.state === 'suspended') {
-        try { await audioCtx.resume(); } catch(e) {}
-      }
-    }
-
-    /* Precalcola un buffer di noise */
-    let _noise = null;
-    function noiseBuffer() {
-      if (_noise) return _noise;
-      const len = audioCtx.sampleRate * 0.3;
-      _noise = audioCtx.createBuffer(1, len, audioCtx.sampleRate);
-      const d = _noise.getChannelData(0);
-      for (let i = 0; i < len; i++) d[i] = Math.random() * 2 - 1;
-      return _noise;
-    }
-
-    /* ---- Penna su carta ---- */
-    function playPen() {
-      if (!audioCtx) return;
-      const now = audioCtx.currentTime;
-
-      /* Rumore filtrato: corpo acuto del graffio */
-      const src = audioCtx.createBufferSource();
-      src.buffer = noiseBuffer();
-      src.playbackRate.value = 0.75 + Math.random() * 0.5;
-
-      const bp = audioCtx.createBiquadFilter();
-      bp.type = 'bandpass';
-      bp.frequency.value = 2600 + Math.random() * 2200;
-      bp.Q.value = 1.4;
-
-      const hp = audioCtx.createBiquadFilter();
-      hp.type = 'highpass';
-      hp.frequency.value = 1100;
-
-      const g = audioCtx.createGain();
-      const dur  = 0.028 + Math.random() * 0.03;
-      const peak = 0.12 + Math.random() * 0.06;
-      g.gain.setValueAtTime(0, now);
-      g.gain.linearRampToValueAtTime(peak, now + 0.003);
-      g.gain.exponentialRampToValueAtTime(0.0005, now + dur);
-
-      src.connect(bp).connect(hp).connect(g);
-      g.connect(masterGain);
-      g.connect(convolver);
-      src.start(now);
-      src.stop(now + dur + 0.05);
-
-      /* Piccolo "tap" sub-tonale per dare corpo al colpo */
-      const thump = audioCtx.createOscillator();
-      const tg    = audioCtx.createGain();
-      thump.type  = 'triangle';
-      thump.frequency.setValueAtTime(180 + Math.random() * 60, now);
-      thump.frequency.exponentialRampToValueAtTime(60, now + 0.05);
-      tg.gain.setValueAtTime(0, now);
-      tg.gain.linearRampToValueAtTime(0.04, now + 0.002);
-      tg.gain.exponentialRampToValueAtTime(0.0005, now + 0.05);
-      thump.connect(tg).connect(masterGain);
-      thump.start(now);
-      thump.stop(now + 0.07);
-    }
-
-    /* ---- Campanellina: inarmonica, brevissima, cristallina ---- */
-    function playBell() {
-      if (!audioCtx) return;
-      const now = audioCtx.currentTime;
-
-      /* Frequenze inarmoniche tipiche di una piccola campanella */
-      const partials = [
-        { f: 1760, amp: 0.22, decay: 0.42 },
-        { f: 2640, amp: 0.14, decay: 0.28 },
-        { f: 3520, amp: 0.10, decay: 0.22 },
-        { f: 4620, amp: 0.07, decay: 0.16 },
-        { f: 880,  amp: 0.06, decay: 0.55 }
-      ];
-
-      const out = audioCtx.createGain();
-      out.gain.value = 0.9;
-      out.connect(masterGain);
-      out.connect(convolver);
-
-      partials.forEach((p, i) => {
-        const osc = audioCtx.createOscillator();
-        osc.type  = 'sine';
-        osc.frequency.value = p.f * (1 + (Math.random() - 0.5) * 0.004);
-
-        const g = audioCtx.createGain();
-        g.gain.setValueAtTime(0, now);
-        g.gain.linearRampToValueAtTime(p.amp, now + 0.003 + i * 0.001);
-        g.gain.exponentialRampToValueAtTime(0.0005, now + p.decay);
-
-        osc.connect(g).connect(out);
-        osc.start(now);
-        osc.stop(now + p.decay + 0.05);
-      });
-
-      /* Piccolo "ping" iniziale, rumore molto breve filtrato alto */
-      const src = audioCtx.createBufferSource();
-      src.buffer = noiseBuffer();
-      const hp = audioCtx.createBiquadFilter();
-      hp.type = 'highpass';
-      hp.frequency.value = 3500;
-      const pg = audioCtx.createGain();
-      pg.gain.setValueAtTime(0, now);
-      pg.gain.linearRampToValueAtTime(0.18, now + 0.002);
-      pg.gain.exponentialRampToValueAtTime(0.0005, now + 0.04);
-      src.connect(hp).connect(pg).connect(masterGain);
-      src.start(now);
-      src.stop(now + 0.06);
+      /* L'interazione utente (click) basta a sbloccare l'autoplay */
     }
 
     /* Inizializza ogni cartolina in modo indipendente */
@@ -415,21 +328,25 @@
         await wait(START_DELAY);
         if (myToken !== writeToken) return;
 
-        for (const line of lines) {
-          const text = line.dataset.text;
-          line.textContent = '';
+        pencilStart();
+        try {
+          for (const line of lines) {
+            const text = line.dataset.text;
+            line.textContent = '';
 
-          for (let i = 0; i < text.length; i++) {
-            const ch = text[i];
-            line.textContent += ch;
-            if (ch !== ' ') playPen();
-            let delay = CHAR_MS + rand(-CHAR_JITTER, CHAR_JITTER);
-            if (ch === ' ' || ch === ',' || ch === '.') delay += SPACE_PAUSE;
-            await wait(delay);
+            for (let i = 0; i < text.length; i++) {
+              const ch = text[i];
+              line.textContent += ch;
+              let delay = CHAR_MS + rand(-CHAR_JITTER, CHAR_JITTER);
+              if (ch === ' ' || ch === ',' || ch === '.') delay += SPACE_PAUSE;
+              await wait(delay);
+              if (myToken !== writeToken) return;
+            }
+            await wait(LINE_PAUSE);
             if (myToken !== writeToken) return;
           }
-          await wait(LINE_PAUSE);
-          if (myToken !== writeToken) return;
+        } finally {
+          pencilStop();
         }
       }
 
@@ -444,14 +361,19 @@
     });
 
     /* ===========================================================
-       NEVE – canvas con fiocchi sinusoidali, toggleabile
+       NEVE – fiocchi + accumulo sul bordo superiore delle card
        =========================================================== */
     (function snowModule() {
       const canvas = document.getElementById('snow');
       const ctx    = canvas.getContext('2d');
       const toggle = document.getElementById('snowToggle');
 
-      let W, H, DPR, active = false, flakes = [];
+      let W, H, DPR, active = false;
+      const flakes = [];
+      const BIN = 3;                 /* larghezza in px di ogni colonna di neve */
+      const MAX_PILE = 14;           /* altezza massima dell'accumulo in px */
+      const cards = Array.from(document.querySelectorAll('.scene'));
+      const piles = cards.map(() => ({ bins: [], top: 0, left: 0, width: 0 }));
 
       function resize() {
         DPR = Math.min(window.devicePixelRatio || 1, 2);
@@ -461,19 +383,34 @@
         canvas.style.width  = W + 'px';
         canvas.style.height = H + 'px';
         ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+        measurePiles(true);
       }
+
+      function measurePiles(keep) {
+        cards.forEach((scene, i) => {
+          const r = scene.getBoundingClientRect();
+          const p = piles[i];
+          p.top   = r.top;
+          p.left  = r.left;
+          p.width = r.width;
+          const n = Math.max(1, Math.ceil(r.width / BIN));
+          if (!keep || p.bins.length !== n) p.bins = new Array(n).fill(0);
+        });
+      }
+
       window.addEventListener('resize', resize);
+      window.addEventListener('scroll', () => measurePiles(true), { passive: true });
       resize();
 
       const COUNT = Math.max(80, Math.floor(W * H / 14000));
 
-      function makeFlake(top = false) {
+      function makeFlake(fromTop = false) {
         const r = 1 + Math.random() * 2.8;
         return {
           x: Math.random() * W,
-          y: top ? -20 - Math.random() * H : Math.random() * H,
+          y: fromTop ? -20 - Math.random() * 80 : Math.random() * H,
           r,
-          vy: 0.3 + r * 0.35,        /* più grande = più veloce */
+          vy: 0.3 + r * 0.35,
           vxAmp: 0.4 + Math.random() * 0.9,
           phase: Math.random() * Math.PI * 2,
           omega: 0.004 + Math.random() * 0.008,
@@ -483,14 +420,61 @@
 
       for (let i = 0; i < COUNT; i++) flakes.push(makeFlake(false));
 
+      /* Verifica collisione di un fiocco con una pila:
+         se tocca il bordo superiore della card, viene assorbito
+         e la bin corrispondente cresce. */
+      function collide(f) {
+        for (const p of piles) {
+          if (p.width === 0) continue;
+          if (f.x < p.left || f.x > p.left + p.width) continue;
+          const bin = Math.max(0, Math.min(p.bins.length - 1, Math.floor((f.x - p.left) / BIN)));
+          const surfaceY = p.top - p.bins[bin];
+          if (f.y >= surfaceY && f.y <= surfaceY + 20) {
+            /* aggiungi al mucchietto + distribuzione ai vicini */
+            p.bins[bin] = Math.min(MAX_PILE, p.bins[bin] + 0.45);
+            if (bin > 0) p.bins[bin - 1] = Math.min(MAX_PILE, p.bins[bin - 1] + 0.18);
+            if (bin < p.bins.length - 1) p.bins[bin + 1] = Math.min(MAX_PILE, p.bins[bin + 1] + 0.18);
+            return true;
+          }
+        }
+        return false;
+      }
+
+      function drawPiles() {
+        ctx.fillStyle   = 'rgba(255,255,255,0.95)';
+        ctx.strokeStyle = 'rgba(255,255,255,0.75)';
+        ctx.lineWidth   = 1;
+        for (const p of piles) {
+          if (p.width === 0) continue;
+          ctx.beginPath();
+          ctx.moveTo(p.left, p.top + 1);
+          for (let i = 0; i < p.bins.length; i++) {
+            const x = p.left + i * BIN + BIN / 2;
+            const y = p.top - p.bins[i];
+            ctx.lineTo(x, y);
+          }
+          ctx.lineTo(p.left + p.width, p.top + 1);
+          ctx.closePath();
+          ctx.fill();
+        }
+      }
+
       function frame() {
         ctx.clearRect(0, 0, W, H);
+        /* Sempre visibile: la neve accumulata resta anche a neve spenta */
+        drawPiles();
+
         if (active) {
           for (const f of flakes) {
             f.phase += f.omega;
             f.x += Math.sin(f.phase) * f.vxAmp * 0.6;
             f.y += f.vy;
-            if (f.y > H + 10) { Object.assign(f, makeFlake(true)); }
+
+            if (collide(f)) {
+              Object.assign(f, makeFlake(true));
+              continue;
+            }
+            if (f.y > H + 10) { Object.assign(f, makeFlake(true)); continue; }
             if (f.x < -10) f.x = W + 10;
             if (f.x > W + 10) f.x = -10;
 
@@ -503,6 +487,9 @@
           }
           ctx.shadowBlur = 0;
         }
+
+        /* Ri-misura periodicamente per seguire eventuali spostamenti */
+        if ((frame.count = (frame.count || 0) + 1) % 30 === 0) measurePiles(true);
         requestAnimationFrame(frame);
       }
       requestAnimationFrame(frame);
@@ -510,6 +497,8 @@
       toggle.addEventListener('click', () => {
         active = !active;
         document.body.classList.toggle('snowing', active);
+        /* Reset accumulo se spegni la neve */
+        if (!active) piles.forEach(p => p.bins.fill(0));
       });
     })();
   </script>
