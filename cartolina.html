@@ -21,14 +21,14 @@
       padding: 40px 20px;
     }
 
-    /* ---- Scena 3D ---- */
+    /* ---- Scena 3D ----
+       Niente `filter` né `overflow` qui né su .card: qualsiasi
+       effetto che costringa il browser a rasterizzare i figli
+       appiattisce lo spazio 3D e nasconde il retro. */
     .scene {
       width: 320px;
       height: 500px;
       perspective: 1600px;
-      /* L'ombra VA qui, non su .card: `filter` su un elemento
-         preserve-3d appiattisce le facce figlie rompendo il flip. */
-      filter: drop-shadow(0 18px 28px rgba(0,0,0,0.35));
     }
 
     .card {
@@ -41,15 +41,9 @@
       will-change: transform;
     }
 
-    /* Rotazione sul proprio asse: il retro viene mostrato */
-    .scene:hover .card,
-    .scene.flipped .card {
-      transform: rotateY(180deg);
-    }
+    /* Flip solo al click */
+    .scene.flipped .card { transform: rotateY(180deg); }
 
-    /* IMPORTANTE: niente `overflow: hidden` o `border-radius` qui,
-       altrimenti Chrome/Safari creano un compositing layer che rompe
-       il backface-visibility e mostra di nuovo il fronte sul retro. */
     .face {
       position: absolute;
       inset: 0;
@@ -63,12 +57,12 @@
       display: block;
       object-fit: cover;
       border-radius: 18px;
+      /* ombra sull'immagine, così non serve filter sul 3D */
+      box-shadow: 0 18px 28px rgba(0,0,0,0.35);
       user-select: none;
       -webkit-user-drag: none;
     }
 
-    /* Ogni faccia su un proprio piano 3D, per evitare z-fighting
-       e garantire che backface-visibility funzioni in modo affidabile */
     .front { transform: rotateY(0deg)   translateZ(1px); }
     .back  { transform: rotateY(180deg) translateZ(1px); }
 
@@ -145,7 +139,7 @@
     </div>
   </div>
 
-  <div class="hint">passa il mouse sulla cartolina</div>
+  <div class="hint">clicca sulla cartolina</div>
 
   <script>
     const scene = document.getElementById('scene');
@@ -232,7 +226,7 @@
       writing = false;
     }
 
-    scene.addEventListener('mouseenter', writeAll);
+    /* Solo click: la cartolina si gira, poi parte la scrittura */
     scene.addEventListener('click', () => {
       scene.classList.toggle('flipped');
       if (scene.classList.contains('flipped')) writeAll();
