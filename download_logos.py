@@ -3,7 +3,7 @@
 Scarica il logo principale da una lista di siti.
 
 Uso:
-    python3 download_logos.py siti.txt [cartella_output]
+    python3 download_logos.py siti.txt [cartella_output] [num_workers]
 
 Formato di `siti.txt` (una riga per sito):
     Nome Azienda | https://example.com/
@@ -11,6 +11,7 @@ Formato di `siti.txt` (una riga per sito):
 
 Righe vuote e righe che iniziano con '#' sono ignorate.
 Default output: ./loghi
+Default workers: 20 (download in parallelo)
 Dipendenze: requests, beautifulsoup4  (pip install requests beautifulsoup4)
 """
 
@@ -19,6 +20,8 @@ from __future__ import annotations
 import mimetypes
 import re
 import sys
+import threading
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 from urllib.parse import urljoin, urlparse
 
@@ -125,39 +128,51 @@ def parse_line(line: str) -> tuple[str | None, str] | None:
     return None, line
 
 
-def process(entry: tuple[str | None, str], out_dir: Path, session: requests.Session) -> None:
+_print_lock = threading.Lock()
+
+
+def log(*parts: str) -> None:
+    with _print_lock:
+        print(" ".join(parts), flush=True)
+
+
+def process(
+    entry: tuple[str | None, str],
+    out_dir: Path,
+    session: requests.Session,
+) -> tuple[str, str]:
+    """Ritorna (status, label). status in {ok, err, warn}."""
     name, site = entry
     if not site.startswith(("http://", "https://")):
         site = "https://" + site
     domain = urlparse(site).hostname or site
     label = name or domain
-    print(f"\n>> {label}  ({site})")
 
     try:
         r = session.get(site, headers=HEADERS, timeout=TIMEOUT, allow_redirects=True)
         r.raise_for_status()
     except requests.RequestException as e:
-        print(f"  [ERR] impossibile scaricare la pagina: {e}")
-        return
+        log(f"[ERR]  {label}: pagina non raggiungibile ({e.__class__.__name__})")
+        return "err", label
 
     logo_url = find_logo_url(r.text, r.url)
     if not logo_url:
-        print("  [WARN] nessun logo trovato")
-        return
-    print(f"  logo: {logo_url}")
+        log(f"[WARN] {label}: nessun logo trovato")
+        return "warn", label
 
     try:
         lr = session.get(logo_url, headers=HEADERS, timeout=TIMEOUT, allow_redirects=True)
         lr.raise_for_status()
     except requests.RequestException as e:
-        print(f"  [ERR] download logo fallito: {e}")
-        return
+        log(f"[ERR]  {label}: download logo fallito ({e.__class__.__name__})")
+        return "err", label
 
     ext = ext_from_response(lr, logo_url)
     filename = safe_name(name) if name else safe_name(domain)
     out_path = out_dir / f"{filename}{ext}"
     out_path.write_bytes(lr.content)
-    print(f"  -> salvato: {out_path} ({len(lr.content)} byte)")
+    log(f"[OK]   {label} -> {out_path.name} ({len(lr.content)} byte)")
+    return "ok", label
 
 
 def main() -> int:
@@ -166,6 +181,7 @@ def main() -> int:
         return 1
     list_file = Path(sys.argv[1])
     out_dir = Path(sys.argv[2]) if len(sys.argv) > 2 else Path("loghi")
+    workers = int(sys.argv[3]) if len(sys.argv) > 3 else 20
     out_dir.mkdir(parents=True, exist_ok=True)
 
     entries = []
@@ -174,10 +190,25 @@ def main() -> int:
         if parsed is not None:
             entries.append(parsed)
 
-    with requests.Session() as s:
-        for entry in entries:
-            process(entry, out_dir, s)
+    total = len(entries)
+    log(f"Siti: {total} | workers paralleli: {workers} | output: {out_dir}/")
 
+    counts = {"ok": 0, "err": 0, "warn": 0}
+    with requests.Session() as s:
+        with ThreadPoolExecutor(max_workers=workers) as pool:
+            futures = {pool.submit(process, e, out_dir, s): e for e in entries}
+            for i, fut in enumerate(as_completed(futures), 1):
+                try:
+                    status, _ = fut.result()
+                    counts[status] += 1
+                except Exception as e:
+                    counts["err"] += 1
+                    log(f"[ERR]  exception: {e}")
+                if i % 50 == 0 or i == total:
+                    log(f"--- progresso: {i}/{total} "
+                        f"(ok={counts['ok']} err={counts['err']} warn={counts['warn']})")
+
+    log(f"\nFINE: ok={counts['ok']} err={counts['err']} warn={counts['warn']}")
     return 0
 
 

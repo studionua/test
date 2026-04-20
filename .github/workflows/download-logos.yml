@@ -11,11 +11,15 @@ on:
         description: "Cartella di output"
         default: "loghi"
         required: true
+      workers:
+        description: "Download paralleli (default 20)"
+        default: "20"
+        required: true
 
 jobs:
   download:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 15
 
     steps:
       - name: Checkout repo
@@ -30,7 +34,7 @@ jobs:
         run: pip install requests beautifulsoup4
 
       - name: Run logo downloader
-        run: python3 download_logos.py "${{ inputs.list_file }}" "${{ inputs.output_dir }}"
+        run: python3 download_logos.py "${{ inputs.list_file }}" "${{ inputs.output_dir }}" "${{ inputs.workers }}"
 
       - name: Summary
         if: always()
