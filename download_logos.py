@@ -21,6 +21,7 @@ import mimetypes
 import re
 import sys
 import threading
+import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 from urllib.parse import urljoin, urlparse
@@ -136,43 +137,102 @@ def log(*parts: str) -> None:
         print(" ".join(parts), flush=True)
 
 
+def fetch_with_retry(
+    session: requests.Session, url: str, attempts: int = 2
+) -> requests.Response:
+    last_exc: Exception | None = None
+    for i in range(attempts):
+        try:
+            r = session.get(url, headers=HEADERS, timeout=TIMEOUT, allow_redirects=True)
+            r.raise_for_status()
+            return r
+        except requests.RequestException as e:
+            last_exc = e
+            if i < attempts - 1:
+                time.sleep(0.5 * (i + 1))
+    assert last_exc is not None
+    raise last_exc
+
+
+def try_scrape_logo(
+    session: requests.Session, site: str, out_dir: Path, filename: str
+) -> Path | None:
+    """Scrape HTML del sito per trovare e scaricare il logo."""
+    try:
+        r = fetch_with_retry(session, site)
+    except requests.RequestException:
+        return None
+
+    logo_url = find_logo_url(r.text, r.url)
+    if not logo_url:
+        return None
+
+    try:
+        lr = fetch_with_retry(session, logo_url)
+    except requests.RequestException:
+        return None
+
+    if len(lr.content) < 100:
+        return None
+
+    ext = ext_from_response(lr, logo_url)
+    out_path = out_dir / f"{filename}{ext}"
+    out_path.write_bytes(lr.content)
+    return out_path
+
+
+def try_fallback_icon(
+    session: requests.Session, domain: str, out_dir: Path, filename: str
+) -> tuple[Path, str] | None:
+    """Prova servizi esterni di favicon. Ritorna (path, source) o None."""
+    services = [
+        ("DDG",   f"https://icons.duckduckgo.com/ip3/{domain}.ico",           ".ico", 200),
+        ("Goog",  f"https://www.google.com/s2/favicons?domain={domain}&sz=256", ".png", 500),
+    ]
+    for source, url, default_ext, min_size in services:
+        try:
+            r = session.get(url, headers=HEADERS, timeout=TIMEOUT, allow_redirects=True)
+            r.raise_for_status()
+        except requests.RequestException:
+            continue
+        if len(r.content) < min_size:
+            continue
+        ext = ext_from_response(r, url) or default_ext
+        out_path = out_dir / f"{filename}{ext}"
+        out_path.write_bytes(r.content)
+        return out_path, source
+    return None
+
+
 def process(
     entry: tuple[str | None, str],
     out_dir: Path,
     session: requests.Session,
-) -> tuple[str, str]:
-    """Ritorna (status, label). status in {ok, err, warn}."""
+) -> tuple[str, tuple[str | None, str]]:
+    """Ritorna (status, entry). status in {ok, fail}."""
     name, site = entry
     if not site.startswith(("http://", "https://")):
         site = "https://" + site
     domain = urlparse(site).hostname or site
     label = name or domain
-
-    try:
-        r = session.get(site, headers=HEADERS, timeout=TIMEOUT, allow_redirects=True)
-        r.raise_for_status()
-    except requests.RequestException as e:
-        log(f"[ERR]  {label}: pagina non raggiungibile ({e.__class__.__name__})")
-        return "err", label
-
-    logo_url = find_logo_url(r.text, r.url)
-    if not logo_url:
-        log(f"[WARN] {label}: nessun logo trovato")
-        return "warn", label
-
-    try:
-        lr = session.get(logo_url, headers=HEADERS, timeout=TIMEOUT, allow_redirects=True)
-        lr.raise_for_status()
-    except requests.RequestException as e:
-        log(f"[ERR]  {label}: download logo fallito ({e.__class__.__name__})")
-        return "err", label
-
-    ext = ext_from_response(lr, logo_url)
     filename = safe_name(name) if name else safe_name(domain)
-    out_path = out_dir / f"{filename}{ext}"
-    out_path.write_bytes(lr.content)
-    log(f"[OK]   {label} -> {out_path.name} ({len(lr.content)} byte)")
-    return "ok", label
+
+    # 1. Scraping del sito
+    path = try_scrape_logo(session, site, out_dir, filename)
+    if path:
+        log(f"[OK]   {label} -> {path.name} ({path.stat().st_size} byte)")
+        return "ok", entry
+
+    # 2. Fallback a DuckDuckGo / Google favicon
+    result = try_fallback_icon(session, domain, out_dir, filename)
+    if result:
+        path, source = result
+        log(f"[FB-{source}] {label} -> {path.name} ({path.stat().st_size} byte)")
+        return "ok", entry
+
+    # 3. Fallito
+    log(f"[FAIL] {label}  ({site})")
+    return "fail", entry
 
 
 def main() -> int:
@@ -193,22 +253,38 @@ def main() -> int:
     total = len(entries)
     log(f"Siti: {total} | workers paralleli: {workers} | output: {out_dir}/")
 
-    counts = {"ok": 0, "err": 0, "warn": 0}
+    counts = {"ok": 0, "fail": 0}
+    failed: list[tuple[str | None, str]] = []
     with requests.Session() as s:
         with ThreadPoolExecutor(max_workers=workers) as pool:
             futures = {pool.submit(process, e, out_dir, s): e for e in entries}
             for i, fut in enumerate(as_completed(futures), 1):
                 try:
-                    status, _ = fut.result()
-                    counts[status] += 1
+                    status, entry = fut.result()
                 except Exception as e:
-                    counts["err"] += 1
                     log(f"[ERR]  exception: {e}")
+                    counts["fail"] += 1
+                    continue
+                counts[status] += 1
+                if status == "fail":
+                    failed.append(entry)
                 if i % 50 == 0 or i == total:
                     log(f"--- progresso: {i}/{total} "
-                        f"(ok={counts['ok']} err={counts['err']} warn={counts['warn']})")
+                        f"(ok={counts['ok']} fail={counts['fail']})")
 
-    log(f"\nFINE: ok={counts['ok']} err={counts['err']} warn={counts['warn']}")
+    # Scrivi failed.txt accanto a out_dir (così finisce anche nell'artifact)
+    failed_path = out_dir / "failed.txt"
+    if failed:
+        with open(failed_path, "w", encoding="utf-8") as f:
+            f.write("# Siti dove non e' stato possibile scaricare alcun logo\n")
+            f.write("# Formato: Nome | URL (stesso di siti.txt, puoi rilanciare solo questi)\n")
+            for name, url in failed:
+                f.write(f"{name} | {url}\n" if name else f"{url}\n")
+        log(f"Scritto {failed_path} con {len(failed)} siti falliti")
+    elif failed_path.exists():
+        failed_path.unlink()
+
+    log(f"\nFINE: ok={counts['ok']} fail={counts['fail']} / {total}")
     return 0
 
 
