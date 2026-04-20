@@ -1,3 +1,719 @@
-# Formato: Nome Azienda | URL
-# Righe che iniziano con '#' sono commenti.
-Healthink SRL | https://healthinksrl.it/
+# Generato dal CSV: righe con colonna Logo vuota e Website presente
+# Formato: Nome | URL
+Markeplay | https://www.markeplay.com/
+RecapGPT | https://www.recapgpt.com/
+Coffeefrom | https://coffeefrom.it/en/home/
+Visual Note | https://www.visual-note.com
+Monokee | https://www.monokee.com
+BCC Studio | https://www.bccstudio.biz/
+Oraigo | https://oraigo.com
+Memento | https://www.mementotoys.com
+HuKnow | https://www.huknow.com
+Fluentis | https://www.fluentis.com/en/
+Cyberangels | https://Cyberangels.it
+Sirio | https://sirio.chiron.ai/en/
+TerraViva | https://www.terravivacompetitions.com
+221E | https://www.221e.com
+Eligo | https://www.eligo.style
+Farzati | https://www.farzati.it
+AR Market | https://armarket.it
+Eudata | https://www.eudata.com
+Blockchain Italia | https://www.blockchainitalia.io/
+Builti | http://www.builti.it/
+Wallfarm | https://wallfarm.bio/
+Canova Tech | https://www.canovatech.com/
+Futurenext | https://www.futurenext.it
+Blue Innovation | https://www.blueinnovation.it
+Nest.City | https://www.nest.city
+Edge SDN | https://www.edge-sdn.com
+GardenStuff | https://www.gardenstuff.it
+Tutored - Joiners | https://www.tutored.me
+Ada Travel | https://www.adatravel.it
+Ernesto | http://www.ernesto.it/
+Reasoned Art | https://www.reasonedart.com
+Yookye | https://yookye.com/it
+It’s Prodigy | https://www.dataprodigy.io
+Notarify | https://notarify.io/
+Nextome | http://www.nextome.com/
+Scen | https://www.scen.it
+Trainect | https://www.trainect.it
+NIDO Unmanned Box System | https://www.nido-system.com/
+Wearable Robotics | https://www.wearable-robotics.com
+Pragma Etimos | https://pragmaetimos.com/
+Sigma Ingegneria | https://www.sigmaingegneria.com
+Social Thingum | https://www.socialthingum.it/en
+Huna | https://huna.io/
+Robosan | https://www.robosan.it
+Ticketoo | https://ticketoo.it/
+Kulto | https://www.kultolab.com
+Hercle | https://hercle.financial/
+ABzero | https://www.abzero.it/
+Astrakode | https://astrakode.tech/
+Digital Forest | https://www.digitalforest.it/
+Tiwi | https://www.tiwi.it
+Must Had | https://musthad.com/
+SaferPlaces | http://www.saferplaces.co/
+SLY | http://www.sly.eco/
+j4energy | https://www.j4company.com/
+Pinpoint | https://www.pinpointweb.it/
+Go Additive | https://goadditive.com/
+Pradella Sistemi | https://www.pradellasistemi.com/
+Arxax | https://www.arxax.com/
+Babylon Cloud | http://www.babyloncloud.com/
+ecosostenibile.eu | https://www.e-co2.website/
+Green Future Project | https://greenfutureproject.com/
+Zerow | http://www.zerow.it/
+Blue Gold | https://www.blue-gold.it/en
+EZ LAB | http://www.ezlab.it/
+Iride Acque | http://www.irideacque.com/
+Is CLEAN AIR | http://www.iscleanair.com/
+Nextsense | http://www.biovitae.it/
+Osense | http://www.osense.ai/
+Green Independence | https://www.greenindependence.eu/
+Altea Green Power | https://www.alteagreenpower.it/
+Olivia | https://www.olivia-software.com/
+Resmart | http://resmart.tech/
+Arredo Inox | https://stagionellostore.com/it/
+Real Bowl | http://www.realbowl.it/
+Cynomys | http://www.cynomys.it/
+Igrox | http://www.igrox.com/
+Enerpaper | http://www.enerpaper.com/
+Tomato+ | http://www.tomatopiu.com/
+The Edge Company | https://www.theedgecompany.net/
+3Bee | https://www.3bee.com/
+Wekiwi | https://www.wekiwi.it/
+Lisari | https://www.lisari.com
+Agrimessina | https://www.agrimessina.it/en/
+Veos Digital | https://veos.digital/
+Domethics | https://www.domethics.com
+HERO | https://www.herovision.it
+Altilia | https://altilia.ai
+Revelis | https://www.revelis.eu
+Vehnta | https://vehnta.com/
+Fantacycling | https://fanta-cycling.com/en
+Accessory Line | https://www.accessoryline.it/
+Ascot Industrial | https://www.ascotinternational.com/
+Deateq | https://www.deateq.com/
+EnGreen | https://www.engreensolutions.com
+WMD | https://wmdsrl.com/
+Xylene | https://www.xylene.io
+Daze | https://www.daze.eu
+Bio-Esperia | https://www.bioesperia.com/en
+ACBC | https://acbc.com
+Italian Cricket Farm | https://www.italiancricketfarm.com/
+Route220 | https://evway.net
+Kaymacor | https://www.kaymacor.com
+èlevit | https://www.elevit-ui.com/
+Home Food | https://cesarine.com
+Biolibrary | https://www.biolibrary.it/en/
+Monitor the Planet | https://www.monitortheplanet.com/index
+Idra Water | https://www.idrawater.it
+Kemanji | https://www.appeaty.it/en
+XFarm Technologies | https://xfarm.ag
+Archygram | https://archygram.com
+STS LAB | https://stslab.it
+Cererly.it by Urban Farmer | https://www.cererly.it/
+A.C.A. | https://www.finetaste.it
+Sidewalk Kitchens | https://www.sidewalkitchens.com
+Finapp | https://www.finapptech.com/
+AWorld | https://www.aworld.org
+Agriverse | https://www.agriverse.it
+Kloters | https://www.kloters.com
+Wave | https://www.wavesws.it
+Climate Standard | https://climatestandard.net/
+PowerSolutions Emea | https://www.power-solutions.it
+20energy | https://www.20energy.it
+Billding | https://www.billding.it
+Particular Materials | https://particularmaterials.com/
+Fitporn | https://www.fitporn.com
+Haura | https://www.haura.eu
+Solar Water | https://www.biopic.it
+Prosume | https://prosume.io
+Saba Technology | https://www.sabatechnology.tech
+AIKO | https://aikospace.com/
+Miprons | https://www.miprons.com/
+Gravisat | https://www.gravisat.com/
+Media Lario | https://www.medialario.com/
+ADD-ASTRA | https://www.add-astra.it//
+A.D.S. International | https://www.ads-int.com/
+Elsel | https://www.elsel.net/
+Next Generation Robotics | https://nextgen-robotics.com
+Ganiga Innovation | https://ganiga.ai/
+Hyntelo | https://hyntelo.com
+Purilian | https://purilian.com/en
+Prometeo | https://www.prometeonet.it/en/
+Binoocle Institute | https://binoocle.com
+ArtCentrica | https://artcentrica.com
+IPLABS | https://iplabs.it
+Accelerat | https://Accelerat.eu
+Enapter | https://enapter.com
+EXE - Engineering for Environment | https://exe-engineering.com/en/
+Link.it | https://link.it
+Trigit | https://trigit.it
+BRTCONSULTING | https://brtconsulting.it
+Plannest | https://plannest.it
+IMMERXIVE | https://immerxive.io
+KPI | https://kpi6.com
+Brandplane | https://www.brandplane.co
+Volumio | https://volumio.com/
+Algo | https://algo.tv
+CAELUS | https://caelus-nuclear.com/
+Myndoor | https://www.myndoor.it/
+DataSpark AI | https://ai.dataspark.org/
+WAVENURE | https://wavenure.com/
+Zefi | https://www.zefi.ai/
+Small Pixels | https://smallpixels.ai/
+Keplero AI | https://keplero.ai/
+CRONO | https://www.crono.one/
+Aptus.AI | https://www.aptus.ai/
+Fogsphere | https://fogsphere.com
+RIC3D | https://ric3d.it/
+ResilientX Italia | https://resilientx.com
+Profiter | https://profiter.ai/
+Ludwig | https://ludwig.guru/
+Talentware | https://betalentware.com/
+Restaurants Club | https://aigot.com/
+OpenMall | https://openmall.ai
+Billd | https://billd.it/
+Hiop | https://www.hiop.io
+CENTAI | https://centai.eu
+Develhope | https://www.develhope.co/it/sign-up/
+Spoki | https://spoki.it/en/
+SaidText | https://www.saidtext.com
+Admind.AI | https://www.admind.ai/en/
+Apprendo | https://www.viblio.com
+QuestIT | https://www.quest-it.com
+Cyberneid | https://www.cyberneid.com
+Aida | https://aidamask.com/
+Nimbo Jobs | https://nimbo.ai
+Netix | https://www.netixverso.com
+Audacia Innovations | https://www.audaciainnovations.com/
+Restworld | https://restworld.it
+Innovatech | https://www.innovatechpartecipazioni.com
+Dermaself | https://www.dermaself.it/
+Mine Crime | https://www.minecrime.it/
+IIO | https://iio.ai/
+menumal.it | https://menumal.it
+Athics | https://www.athics.ai
+Rubyno.Studio | https://www.rubyno.com/
+Aries Tech - Cathedra | https://www.ariestech.it
+Athlos | https://www.athlos.biz
+Babelscape | https://babelscape.com/
+BdSound | https://www.bdsound.com
+BitBang | https://bitbang.com/
+Business Changers | https://business-changers.it/en/
+CLOUD PATHOLOGY GROUP | https://cloudpathology.eu
+CREACTIVES | https://WWW.CREACTIVES.COM
+Digitiamo | https://www.digitiamo.com/en
+Dilium | https://www.dilium.com/home.php
+E4 Computer Engineering | https://www.e4company.com/en/
+Enuan | https://www.enuan.com/
+Expert.ai | https://www.expert.ai
+flowtech | https://flowtech.ai
+INTELLISYNC | https://www.intellisync.it/
+Interactive Media | https://imnet.com
+Krateo | https://krateo.io
+Macoev | https://macoev.com
+Nextbit | https://www.nextbit.it/
+Radicalbit | https://radicalbit.ai
+WordLift | https://wordlift.io/
+XCALLY | https://www.xcally.ai/
+Ganiga Innovation | https://ganiga.ai/
+Prometeo | https://www.prometeonet.it/en/
+Purilian | https://purilian.com/en
+Volumio | https://volumio.com/
+Osense | http://www.osense.ai/
+Home Food | https://cesarine.com
+Altilia | https://altilia.ai
+Aptus.AI | https://www.aptus.ai/
+Domethics | https://www.domethics.com
+ecosostenibile.eu | https://www.e-co2.website/
+Diamante | https://www.diamante.tech
+enGenome | https://www.engenome.com
+Datatellers | https://datatellers.info
+NIB biotec | https://www.nibbiotec.com/
+Profiter | https://profiter.ai/eng/
+RIC3D | https://ric3d.it/
+medicud | https://medicud.it
+Human Factor & Innovations | https://www.innovahf.eu
+Wisepath | https://www.wisepath.ai
+Medics | https://www.medics3d.com/en/
+Exosomics | https://www.exosomics.eu
+Life Meter | https://www.lifemetersrl.com/
+DOCTORAPP | https://doctorapp.it/
+Cerebro | https://cerebrosrl.it/
+Binoocle Institute | https://www.binoocle.com
+Daily Practice 22 | https://dailyplatform.it
+CENTAI | https://centai.eu
+Medlea | https://medlea-tech.com
+Servimed Industrial | https://servimed-industrial.com/
+LOQUI | https://www.loqui.chat
+IIO | https://iio.ai/
+AorticLab | https://www.aorticlab.com
+Mirnagreen | https://www.mirnagreen.com
+Biocompatibility Innovation | https://biocompatibility.bio
+InSimili | https://www.insimili.com
+BionIT Labs | https://bionitlabs.com
+BIONSEEK | https://www.bionseek.com
+CLOUD PATHOLOGY GROUP | https://cloudpathology.eu/
+Needleye Robotics | https://www.needleye.it
+Dermaself | https://www.dermaself.it/
+Aileens Pharma | https://aileenspharma.com/
+Holifya | https://www.holifya.com/
+Myndoor | https://www.myndoor.it/
+Library Med | https://librarymed.com/
+More Than Access | https://www.morethanaccess.com
+Officinae Bio | https://officinae.bio/
+Paperbox | https://paperbox.health
+INTA | https://www.intasystems.net/
+COMFTECH | https://www.comftech.com
+Mediavoice | https://www.mediavoice.it/en
+React4life | https://www.react4life.com
+InSililicoTrials Technologies | https://insilicotrials.com
+VAXXIT | https://www.vaxxit.com
+Nous Energy | https://nous.energy/
+CellPly | https://www.cellply.com
+WISE | https://www.wiseneuro.com
+U-Care Medical | https://www.u-caremedical.com
+Restorative Neurotechnologies | https://restorativeneurotechnologies.com
+GVM Assistance | https://gvmassistance.it/it-it/home
+BrainDTech | https://www.braindtech.com
+Nutras | https://www.nutras.it/
+GEK | https://www.geklab.com/
+Drop Digital Health | https://www.dropdigitalhealth.com
+CaSRevolution | https://casrevolution.com/
+Biolibrary | https://www.biolibrary.it/en/
+Math Biology | https://mathbiology.tech/
+Manava Plus | https://www.manava.plus
+Soundsafe Care | https://soundsafecare.com
+Hyntelo | https://hyntelo.com/
+Gamastech | https://www.gamastech.com/en/home
+Kither Biotech | https://kitherbiotech.com
+Lab Service Analytica | https://labservice.it
+Techinnova | https://techinnova.eu
+Develop-Players | https://www.develop-players.com
+ChemiCare | https://www.chemicare.it/
+Awentia | https://awentia.com/
+Linari Medical | https://www.linarimedical.com
+DRB | http://drb.aero
+Groower | https://www.prime-plant.com
+Western CO | https://www.western.it/en/
+NExT | https://www.next-future-mobility.com/
+Truesense | https://www.truesense.it
+INVENTVM Semiconductor | https://www.inventvm.com
+MAMMT | https://www.mammtfood.it
+Ganiga Innovation | https://ganiga.it/en/
+Test 1 | https://t1.solutions/
+Evolvee | https://conkretarobotics.com
+Agrobit | https://www.agrobit.ag/
+Roboze | https://roboze.com
+Clickwash | https://www.clickwash.it
+The Okapi Network | https://r5living.com
+Smartisland Group | https://smartisland.it/
+Authentico | https://www.authentico-ita.org/
+Builti | https://www.builti.it
+BonusX | https://bonusx.it/
+menumal.it | https://menumal.it
+Veycore | https://veycore.com/
+Krateo | https://krateo.io
+Algo | https://algo.tv
+Fintastico | https://www.fintastico.com
+Keplera | https://www.lexhero.com
+Hodlie | https://hodlie.ai
+Future Value | https://futurevalue.app/
+Sibill | https://sibill.com
+WAVENURE | https://wavenure.com/
+Doorway | https://doorwayplatform.com
+ResilientX Italia | https://resilientx.com
+Talentware | https://betalentware.com/
+Aida | https://aidamask.com/
+Twiper | https://twiper.ai
+Why Only White | https://www.whyonlywhite.com/
+Powandgo | https://powandgo.com
+Soundsafe Care | https://soundsafecare.com
+èlevit | https://www.elevit-ui.com/
+Yeastime | https://www.yeastime.com
+Evolvee | https://conkretarobotics.com
+OhmSpace | https://ohm.space
+SEAform | https://seaform.it/
+CENTAI | https://centai.eu
+Sortie Technology | https://www.sortiecargo.com
+CAELUS | https://caelus-nuclear.com/
+Zephorum | https://zephorum.com/
+InSimili | https://www.insimili.com
+Manava Plus | https://www.manava.plus
+MESPAC | https://www.mespac.space
+The Glass Élite | https://theglasselite.com
+Widdel | https://www.widdel.eu/
+XOOTS | https://www.xoots.biz/
+PlantBit | https://www.plantbit.it
+Go Additive | https://goadditive.com/
+Go Additive | https://goadditive.com/
+QuestIT | https://www.quest-it.com
+SEAform | https://seaform.it/en/home-en/
+TradePulse | https://tradepulse.io
+Kytabu | https://kytabu.africa
+IRIF (Remote) | https://www.irif.et
+IrWise | https://irwise.com
+Traent | https://www.traent.com
+Linari Engineering | https://www.linarinanotech.com
+Mediate | https://www.mediate-company.com/
+EvaluationTool | https://macoev.com
+Startacrowd | https://www.startacrowd.com/en/homepage/
+SailADV | https://www.sailadv.com/
+Haruspex | https://www.haruspex.it
+PlayNook | https://www.playnook.games
+Knitronix | https://www.knitronix.com/en/
+Small Pixels | https://www.smallpixels.ai
+DSQM | https://www.dsqm.it
+TUC.technology | https://tuc.technology
+CShark | https://www.cshark.it/page/homepage-en
+NOVAEKA | https://www.novaeka.com
+Titan4 | https://www.titan4.it
+LMA | https://lmasrl.com/
+Sidereus Space Dynamics | https://www.sidereus.space/
+Volta Structural Energy | https://www.voltase.energy
+ORiS | https://oris-space.com/
+Lazzero Tecnologie | http://www.lazzero.com
+Deplotic | https://www.deplotic.com
+Space 11 | https://space11.ai
+Intuos | https://intuos.it/
+Geniel | https://www.geniel.eu
+Capsule Corporation | https://www.capsule-corp.biz
+Andremacon | https://www.andremacon.com
+i-See | https://www.i-seecomputing.com
+Involve Space | https://www.involvespace.eu/
+R&S SOLUTIONS | https://www.linkedin.com/in/res-solutions/
+Highftech Engineering | https://www.highftech.com
+2NDSpace | https://www.2ndspace.eu/
+Adaptronics | https://adaptronics.it
+Roboze | https://roboze.com
+Apogeo Space | https://www.apogeo.space/
+GVM Assistance | https://gvmassistance.it/it-it/home
+FlySight | https://www.flysight.it
+OhmSpace | https://ohm.space
+Space2earth | https://www.space2earth.it/
+MESPAC | https://www.mespac.space
+Survey Lab | https://www.surveylab.info
+Isual Srl | https://www.isual.it
+Alexandria S.r.l. | https://www.diedradesign.com
+Pack | https://thepack.tech
+O-DAMP S.R.L. | https://www.o-damp.com
+2WATCH | https://www.2w.gg
+Red Hog Studio | https://redhogstudio.com
+ADAPTA Studio | https://adapta.studio
+Forge Studios | https://www.forgestudios.com
+360maker | https://www.360maker.it
+Take over rilievi integrati | https://www.take-over.it
+Real Target | https://realtarget.space
+Masseria LoJazzo | https://theheart.masserialojazzo.it/aura-ai
+Service Station | https://www.autoriparatori.net
+AgeOfGames | https://www.ageofgames.net
+Redrawn Studios | https://redrawnstudios.com
+PlayNook | https://playnook.games
+PlayNook | https://PlayNook is a tech startup that creates AudioGames. We want to create an accessible alternative to standard gaming, through immersive and interactive audio stories. We created a 50+ AudioGames catalog, available on our mobile app, and a proprietary tech structure that let us create and publish a new AudioGame each week. We're launching a freemium business model, with 6,000+ active users and 2.5M minutes played.
+ALOE | https://aloesuite.com
+Snaproof | https://www.snaproof.me
+Govisit | https://www.go-visit.it
+Astra Project | https://www.astraproject.eu
+HMDrive | https://www.hmdrive.it
+GeneSys Bio | https://genesysbio.com/
+MITOCHON Srl | https://www.mitochon.it/
+Change2 | https://change2.earth
+ITER IDEA | https://www.iter-idea.com/
+SportId | https://www.sportid.it
+EuroGreen Technology s.r.l. | https://rania-morsi.github.io/EuroGreenTechnology/html/environment.html
+Intuos | https://intuos.it/
+Galvani Power SRL | https://www.galvanipower.com/en/
+MyLime | https://my-lime.com/
+GRIDDIT | https://griddit.space/
+DEEP VISION S.R.L. | https://www.hyperaxes.ai
+SPAZIOFUTURO S.r.l | https://www.spaziofuturo.eu
+Involve Space | https://www.involvespace.eu/
+Engreen | https://www.engreen.world
+FormaXR | https://formaxr.com/
+Climate Standard | https://climatestandard.net/
+Aqtec srl | https://aqtec.it
+Next Digital Platform Srl | https://www.nextdigitalplatform.eu
+Tuidi | https://www.tuidi.ai/
+Admind | https://www.admind.ai
+Metacasa | https://www.metacasa.ai
+Planet Srl. | https://nogreenwithoutblue.it/
+Brandplane | https://www.brandplane.co/
+Laizy | https://laizy.co/
+RELLAI | https://www.rellai.com
+ICONN TECH srl | https://correlist.com/en/
+NeuroSyntek | https://neurosyntek.com
+Biolibrary | https://www.biolibrary.it/en/
+ImpattoZero srl | https://www.agricoltura2punto0.it/
+AllStent | https://www.allstent.com/
+Well-Rehab srl | https://www.well-rehab.com/
+Mangofit srl | https://www.mangofitapp.com/
+Clean OS Srl | https://www.thecleanos.com/
+Innovatech srl | https://www.innovatech.info
+Confirmo | https://www.confirmo.it
+BIONSEEK | https://www.bionseek.com
+Melissa | https://www.linkedin.com/in/chiara-bianco-731a6161
+MgShell | https://www.mgshell.com
+Nutra Futura | https://nutrafutura.com
+jooband | https://jooband.com
+Oraltec srl | https://www.oraltec.it
+Biogenera SpA | https://www.biogenera.com
+Tethis S.p.A. | https://www.tethis-lab.com
+FlorenceCare | https://florencecare.eu
+Rosso (EMA HEALTH SRL) | https://donarosso.it
+Zephorum | https://webetery.zephorum.com/home
+Aequilibrium pharma srl | https://www.aeqpharma.com
+LIONHEALTH SOCIETA' BENEFIT | https://www.lionhealth.tech/
+Star Tric srl | https://www.startric.it/
+Exosomics SpA | https://www.exosomics.eu
+innovabiohealth S.r.l. | https://www.innovabiohealth.com
+YU.SH srl | https://www.yush.it/
+LOOKALIKE SRL | https://company.lookalike.shop/en/
+DaLunedì | https://www.dalunedi.it/
+SBAM SOCIAL SRL | https://sbam.social/
+EYE-TECH SRL | https://www.eye2drive.com/
+TRIBYOU - YOUR PLACES | https://www.tribyou.life/
+NEXTFLAG SRL | https://nextflag.app/
+Genius Loci srl (The thinking clouds) | https://geniusloci.tech/
+SunCubes | https://www.suncubes.space/
+Valuebiotech Srl | https://valuebiotech.com/
+Trailslight srl | https://trailslight.it/en/
+CBL Electronics SRL | https://www.cblelectronics.com
+TECHNOPI SOLUTIONS SRL | https://technopi.solutions
+Penguinpass | https://www.penguinpass.it
+Govisit | https://www.go-visit.it
+DRB srl | https://drb.aero
+EKORE | https://www.ekore.it/
+Viber Alert | https://viberalert.com/
+Helios Domotics S.r.l. (Lit) | https://www.itslitbox.com/
+Neuronova | https://www.neuronovatech.com
+BeNewtral (COMPANY DROP OUT - CLEANTECH COHORT) | https://www.benewtral.com/
+MONITOR THE PLANET | https://www.monitortheplanet.com/index-en
+QA ANALYTICS srl | https://www.scops.ai/en
+Artinoise | https://www.recorderinstruments.com
+Renovo | https://www.renovo-recycling.it/
+Procederai | https://procederai.com
+To Move | https://tomove.tech/
+eMomentum | https://www.emomentum.it
+I2T2C srl | https://ulisses.it
+ELEVATE S.R.L. | https://cooshino.com/
+MyLime Srl | https://my-lime.com/
+Alexandrite Lighting | https://www.alexandritelighting.com
+New Generation Sensors srl | https://ngs-sensors.it
+3FESTO SRL | https://www.any3dp.com
+EUREBO HUB | https://innovabilita.it
+DriveDrop | https://drivedrop.it
+BlueUp Srl | https://www.blueupbeacons.com
+Nowtech Solutions srl | https://it.nowtechsolutions.it/
+ImpattoZero srl | https://www.agricoltura2punto0.it/
+QuickPark | https://quick-park.net/
+Noa software srl | http://noasoftware.it
+lit | https://www.itslitbox.com/
+iHeel | https://www.iheel.it
+Clean OS Srl | https://www.thecleanos.com/
+take over rilievi integrati srl | https://www.take-over.it
+CShark srl | https://www.cshark.it/
+Real Target | https://realtarget.space/
+Meddle Srl | https://www.meddleconnect.com/en
+Particular Materials | https://www.elementag.it/
+Kaigos | https://www.kaigos.io
+Planet Srl. | https://nogreenwithoutblue.it/
+IOTILIZE.ME | https://iotilize.me
+Sintropy.ai | https://www.sintropy.ai/
+Fortuny-Caramba | https://www.avon
+Klara | https://www.wearklara.com/
+jooband | https://jooband.com
+Vanto Collaborative Robotic Systems Ltd | https://www.vanto.ai/
+B-Plas srl società benefit | https://www.b-plas.it/
+EV Field Service | https://www.evfieldservice.it
+ALEANTE ENGINEERING | https://www.aleante.com
+Infinity Electric Energy Srl. | https://www.infinityelectricenergy.it
+J4ENERGY (J4 Srl) | https://www.j4.energy/decarb-co-pilot/
+Penguinpass | https://www.penguinpass.it
+Metacasa | https://www.metacasa.ai
+Helios Domotics S.r.l. | https://www.itslitbox.com/
+While True srl | https://www.whiletrue.eco
+IOTILIZE.ME | https://iotilize.me
+Ohoskin | https://ohoskin.com/
+Planet Srl. | https://nogreenwithoutblue.it/
+Dabohn srl | https://www.dabohn.com
+IRIDE ACQUE SB SRL | https://irideacque.com/en/
+PROSUME | https://prosume.io
+Aqtec srl | https://aqtec.it
+New Generation Sensors srl | https://ngs-sensors.it
+RARA Factory | https://rarafactory.com
+Algae Scope | https://www.algae-scope.com
+Ecodrone Srl | https://ecodroneitaly.com
+eMomentum | https://www.emomentum.it
+Blackbox Green Srl | https://blackboxgreen.com
+GECO - Global Engineerimg Constructions s.r.l. | https://gecobr.wixsite.com/sewat-en
+Boats Connect | https://www.boatsconnect.com
+Italynsect | https://www.italynsect.it
+Free Eat | https://www.freeeat.it/
+AGReen service srl | https://www.agreenservice.it
+QuickPark | https://quick-park.net/
+farmeo | https://www.farmeo.it
+jooband | https://jooband.com
+CarbonSpotted | https://onicolas2.wixstudio.com/leafy
+SatEnlight | https://satenlight.com/
+Deeva | https://www.deeva.it/
+Dualme | https://www.dualme.it/
+LEB Srl | https://www.leb.world
+Ohoskin | https://ohoskin.com/
+TEMERA SRL | https://temera.it/
+Bonnie Beauty | https://bonniebeauty.it/
+Pulvera | https://pulvera.com/en/
+LongEVity Bioscience | https://arterrabio.it/wp-content/uploads/2024/07/ARTERRA-SIGLATO-ACCORDO-DI-JOINT-VENTURE-CON-EXOSOMICS-S.P.A.-PER-LA-COSTITUZIONE-DI-LONGEVITY-BIOSCIENCE-SRL-25072024.pdf
+Ballangi S.R.L. | https://ballangi.com/
+Exteryo | https://exteryo.com
+MADE IN ITALY -Ai- MARKETPLACE s.r.l. | https://www.madeinitaly-marketplace.com
+Ratti SpA SB | https://www.ratti.it
+BETTAKNIT SRL | https://www.bettaknit.com/it
+tellmewai.eu | https://tellmewai.eu
+Ecomi | https://www.ecomi.digital
+Airfield Security | https://www.youtube.com/watch?v=ekjNpMfF3fM
+EMERALS | https://dev01.emeralsrp.it/en
+Beep | https://beep.finance/
+LIQEX Italia | https://www.liqex.eu/en
+EYE4NIR | https://www.eye4nir.com/
+SUPAIR s.r.l. | https://www.supair.it/
+MEUS | https://www.meusfan.com/
+Trainect s.r.l. | https://www.trainect.ai/
+MatchGuru | https://www.matchguru.it
+Climate Standard | https://climatestandard.net/
+Sablier | https://sablier.it/
+ANcybernetics srl | https://www.ancybernetics.it/
+Timeless Club | https://thetimeless.club/
+Wink Suite | https://www.winksuite.com/
+Inspector | https://inspector.dev
+Mae srl | https://app.mae.community
+To Move | https://tomove.tech/
+Algae Scope | https://www.algae-scope.com
+4 FOOD SRL | https://emiliafood.love
+AgonUp Srl | https://www.agonup.com
+Sharewood | https://sharewood.io
+Altilia | https://altilia.ai
+APPYPILGRIM SRL | https://www.appypilgrim.com/
+ARGO S.R.L. | https://argo4health.com/
+EXE-ENGINEERING FOR ENVIRONMET | https://exe-engineering.com/en/
+Genuine Way srl | https://genuineway.io/
+Hiop | https://www.hiop.io/
+Hotiday | https://www.hotiday.com
+LYNDA (CARRIE SRL) | https://www.hellolynda.com
+Nimbo Jobs srl | https://nimbo.ai
+PRODIGY PRODUCTS S.R.L. | https://www.itsprodigy.com
+PugliAI | https://www.pugliai.com/
+Qwirklabs srl | https://qwirklabs.gg
+ScaleUp | https://scaleupacademy.it/landing/home
+soulShape S.R.L.s. S.B. | https://www.f6s.com/company/soulshape
+Syrto | https://syrto.ai/
+TokNox | https://www.toknox.com
+Totally Innovation | https://totallyinnovation.com/en/
+Valeria | https://www.valeria.food/
+Vectorlab | https://www.vectorlab-cg.com/
+Vepartment | https://vepartment.com
+Wisepath | https://www.wisepath.ai
+SatEnlight | https://satenlight.com/
+Agrimachine Green Evolution srl | https://www.herbeeside.com
+Pharmajea | https://pharmajea.com
+Revelio | https://reveliobooks.com/
+NIB biotec | https://www.nibbiotec.com/
+Vertalis | https://www.vertalis.ai/
+MADE IN ITALY -Ai- MARKETPLACE s.r.l. | https://www.madeinitaly-marketplace.com
+Imdea | https://www.pensain4.com/
+Tangible Tech S.r.l. | https://www.tangibletech.eu
+VineTech | https://www.vinetech.it
+Infinity Electric Energy Srl. | https://www.infinityelectricenergy.it
+Real Target | https://realtarget.space/
+SANTELMO S.r.l. | https://www.thesantelmo.com
+ELEVATE S.R.L. | https://cooshino.com/
+WaveLAB | https://wavelab.space
+Vanto Collaborative Robotic Systems Ltd | https://www.vanto.ai/
+Free Eat | https://www.freeeat.it/
+B&Y s.r.l. | https://www.bnysrl.it
+Loudrights | https://www.loudrights.com
+Victor - Hart™️ | https://victor-hart.com/
+Myra Lab | https://myra-lab.com/
+Pathlo | https://pathlo.framer.website/
+doloweex | https://doloweex.eu
+Fortuny-Caramba | https://www.avon
+HELYRA | https://www.helyra.eu
+farmeo | https://www.farmeo.it
+HUDI | https://www.humandataincome.com
+ARCA Dynamics | https://www.arcadynamics.space
+TSD Space – Techno System Developments Srl | https://www.tsd-space.it/
+TUC.technology | https://tuc.technology
+Cshark srl | https://www.cshark.it/
+AREA SpA | https://www.area.it
+Xplora Srl | https://xploragroup.ai/
+Cyberwave | https://cyberwave.com
+Daidalos | https://www.daidalos.it/
+VersoSat | https://versosat.com
+VectorLab | https://www.vectorlab-cg.com/
+Vector Robotics | https://vector-robotics.space
+SatEnlight | https://satenlight.com/
+SVP | https://www.svp-industries.com/
+Small Pixels | https://smallpixels.ai/
+Dymension | https://dymension.systems/
+Noa Software | http://noasoftware.it
+Antarix Space srl / previously Fashion For Biodiversity srl | https://www.fashionforbiodiversity.com
+Novac | https://novacsupercap.com/
+Kaigos | https://www.kaigos.io
+REA Space S.r.l. | https://reaspace.com/
+Sab Group S.r.l. | https://www.sabrobotix.com/
+EYE4NIR | https://www.eye4nir.com/
+Zephorum | https://webetery.zephorum.com/home
+Cognivix | https://cognivix.com/
+Fluid Wire Robotics | https://www.fluidwirerobotics.com/
+ai.esra Spa | https://ai-esra.com
+Beelzebub | https://beelzebub.ai/
+bitCorp | https://bitcorp.it/it
+BUTTERFLY DECISIONS - S.R.L. | https://www.butterflydecisions.com/?lang=en
+Bynario | https://bynar.io
+Cleafy | https://cleafy.com
+Cyber Evolution Srl | https://lecs.io/
+Drivesec srl | https://www.drivesec.com
+Fata Informatica srl | https://www.cybersecurityup.com
+Hacktive Security | https://hacktivesecurity.com
+Hiop | https://www.hiop.io/
+neurally | https://www.neurally.it/
+Propero | https://www.ufficiostampa.provincia.tn.it/Comunicati/Propero-startup-trentina-pr
+QuantHum Edge Srl | https://www.quanthumedge.it
+Sicuranext srl | https://sicuranext.com/
+MATERIAINTEL S.r.l. | https://www.materiaintel.com
+Seneca Biotech Srl | https://www.senecabiotech.com
+Brain Innovations | https://braininnovations.eu/
+GEORADIO SRL | https://www.loquis.biz/it/
+We-Com S.r.l. | https://www.we-com.it
+L'ERMA di BRETSCHNEIDER Srl | https://www.lerma.it
+CShark S.r.l. | https://www.cshark.it/
+PlantVoice srl SB | https://plantvoice.farm/
+Giuseppe Bernardini Costruzioni e Servizi SRLS | https://www.dedaloroma.com
+Easyrain | https://www.easyrain.it/
+To Move srl | https://tomove.tech/
+CityZ | https://www.cityz.it
+Viber Alert | https://viberalert.com/
+GECO -GLOBAL ENGINEERING CONSTRUCTIONS s.r.l. | https://www.360maker.it/
+Noa Software | http://noasoftware.it
+Cyber Evolution Srl | https://lecs.io/
+WWH Italia srl | https://wwhitalia.it
+MACS Srl | https://macsitalia.com/
+GAMASTECH SRL | https://www.gamastech.com/en/home
+Dataz s.r.l. | https://www.dataz.it
+Busforfun.com srl | https://www.busforfun.com
+BLUMIT | https://www.blumit.it
+VectorLab | https://www.vectorlab-cg.com/
+Climate Standard | https://climatestandard.net/
+Genuine Way | https://genuineway.io/
+InfraNexo | https://infranexo.com
+Lokit Technology Srl | https://lokit.it/
+SkyProof Company srl | https://www.skyproofco.com
+Syrto | https://syrto.ai/
+neurally | https://www.neurally.it/
+TRAILSLIGHT srl | https://trailslight.it/en/
+ANcybernetics srl | https://www.ancybernetics.it/
+oniro | https://oniro.tech/
+ImpattoZero srl | https://www.agricoltura2punto0.it/
+SANTELMO S.r.l. | https://www.thesantelmo.com
+Ride2share s.r.l. (Wegoo) | https://wegoo.it/
