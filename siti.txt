@@ -1,1 +1,3 @@
-https://healthinksrl.it/
+# Formato: Nome Azienda | URL
+# Righe che iniziano con '#' sono commenti.
+Healthink SRL | https://healthinksrl.it/

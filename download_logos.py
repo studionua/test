@@ -5,7 +5,11 @@ Scarica il logo principale da una lista di siti.
 Uso:
     python3 download_logos.py siti.txt [cartella_output]
 
-Il file `siti.txt` contiene un URL per riga (righe vuote e '#' ignorate).
+Formato di `siti.txt` (una riga per sito):
+    Nome Azienda | https://example.com/
+    https://solo-url.com/           # senza nome -> usa il dominio
+
+Righe vuote e righe che iniziano con '#' sono ignorate.
 Default output: ./loghi
 Dipendenze: requests, beautifulsoup4  (pip install requests beautifulsoup4)
 """
@@ -105,15 +109,29 @@ def ext_from_response(resp: requests.Response, url: str) -> str:
     return ext
 
 
-def safe_name(domain: str) -> str:
-    return re.sub(r"[^a-zA-Z0-9._-]", "_", domain)
+def safe_name(name: str) -> str:
+    name = name.strip().replace(" ", "_")
+    return re.sub(r"[^a-zA-Z0-9._-]", "_", name) or "logo"
 
 
-def process(site: str, out_dir: Path, session: requests.Session) -> None:
+def parse_line(line: str) -> tuple[str | None, str] | None:
+    """Ritorna (nome, url) o None se la riga va saltata."""
+    line = line.strip()
+    if not line or line.startswith("#"):
+        return None
+    if "|" in line:
+        name, _, url = line.partition("|")
+        return name.strip() or None, url.strip()
+    return None, line
+
+
+def process(entry: tuple[str | None, str], out_dir: Path, session: requests.Session) -> None:
+    name, site = entry
     if not site.startswith(("http://", "https://")):
         site = "https://" + site
     domain = urlparse(site).hostname or site
-    print(f"\n>> {site}")
+    label = name or domain
+    print(f"\n>> {label}  ({site})")
 
     try:
         r = session.get(site, headers=HEADERS, timeout=TIMEOUT, allow_redirects=True)
@@ -136,7 +154,8 @@ def process(site: str, out_dir: Path, session: requests.Session) -> None:
         return
 
     ext = ext_from_response(lr, logo_url)
-    out_path = out_dir / f"{safe_name(domain)}{ext}"
+    filename = safe_name(name) if name else safe_name(domain)
+    out_path = out_dir / f"{filename}{ext}"
     out_path.write_bytes(lr.content)
     print(f"  -> salvato: {out_path} ({len(lr.content)} byte)")
 
@@ -149,15 +168,15 @@ def main() -> int:
     out_dir = Path(sys.argv[2]) if len(sys.argv) > 2 else Path("loghi")
     out_dir.mkdir(parents=True, exist_ok=True)
 
-    sites = [
-        line.strip()
-        for line in list_file.read_text(encoding="utf-8").splitlines()
-        if line.strip() and not line.strip().startswith("#")
-    ]
+    entries = []
+    for line in list_file.read_text(encoding="utf-8").splitlines():
+        parsed = parse_line(line)
+        if parsed is not None:
+            entries.append(parsed)
 
     with requests.Session() as s:
-        for site in sites:
-            process(site, out_dir, s)
+        for entry in entries:
+            process(entry, out_dir, s)
 
     return 0
 

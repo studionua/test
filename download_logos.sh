@@ -2,6 +2,9 @@
 # Scarica il logo principale da una lista di siti.
 # Uso: ./download_logos.sh [lista.txt] [cartella_output]
 #      default: siti.txt ./loghi
+# Formato lista (una riga per sito):
+#   Nome Azienda | https://example.com/
+#   https://solo-url.com/       (senza nome usa il dominio)
 # Dipendenze: curl, grep, sed, awk (standard Unix)
 
 set -uo pipefail
@@ -82,14 +85,35 @@ detect_ext() {
     esac
 }
 
-while IFS= read -r site || [ -n "$site" ]; do
-    site="$(echo "$site" | tr -d '[:space:]')"
-    [ -z "$site" ] && continue
-    case "$site" in '#'*) continue ;; esac
-    case "$site" in http://*|https://*) ;; *) site="https://$site" ;; esac
+sanitize() {
+    # rimuove spazi ai bordi e sostituisce caratteri non sicuri per nomi file
+    echo "$1" \
+        | sed -E 's/^[[:space:]]+|[[:space:]]+$//g' \
+        | sed -E 's/[[:space:]]+/_/g' \
+        | sed -E 's/[^a-zA-Z0-9._-]/_/g'
+}
 
-    echo ">> $site"
+while IFS= read -r line || [ -n "$line" ]; do
+    # strip leading/trailing whitespace
+    line=$(echo "$line" | sed -E 's/^[[:space:]]+|[[:space:]]+$//g')
+    [ -z "$line" ] && continue
+    case "$line" in '#'*) continue ;; esac
+
+    # split su '|' per "Nome | URL"
+    if [[ "$line" == *"|"* ]]; then
+        name="${line%%|*}"
+        site="${line##*|}"
+        name=$(echo "$name" | sed -E 's/^[[:space:]]+|[[:space:]]+$//g')
+        site=$(echo "$site" | sed -E 's/^[[:space:]]+|[[:space:]]+$//g')
+    else
+        name=""
+        site="$line"
+    fi
+
+    case "$site" in http://*|https://*) ;; *) site="https://$site" ;; esac
     domain=$(sed -E 's#^https?://##; s#/.*##' <<<"$site")
+    label="${name:-$domain}"
+    echo ">> $label  ($site)"
 
     html=$(curl -sSL -A "$UA" --compressed "$site" 2>/dev/null) || true
     if [ -z "$html" ]; then
@@ -113,7 +137,12 @@ while IFS= read -r site || [ -n "$site" ]; do
     ext=$(detect_ext "$ct" "$logo_url")
     rm -f "$headers"
 
-    out="$OUT/${domain}.${ext}"
+    if [ -n "$name" ]; then
+        filename=$(sanitize "$name")
+    else
+        filename=$(sanitize "$domain")
+    fi
+    out="$OUT/${filename}.${ext}"
     mv "$tmp" "$out"
     size=$(wc -c <"$out" | tr -d ' ')
     echo "  -> $out ($size byte)"
