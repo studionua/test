@@ -1,0 +1,51 @@
+name: Download Logos
+
+on:
+  workflow_dispatch:
+    inputs:
+      list_file:
+        description: "File lista siti (formato: Nome | URL per riga)"
+        default: "siti.txt"
+        required: true
+      output_dir:
+        description: "Cartella di output"
+        default: "loghi"
+        required: true
+
+jobs:
+  download:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install requests beautifulsoup4
+
+      - name: Run logo downloader
+        run: python3 download_logos.py "${{ inputs.list_file }}" "${{ inputs.output_dir }}"
+
+      - name: Summary
+        if: always()
+        run: |
+          echo "## Download completato" >> $GITHUB_STEP_SUMMARY
+          count=$(find "${{ inputs.output_dir }}" -type f 2>/dev/null | wc -l)
+          echo "Loghi scaricati: **$count**" >> $GITHUB_STEP_SUMMARY
+          size=$(du -sh "${{ inputs.output_dir }}" 2>/dev/null | cut -f1)
+          echo "Dimensione totale: **$size**" >> $GITHUB_STEP_SUMMARY
+
+      - name: Upload logos as artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: loghi
+          path: ${{ inputs.output_dir }}/
+          retention-days: 30
+          if-no-files-found: warn
