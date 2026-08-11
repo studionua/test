@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Cartolina · Camigliatello Silano</title>
+  <title>Cartoline · Camigliatello Silano</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;600&display=swap" rel="stylesheet">
@@ -13,7 +13,7 @@
     html, body {
       width: 100%;
       min-height: 100%;
-      background: #e8e4d8;
+      background: #F9F6EF;
       font-family: system-ui, sans-serif;
       display: flex;
       align-items: center;
@@ -21,11 +21,65 @@
       padding: 40px 20px;
     }
 
-    /* ---- Scena 3D ---- */
+    /* Riga orizzontale di tre cartoline */
+    .row {
+      display: flex;
+      gap: clamp(16px, 3vw, 48px);
+      align-items: center;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    /* ---- Scena 3D ----
+       Aspect-ratio esatto dell'immagine (316×509) così la cartolina
+       non viene mai ritagliata, e `object-fit: contain` la preserva
+       integrale. */
     .scene {
-      width: 320px;
-      height: 500px;
+      width: min(30vw, 316px);
+      min-width: 240px;
+      aspect-ratio: 316 / 509;
       perspective: 1600px;
+    }
+
+    /* ---- Mobile: carosello scorrevole, una card alla volta ---- */
+    @media (max-width: 768px) {
+      html, body {
+        display: block;
+        padding: 0;
+        overflow-x: hidden;
+      }
+
+      .row {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        overflow-y: hidden;
+        scroll-snap-type: x mandatory;
+        -webkit-overflow-scrolling: touch;
+        padding: 90px calc(50vw - 158px) 140px;  /* più aria sopra e sotto */
+        gap: 32px;
+        justify-content: flex-start;
+        scrollbar-width: none;
+      }
+      .row::-webkit-scrollbar { display: none; }
+
+      .scene {
+        flex: 0 0 auto;
+        width: 316px;
+        min-width: 316px;
+        scroll-snap-align: center;
+      }
+
+      /* Icona neve: sul mobile evita di sovrapporsi alle card:
+         spostala in basso a destra con più margine. */
+      .snow-toggle {
+        top: auto;
+        bottom: 36px;
+        right: 18px;
+        width: 42px;
+        height: 42px;
+        font-size: 20px;
+      }
+      .hint { display: none; }
     }
 
     .card {
@@ -33,74 +87,61 @@
       width: 100%;
       height: 100%;
       transform-style: preserve-3d;
-      transition: transform 1.1s cubic-bezier(0.22, 0.8, 0.28, 1);
       cursor: pointer;
-      filter: drop-shadow(0 18px 24px rgba(0,0,0,0.25));
+      transition: transform 1.2s cubic-bezier(0.55, 0.1, 0.35, 1);
+      will-change: transform;
     }
 
-    .scene:hover .card { transform: rotateY(180deg); }
+    /* Flip solo al click */
+    .scene.flipped .card { transform: rotateY(180deg); }
 
     .face {
       position: absolute;
       inset: 0;
       backface-visibility: hidden;
       -webkit-backface-visibility: hidden;
-      border-radius: 18px;
-      overflow: hidden;
     }
 
     .face img {
       width: 100%;
       height: 100%;
       display: block;
-      object-fit: cover;
+      object-fit: contain;
       user-select: none;
       -webkit-user-drag: none;
     }
 
-    .back { transform: rotateY(180deg); }
+    .front { transform: rotateY(0deg)   translateZ(1px); }
+    .back  { transform: rotateY(180deg) translateZ(1px); }
 
-    /* ---- Righe dove appare il testo scritto a mano ---- */
+    /* ---- Scritta a mano sulle righe del retro ---- */
     .handwriting {
       position: absolute;
-      /* Posizione sulle righe del retro cartolina */
-      left: 10.5%;
-      right: 10.5%;
-      top: 47%;
-      bottom: 18%;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
+      inset: 0;
       pointer-events: none;
     }
 
     .handwriting .line {
+      position: absolute;
+      left: 12%;
+      right: 2%;
+      height: 22px;
+      line-height: 22px;
       font-family: 'Caveat', cursive;
-      font-size: 22px;
-      line-height: 1;
-      color: #1a1a1a;
+      font-size: 17px;
+      color: #ece7d3;
       white-space: nowrap;
       overflow: hidden;
-      transform: translateY(-4px) rotate(-0.6deg);
-      letter-spacing: 0.3px;
+      letter-spacing: 0.2px;
     }
 
-    .handwriting .line:nth-child(2) { transform: translateY(-4px) rotate(0.4deg); }
-    .handwriting .line:nth-child(3) { transform: translateY(-4px) rotate(-0.3deg); }
-    .handwriting .line:nth-child(4) { transform: translateY(-4px) rotate(0.5deg); }
+    .handwriting .line:nth-child(1) { top: 49.5%; transform: rotate(-0.6deg); }
+    .handwriting .line:nth-child(2) { top: 59.3%; transform: rotate(0.4deg); }
+    .handwriting .line:nth-child(3) { top: 67.4%; transform: rotate(-0.3deg); }
+    .handwriting .line:nth-child(4) { top: 76.5%; transform: rotate(0.5deg); }
 
-    /* Cursore lampeggiante simulando la punta della penna */
-    .handwriting .line.writing::after {
-      content: "";
-      display: inline-block;
-      width: 2px;
-      height: 18px;
-      background: #1a1a1a;
-      margin-left: 2px;
-      vertical-align: middle;
-      animation: blink 0.7s steps(2) infinite;
-    }
-    @keyframes blink { 50% { opacity: 0; } }
+    /* Deluxe: testo in verde scuro invece del crema */
+    .scene.deluxe .handwriting .line { color: #2A331C; }
 
     .hint {
       position: fixed;
@@ -113,139 +154,315 @@
       color: #5a5a4f;
       opacity: 0.7;
     }
+
+    /* ---- Neve: canvas full-viewport + toggle ---- */
+    #snow {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 5;
+      opacity: 0;
+      transition: opacity 0.8s ease;
+    }
+    body.snowing #snow { opacity: 1; }
+
+    .snow-toggle {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      width: 46px;
+      height: 46px;
+      border-radius: 50%;
+      border: 1px solid #2b3321;
+      background: #F9F6EF;
+      color: #2b3321;
+      font-size: 22px;
+      line-height: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: transform 0.4s ease, background 0.3s ease, color 0.3s ease;
+      z-index: 20;
+      user-select: none;
+    }
+    .snow-toggle:hover { transform: scale(1.08); }
+
+    body.snowing .snow-toggle {
+      background: #2b3321;
+      color: #F9F6EF;
+      animation: spin 6s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
   </style>
 </head>
 <body>
 
-  <div class="scene" id="scene">
-    <div class="card">
-      <div class="face front">
-        <img src="fronte.jpg" alt="Fronte cartolina" />
-      </div>
-      <div class="face back">
-        <img src="retro.jpg" alt="Retro cartolina" />
-        <div class="handwriting" id="handwriting">
-          <div class="line" data-text="Cara Anna,"></div>
-          <div class="line" data-text="la neve qui è incantevole,"></div>
-          <div class="line" data-text="ti penso ad ogni passo."></div>
-          <div class="line" data-text="Con affetto, Giulio"></div>
+  <div class="row">
+
+    <div class="scene">
+      <div class="card">
+        <div class="face front">
+          <img src="de-giuseppe/la%20suite.png" alt="Fronte cartolina 1" />
+        </div>
+        <div class="face back">
+          <img src="de-giuseppe/PROVA%20CARTOLINA2.png" alt="Retro cartolina 1" />
+          <div class="handwriting">
+            <div class="line" data-text="Camera con ampi spazi per esigenze"></div>
+            <div class="line" data-text="familiari o di coppie in cerca di"></div>
+            <div class="line" data-text="un vero e proprio spazio da vivere"></div>
+            <div class="line" data-text="in piena libertà."></div>
+          </div>
         </div>
       </div>
     </div>
+
+    <div class="scene">
+      <div class="card">
+        <div class="face front">
+          <img src="de-giuseppe/la_standard.png" alt="Fronte Standard" />
+        </div>
+        <div class="face back">
+          <img src="de-giuseppe/la_standardretro.png" alt="Retro Standard" />
+          <div class="handwriting">
+            <div class="line" data-text="Camera adatta alle coppie che vogliono"></div>
+            <div class="line" data-text="vivere il tempo della vacanza con la"></div>
+            <div class="line" data-text="vita della Sila e godendo nei momenti"></div>
+            <div class="line" data-text="di Relax gli spazi comuni della struttura."></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="scene deluxe">
+      <div class="card">
+        <div class="face front">
+          <img src="de-giuseppe/la_deluxe.png" alt="Fronte Deluxe" />
+        </div>
+        <div class="face back">
+          <img src="de-giuseppe/la_deluxeretro.png" alt="Retro Deluxe" />
+          <div class="handwriting">
+            <div class="line" data-text="Camera con spazi adatti ad una coppia"></div>
+            <div class="line" data-text="esigente e che vuole ritrovare la"></div>
+            <div class="line" data-text="serenità e il relax, vivendo qualche"></div>
+            <div class="line" data-text="momento in più il proprio appartamento."></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
   </div>
 
-  <div class="hint">passa il mouse sulla cartolina</div>
+  <canvas id="snow"></canvas>
+
+  <button class="snow-toggle" id="snowToggle" aria-label="Attiva neve" title="Neve">
+    <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+      <line x1="12" y1="3" x2="12" y2="21"/>
+      <line x1="4.5" y1="7.5" x2="19.5" y2="16.5"/>
+      <line x1="4.5" y1="16.5" x2="19.5" y2="7.5"/>
+      <polyline points="10,5 12,3 14,5"/>
+      <polyline points="10,19 12,21 14,19"/>
+      <polyline points="4.5,10 4.5,7.5 7,7"/>
+      <polyline points="19.5,14 19.5,16.5 17,17"/>
+      <polyline points="4.5,14 4.5,16.5 7,17"/>
+      <polyline points="19.5,10 19.5,7.5 17,7"/>
+    </svg>
+  </button>
+
+  <div class="hint">clicca su una cartolina</div>
 
   <script>
-    /* =========================================================
-       Flip card con scrittura a mano + suono di penna
-       ========================================================= */
-
-    const scene  = document.getElementById('scene');
-    const lines  = document.querySelectorAll('#handwriting .line');
-
-    /* --- Audio: suono di penna generato via Web Audio API --- */
-    let audioCtx = null;
-    let noiseBuffer = null;
-
-    function ensureAudio() {
-      if (audioCtx) return;
-      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-
-      /* Precalcola un buffer di rumore bianco (250 ms) */
-      const len = audioCtx.sampleRate * 0.25;
-      noiseBuffer = audioCtx.createBuffer(1, len, audioCtx.sampleRate);
-      const data = noiseBuffer.getChannelData(0);
-      for (let i = 0; i < len; i++) data[i] = Math.random() * 2 - 1;
-    }
-
-    /* Un breve "graffio" della penna: rumore filtrato con inviluppo rapido */
-    function penTick() {
-      if (!audioCtx) return;
-      const now = audioCtx.currentTime;
-
-      const src = audioCtx.createBufferSource();
-      src.buffer = noiseBuffer;
-      src.playbackRate.value = 0.8 + Math.random() * 0.5;
-
-      /* Band-pass per suono asciutto, alto, come penna su carta */
-      const bp = audioCtx.createBiquadFilter();
-      bp.type = 'bandpass';
-      bp.frequency.value = 2200 + Math.random() * 1800;
-      bp.Q.value = 1.2;
-
-      const hp = audioCtx.createBiquadFilter();
-      hp.type = 'highpass';
-      hp.frequency.value = 1200;
-
-      const gain = audioCtx.createGain();
-      const dur  = 0.035 + Math.random() * 0.03;
-      const peak = 0.08 + Math.random() * 0.05;
-      gain.gain.setValueAtTime(0, now);
-      gain.gain.linearRampToValueAtTime(peak, now + 0.004);
-      gain.gain.exponentialRampToValueAtTime(0.0001, now + dur);
-
-      src.connect(bp).connect(hp).connect(gain).connect(audioCtx.destination);
-      src.start(now);
-      src.stop(now + dur + 0.02);
-    }
-
-    /* --- Scrittura progressiva carattere per carattere --- */
-    const CHAR_MS       = 55;   /* velocità media per carattere */
-    const CHAR_JITTER   = 40;   /* variazione naturale          */
-    const SPACE_PAUSE   = 90;   /* pausa extra su spazi/virgole */
-    const LINE_PAUSE    = 420;  /* pausa tra una riga e l'altra */
+    /* ---- Parametri scrittura ---- */
+    const CHAR_MS     = 55;
+    const CHAR_JITTER = 40;
+    const SPACE_PAUSE = 90;
+    const LINE_PAUSE  = 420;
+    const START_DELAY = 700;
 
     const rand = (a, b) => a + Math.random() * (b - a);
     const wait = ms => new Promise(r => setTimeout(r, ms));
 
-    let writing = false;
-    let written = false;
+    /* ===========================================================
+       AUDIO – sample reali
+       - penna: loop continuo durante la scrittura
+       - campanelle: one-shot al flip
+       =========================================================== */
+    const pencilAudio = new Audio('de-giuseppe/floraphonic-pencil-writing-drawing-loop-5-211896.mp3');
+    pencilAudio.loop   = true;
+    pencilAudio.volume = 0.8;
+    pencilAudio.preload = 'auto';
 
-    async function writeAll() {
-      if (writing || written) return;
-      writing = true;
-      ensureAudio();
-      if (audioCtx.state === 'suspended') await audioCtx.resume();
+    const bellsAudio = new Audio('de-giuseppe/dragon-studio-bells-jingling-2-372467.mp3');
+    bellsAudio.volume = 0.9;
+    bellsAudio.preload = 'auto';
 
-      for (const line of lines) {
-        const text = line.dataset.text;
-        line.textContent = '';
-        line.classList.add('writing');
+    let pencilActive = 0; /* contatore: così più cartoline in scrittura non si pestano */
 
-        for (let i = 0; i < text.length; i++) {
-          const ch = text[i];
-          line.textContent += ch;
-
-          /* Il suono solo sui caratteri visibili */
-          if (ch !== ' ') penTick();
-
-          let delay = CHAR_MS + rand(-CHAR_JITTER, CHAR_JITTER);
-          if (ch === ' ' || ch === ',' || ch === '.') delay += SPACE_PAUSE;
-          await wait(delay);
-        }
-
-        line.classList.remove('writing');
-        await wait(LINE_PAUSE);
+    function pencilStart() {
+      pencilActive++;
+      if (pencilActive === 1) {
+        try {
+          pencilAudio.currentTime = 0;
+          pencilAudio.play();
+        } catch(e) {}
       }
-
-      written = true;
-      writing = false;
     }
 
-    /* Fai partire la scrittura quando si gira la cartolina */
-    scene.addEventListener('mouseenter', writeAll);
+    function pencilStop() {
+      pencilActive = Math.max(0, pencilActive - 1);
+      if (pencilActive === 0) {
+        /* fade out morbido per evitare click di fine loop */
+        const start = pencilAudio.volume;
+        const steps = 10;
+        let i = 0;
+        const id = setInterval(() => {
+          i++;
+          pencilAudio.volume = Math.max(0, start * (1 - i / steps));
+          if (i >= steps) {
+            clearInterval(id);
+            pencilAudio.pause();
+            pencilAudio.currentTime = 0;
+            pencilAudio.volume = start;
+          }
+        }, 25);
+      }
+    }
 
-    /* Tap su mobile: alterna flip e avvia scrittura */
-    scene.addEventListener('click', () => {
-      scene.classList.toggle('flipped');
-      if (scene.classList.contains('flipped')) writeAll();
+    function playBell() {
+      try {
+        /* clone per consentire flip ravvicinati sovrapposti */
+        const b = bellsAudio.cloneNode();
+        b.volume = bellsAudio.volume;
+        b.play();
+      } catch(e) {}
+    }
+
+    async function ensureAudioRunning() {
+      /* L'interazione utente (click) basta a sbloccare l'autoplay */
+    }
+
+    /* Inizializza ogni cartolina in modo indipendente */
+    document.querySelectorAll('.scene').forEach((scene) => {
+      const lines = scene.querySelectorAll('.handwriting .line');
+      let writeToken = 0;
+
+      const resetLines = () => lines.forEach(l => { l.textContent = ''; });
+
+      async function writeAll() {
+        const myToken = ++writeToken;
+        resetLines();
+        await wait(START_DELAY);
+        if (myToken !== writeToken) return;
+
+        pencilStart();
+        try {
+          for (const line of lines) {
+            const text = line.dataset.text;
+            line.textContent = '';
+
+            for (let i = 0; i < text.length; i++) {
+              const ch = text[i];
+              line.textContent += ch;
+              let delay = CHAR_MS + rand(-CHAR_JITTER, CHAR_JITTER);
+              if (ch === ' ' || ch === ',' || ch === '.') delay += SPACE_PAUSE;
+              await wait(delay);
+              if (myToken !== writeToken) return;
+            }
+            await wait(LINE_PAUSE);
+            if (myToken !== writeToken) return;
+          }
+        } finally {
+          pencilStop();
+        }
+      }
+
+      scene.addEventListener('click', async () => {
+        await ensureAudioRunning();
+        const wasFlipped = scene.classList.contains('flipped');
+        scene.classList.toggle('flipped');
+
+        if (!wasFlipped) {
+          /* Verso il retro: parte la scrittura */
+          writeAll();
+        } else {
+          /* Torno al fronte mentre sto scrivendo: annulla il loop
+             di scrittura in corso. L'audio penna si ferma dal `finally`
+             della writeAll (fade-out morbido). */
+          writeToken++;
+        }
+      });
     });
 
-    /* Supporto al tap: forza il flip via classe */
-    const style = document.createElement('style');
-    style.textContent = `.scene.flipped .card { transform: rotateY(180deg); }`;
-    document.head.appendChild(style);
+    /* ===========================================================
+       NEVE – singolo toggle: fiocchi che cadono
+       =========================================================== */
+    (function snowModule() {
+      const canvas = document.getElementById('snow');
+      const ctx    = canvas.getContext('2d');
+      const toggle = document.getElementById('snowToggle');
+
+      let W, H, DPR, active = false;
+      const flakes = [];
+
+      function resize() {
+        DPR = Math.min(window.devicePixelRatio || 1, 2);
+        W = window.innerWidth; H = window.innerHeight;
+        canvas.width  = W * DPR;
+        canvas.height = H * DPR;
+        canvas.style.width  = W + 'px';
+        canvas.style.height = H + 'px';
+        ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+      }
+      window.addEventListener('resize', resize);
+      resize();
+
+      const COUNT = Math.max(80, Math.floor(W * H / 14000));
+
+      function makeFlake(fromTop = false) {
+        const r = 1 + Math.random() * 2.8;
+        return {
+          x: Math.random() * W,
+          y: fromTop ? -20 - Math.random() * 80 : Math.random() * H,
+          r,
+          vy: 0.3 + r * 0.35,
+          vxAmp: 0.4 + Math.random() * 0.9,
+          phase: Math.random() * Math.PI * 2,
+          omega: 0.004 + Math.random() * 0.008,
+          alpha: 0.55 + Math.random() * 0.45
+        };
+      }
+
+      for (let i = 0; i < COUNT; i++) flakes.push(makeFlake(false));
+
+      function frame() {
+        ctx.clearRect(0, 0, W, H);
+        if (active) {
+          for (const f of flakes) {
+            f.phase += f.omega;
+            f.x += Math.sin(f.phase) * f.vxAmp * 0.6;
+            f.y += f.vy;
+            if (f.y > H + 10) { Object.assign(f, makeFlake(true)); continue; }
+            if (f.x < -10) f.x = W + 10;
+            if (f.x > W + 10) f.x = -10;
+
+            ctx.beginPath();
+            ctx.fillStyle = `rgba(255,255,255,${f.alpha})`;
+            ctx.shadowColor = 'rgba(255,255,255,0.6)';
+            ctx.shadowBlur  = 4;
+            ctx.arc(f.x, f.y, f.r, 0, Math.PI * 2);
+            ctx.fill();
+          }
+          ctx.shadowBlur = 0;
+        }
+        requestAnimationFrame(frame);
+      }
+      requestAnimationFrame(frame);
+
+      toggle.addEventListener('click', () => {
+        active = !active;
+        document.body.classList.toggle('snowing', active);
+      });
+    })();
   </script>
 </body>
 </html>
